@@ -1,0 +1,35 @@
+# Local Python environments
+.venv/
+.venv-*/
+venv/
+env/
+
+# Python caches and test output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local benchmark / solver outputs
+csg_benchmark_out/
+csg_solve_out/
+scene_out/
+*_out/
+CSG_Solver_Harness/csg_harness_final_benchmark/
+
+# Build / release artifacts
+build/
+dist/
+*.egg-info/
+phase2e_release/
+phase2e_release_out/
+
+# MuJoCo / local logs
+MUJOCO_LOG.TXT
+*.log
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/

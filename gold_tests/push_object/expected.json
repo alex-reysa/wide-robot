@@ -1,0 +1,11 @@
+{
+  "robot_success": {
+    "passed": true
+  },
+  "robot_grasped": {
+    "expect_mismatch": [
+      "contact_word"
+    ],
+    "passed": false
+  }
+}

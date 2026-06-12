@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "csg.invalid_fixture.v1",
+  "fixtureId": "push_object__missing_contact",
+  "task": "push_object",
+  "target": "../gold_tests/push_object/target.json",
+  "solverConfig": {
+    "backend": "mujoco",
+    "sabotage": "push_missing_contact"
+  },
+  "expected": {
+    "passed": false,
+    "physicalValidity": true,
+    "failureCategory": "contact_missing",
+    "hardMismatch": "contact_word"
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "robot_put_cube_in_tray_success",
+  "_comment": "Hand-authored honest robot observation graph. No plannerView, no copied target. Different ids, gripper effector, sim-extraction evidence. Proves PASS is achievable without copying the target.",
+  "objects": [
+    {
+      "objectId": "r_cube",
+      "categoryLabel": "cube",
+      "categoryConfidence": 1.0,
+      "physicalKind": "RIGID_OBJECT",
+      "geometry": {
+        "source": "FROM_6D_POSE_AND_CAD",
+        "orientedBox": {
+          "sizeM": {
+            "x": 0.04,
+            "y": 0.04,
+            "z": 0.04
+          }
+        }
+      },
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    },
+    {
+      "objectId": "r_tray",
+      "categoryLabel": "tray",
+      "categoryConfidence": 1.0,
+      "physicalKind": "RIGID_OBJECT",
+      "geometry": {
+        "source": "FROM_DEPTH_OR_POINTMAP",
+        "orientedBox": {
+          "sizeM": {
+            "x": 0.24,
+            "y": 0.18,
+            "z": 0.03
+          }
+        }
+      },
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    }
+  ],
+  "agentParts": [
+    {
+      "agentPartId": "robot_gripper",
+      "agentKind": "ROBOT",
+      "partKind": "ROBOT_GRIPPER",
+      "label": "robot_gripper"
+    }
+  ],
+  "objectStates": [
+    {
+      "stateId": "s_cube_0",
+      "objectId": "r_cube",
+      "timeNs": "0",
+      "pose3D": {
+        "frameId": "world",
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        },
+        "confidence": 1.0
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    },
+    {
+      "stateId": "s_cube_1",
+      "objectId": "r_cube",
+      "timeNs": "5000000000",
+      "pose3D": {
+        "frameId": "world",
+        "positionM": {
+          "x": 0.34,
+          "y": -0.12,
+          "z": 0.035
+        },
+        "confidence": 1.0
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    },
+    {
+      "stateId": "s_tray_0",
+      "objectId": "r_tray",
+      "timeNs": "0",
+      "pose3D": {
+        "frameId": "world",
+        "positionM": {
+          "x": 0.34,
+          "y": -0.12,
+          "z": 0.03
+        },
+        "confidence": 1.0
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    }
+  ],
+  "relations": [
+    {
+      "relationId": "r0",
+      "timeNs": "0",
+      "subjectObjectId": "r_cube",
+      "objectObjectId": "r_tray",
+      "relation": "NEAR",
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    },
+    {
+      "relationId": "r1",
+      "timeNs": "5000000000",
+      "subjectObjectId": "r_cube",
+      "objectObjectId": "r_tray",
+      "relation": "INSIDE",
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    }
+  ],
+  "contacts": [
+    {
+      "contactId": "k1",
+      "a": {
+        "kind": "ROBOT_PART_ENTITY",
+        "id": "robot_gripper"
+      },
+      "b": {
+        "kind": "OBJECT_ENTITY",
+        "id": "r_cube"
+      },
+      "timeSpan": {
+        "startTimeNs": "2000000000",
+        "endTimeNs": "4500000000"
+      },
+      "mode": "GRASP_LIKELY",
+      "relativeMotion": "STICKING_LIKELY",
+      "confidence": 1.0,
+      "contactEvidence": {
+        "motionCorrelation": 0.99,
+        "stateChangeNearContactBoundary": true
+      },
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    }
+  ],
+  "events": [
+    {
+      "eventId": "k_contact",
+      "eventKind": "CONTACT_BEGIN",
+      "timeSpan": {
+        "startTimeNs": "2000000000",
+        "endTimeNs": "2050000000"
+      },
+      "involvedObjectIds": [
+        "r_cube"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "contactIds": [
+        "k1"
+      ],
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    },
+    {
+      "eventId": "k_comotion",
+      "eventKind": "HAND_OBJECT_CO_MOTION",
+      "timeSpan": {
+        "startTimeNs": "2200000000",
+        "endTimeNs": "3800000000"
+      },
+      "involvedObjectIds": [
+        "r_cube"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    },
+    {
+      "eventId": "k_contain",
+      "eventKind": "CONTAINMENT_CHANGE",
+      "timeSpan": {
+        "startTimeNs": "4000000000",
+        "endTimeNs": "4100000000"
+      },
+      "involvedObjectIds": [
+        "r_cube",
+        "r_tray"
+      ],
+      "observedDeltas": [
+        {
+          "objectId": "r_cube",
+          "confidence": 1.0,
+          "relationTransition": {
+            "subjectObjectId": "r_cube",
+            "objectObjectId": "r_tray",
+            "fromRelation": "NEAR",
+            "toRelation": "INSIDE"
+          }
+        }
+      ],
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    },
+    {
+      "eventId": "k_release",
+      "eventKind": "RELEASE_INFERRED",
+      "timeSpan": {
+        "startTimeNs": "4600000000",
+        "endTimeNs": "4650000000"
+      },
+      "involvedObjectIds": [
+        "r_cube"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "evidenceId": "ev_sim",
+      "estimator": "SIM_STATE_EXTRACTION",
+      "modelName": "csg.rollout_extract",
+      "modelVersion": "csg.predicates.v0"
+    }
+  ]
+}

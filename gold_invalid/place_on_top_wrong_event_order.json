@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "csg.invalid_fixture.v1",
+  "fixtureId": "place_on_top__wrong_event_order",
+  "task": "place_on_top",
+  "target": "../gold_tests/place_on_top/target.json",
+  "targetMutation": "release_before_relation",
+  "solverConfig": {
+    "backend": "mujoco"
+  },
+  "expected": {
+    "passed": false,
+    "physicalValidity": true,
+    "failureCategory": "event_order_wrong",
+    "hardMismatch": "event_order"
+  }
+}

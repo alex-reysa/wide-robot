@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "human_insert_object",
+  "taskCaption": "human inserts a peg into an open box",
+  "_comment": "Structurally mirrors put_cube_in_tray (same observable quotient class: move a rigid object INSIDE a container). The container carries RIM/OPENING parts so skill routing takes the insert branch. The benchmark confusion matrix documents the expected mutual PASS with put_cube_in_tray.",
+  "objects": [
+    {"objectId": "h_peg", "categoryLabel": "wooden peg", "categoryConfidence": 0.94, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_6D_POSE_AND_CAD", "orientedBox": {"sizeM": {"x": 0.03, "y": 0.03, "z": 0.08}}}},
+    {"objectId": "h_box", "categoryLabel": "open box", "categoryConfidence": 0.91, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_DEPTH_OR_POINTMAP", "orientedBox": {"sizeM": {"x": 0.12, "y": 0.12, "z": 0.10}}}, "parts": [{"partId": "p1", "kind": "RIM"}, {"partId": "p2", "kind": "OPENING"}]}
+  ],
+  "agentParts": [{"agentPartId": "right_hand", "partKind": "RIGHT_HAND"}],
+  "contacts": [
+    {"contactId": "c1", "a": {"kind": "HUMAN_PART_ENTITY", "id": "right_hand"}, "b": {"kind": "OBJECT_ENTITY", "id": "h_peg"}, "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "4600000000"}, "mode": "GRASP_LIKELY", "relativeMotion": "STICKING_LIKELY", "confidence": 0.9, "contactEvidence": {"motionCorrelation": 0.95, "stateChangeNearContactBoundary": true}}
+  ],
+  "events": [
+    {"eventId": "e1", "eventKind": "CONTACT_BEGIN", "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "1100000000"}, "involvedObjectIds": ["h_peg"], "involvedAgentPartIds": ["right_hand"], "contactIds": ["c1"], "confidence": 0.9},
+    {"eventId": "e2", "eventKind": "HAND_OBJECT_CO_MOTION", "timeSpan": {"startTimeNs": "1600000000", "endTimeNs": "2600000000"}, "involvedObjectIds": ["h_peg"], "involvedAgentPartIds": ["right_hand"], "contactIds": ["c1"], "confidence": 0.9},
+    {"eventId": "e3", "eventKind": "CONTAINMENT_CHANGE", "timeSpan": {"startTimeNs": "4000000000", "endTimeNs": "4500000000"}, "involvedObjectIds": ["h_peg", "h_box"], "observedDeltas": [{"objectId": "h_peg", "confidence": 0.95, "relationTransition": {"subjectObjectId": "h_peg", "objectObjectId": "h_box", "fromRelation": "NEAR", "toRelation": "INSIDE"}}], "confidence": 0.95},
+    {"eventId": "e4", "eventKind": "RELEASE_INFERRED", "timeSpan": {"startTimeNs": "4600000000", "endTimeNs": "4700000000"}, "involvedObjectIds": ["h_peg"], "involvedAgentPartIds": ["right_hand"], "confidence": 0.85}
+  ],
+  "temporalEdges": [
+    {"edgeId": "te1", "fromEventId": "e1", "toEventId": "e2", "relation": "BEFORE", "confidence": 0.9},
+    {"edgeId": "te2", "fromEventId": "e2", "toEventId": "e3", "relation": "BEFORE", "confidence": 0.9}
+  ],
+  "plannerView": {
+    "bodies": [{"objectId": "h_peg", "mobility": "MOVABLE"}, {"objectId": "h_box", "mobility": "STATIC"}],
+    "stages": [{"stageId": "s1", "goalConstraints": [{"constraintId": "g1", "kind": "OBJECT_RELATION_GOAL", "hard": true, "confidence": 0.95, "relation": {"subjectObjectId": "h_peg", "objectObjectId": "h_box", "desiredRelation": "INSIDE"}}], "contactPermissions": [{"a": {"kind": "ROBOT_PART_ENTITY", "id": "robot_gripper"}, "b": {"kind": "OBJECT_ENTITY", "id": "h_peg"}, "permission": "CONTACT_ALLOWED"}], "confidence": 0.95}]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "human_push_object",
+  "taskCaption": "human pushes a puck until it is near the goal block, without grasping it",
+  "_comment": "The demonstrated manner is part of the task: a CONTACT_MODE_CONSTRAINT (TOUCHING_LIKELY) on the puck promotes the contact-word probe to hard and routes the solver to the push skill. There is no RELEASE event because nothing is grasped.",
+  "objects": [
+    {"objectId": "h_puck", "categoryLabel": "puck", "categoryConfidence": 0.95, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_6D_POSE_AND_CAD", "orientedBox": {"sizeM": {"x": 0.04, "y": 0.04, "z": 0.04}}}},
+    {"objectId": "h_goal_block", "categoryLabel": "goal block", "categoryConfidence": 0.93, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_6D_POSE_AND_CAD", "orientedBox": {"sizeM": {"x": 0.04, "y": 0.04, "z": 0.04}}}}
+  ],
+  "agentParts": [{"agentPartId": "right_hand", "partKind": "RIGHT_HAND"}],
+  "objectStates": [
+    {"stateId": "s_puck_0", "objectId": "h_puck", "timeNs": "0", "pose3D": {"frameId": "world", "positionM": {"x": 0.20, "y": 0.20, "z": 0.02}, "confidence": 0.9}, "confidence": 0.9},
+    {"stateId": "s_block_0", "objectId": "h_goal_block", "timeNs": "0", "pose3D": {"frameId": "world", "positionM": {"x": 0.20, "y": 0.0, "z": 0.02}, "confidence": 0.9}, "confidence": 0.9}
+  ],
+  "relations": [
+    {"relationId": "r0", "timeNs": "0", "subjectObjectId": "h_puck", "objectObjectId": "h_goal_block", "relation": "FAR_FROM", "confidence": 0.9},
+    {"relationId": "r1", "timeNs": "6000000000", "subjectObjectId": "h_puck", "objectObjectId": "h_goal_block", "relation": "NEAR", "confidence": 0.95}
+  ],
+  "contacts": [
+    {"contactId": "c1", "a": {"kind": "HUMAN_PART_ENTITY", "id": "right_hand"}, "b": {"kind": "OBJECT_ENTITY", "id": "h_puck"}, "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "4000000000"}, "mode": "TOUCHING_LIKELY", "relativeMotion": "SLIDING_LIKELY", "confidence": 0.9, "contactEvidence": {"motionCorrelation": 0.9, "stateChangeNearContactBoundary": true}}
+  ],
+  "events": [
+    {"eventId": "e1", "eventKind": "CONTACT_BEGIN", "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "1100000000"}, "involvedObjectIds": ["h_puck"], "involvedAgentPartIds": ["right_hand"], "contactIds": ["c1"], "confidence": 0.9},
+    {"eventId": "e2", "eventKind": "HAND_OBJECT_CO_MOTION", "timeSpan": {"startTimeNs": "1600000000", "endTimeNs": "3600000000"}, "involvedObjectIds": ["h_puck"], "involvedAgentPartIds": ["right_hand"], "contactIds": ["c1"], "confidence": 0.9}
+  ],
+  "temporalEdges": [
+    {"edgeId": "te1", "fromEventId": "e1", "toEventId": "e2", "relation": "BEFORE", "confidence": 0.9}
+  ],
+  "plannerView": {
+    "bodies": [{"objectId": "h_puck", "mobility": "MOVABLE"}, {"objectId": "h_goal_block", "mobility": "STATIC"}],
+    "stages": [{"stageId": "s1",
+      "pathConstraints": [{"constraintId": "pc1", "kind": "CONTACT_MODE_CONSTRAINT", "hard": true, "confidence": 0.9, "contact": {"a": {"kind": "HUMAN_PART_ENTITY", "id": "right_hand"}, "b": {"kind": "OBJECT_ENTITY", "id": "h_puck"}, "mode": "TOUCHING_LIKELY"}}],
+      "goalConstraints": [{"constraintId": "g1", "kind": "OBJECT_RELATION_GOAL", "hard": true, "confidence": 0.95, "relation": {"subjectObjectId": "h_puck", "objectObjectId": "h_goal_block", "desiredRelation": "NEAR"}}],
+      "contactPermissions": [{"a": {"kind": "ROBOT_PART_ENTITY", "id": "robot_gripper"}, "b": {"kind": "OBJECT_ENTITY", "id": "h_puck"}, "permission": "CONTACT_REQUIRED"}],
+      "confidence": 0.95}]
+  }
+}

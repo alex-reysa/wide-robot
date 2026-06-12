@@ -1,0 +1,214 @@
+{
+  "objects": [
+    {
+      "objectId": "r_cube",
+      "categoryLabel": "red cube",
+      "categoryConfidence": 0.95,
+      "physicalKind": "RIGID_OBJECT",
+      "geometry": {
+        "source": "FROM_6D_POSE_AND_CAD",
+        "orientedBox": {
+          "sizeM": {
+            "x": 0.04,
+            "y": 0.04,
+            "z": 0.04
+          }
+        }
+      },
+      "visualAttributes": [
+        {
+          "name": "color",
+          "value": "red",
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "objectId": "r_tray",
+      "categoryLabel": "black tray",
+      "categoryConfidence": 0.93,
+      "physicalKind": "STATIC_SCENE_SURFACE",
+      "geometry": {
+        "source": "FROM_2D_MASK_ONLY",
+        "maskOnly": {
+          "note": "tray"
+        }
+      },
+      "visualAttributes": [
+        {
+          "name": "color",
+          "value": "black",
+          "confidence": 0.9
+        }
+      ]
+    }
+  ],
+  "agentParts": [
+    {
+      "agentPartId": "robot_gripper",
+      "partKind": "ROBOT_GRIPPER"
+    }
+  ],
+  "contacts": [
+    {
+      "contactId": "c1",
+      "a": {
+        "kind": "ROBOT_PART_ENTITY",
+        "id": "robot_gripper"
+      },
+      "b": {
+        "kind": "OBJECT_ENTITY",
+        "id": "r_cube"
+      },
+      "timeSpan": {
+        "startTimeNs": "1000000000",
+        "endTimeNs": "3000000000"
+      },
+      "mode": "GRASP_LIKELY",
+      "relativeMotion": "STICKING_LIKELY",
+      "confidence": 0.9,
+      "contactEvidence": {
+        "motionCorrelation": 0.95,
+        "stateChangeNearContactBoundary": true
+      }
+    }
+  ],
+  "events": [
+    {
+      "eventId": "e1",
+      "eventKind": "CONTACT_BEGIN",
+      "timeSpan": {
+        "startTimeNs": "1000000000",
+        "endTimeNs": "1100000000"
+      },
+      "involvedObjectIds": [
+        "r_cube"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "contactIds": [
+        "c1"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "eventId": "e2",
+      "eventKind": "HAND_OBJECT_CO_MOTION",
+      "timeSpan": {
+        "startTimeNs": "1600000000",
+        "endTimeNs": "2600000000"
+      },
+      "involvedObjectIds": [
+        "r_cube"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "contactIds": [
+        "c1"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "eventId": "e3",
+      "eventKind": "CONTAINMENT_CHANGE",
+      "timeSpan": {
+        "startTimeNs": "4000000000",
+        "endTimeNs": "4500000000"
+      },
+      "involvedObjectIds": [
+        "r_cube",
+        "r_tray"
+      ],
+      "observedDeltas": [
+        {
+          "objectId": "r_cube",
+          "confidence": 0.95,
+          "relationTransition": {
+            "subjectObjectId": "r_cube",
+            "objectObjectId": "r_tray",
+            "fromRelation": "NEAR",
+            "toRelation": "INSIDE"
+          }
+        }
+      ],
+      "confidence": 0.95
+    },
+    {
+      "eventId": "e4",
+      "eventKind": "RELEASE_INFERRED",
+      "timeSpan": {
+        "startTimeNs": "4600000000",
+        "endTimeNs": "4700000000"
+      },
+      "involvedObjectIds": [
+        "r_cube"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "confidence": 0.85
+    }
+  ],
+  "temporalEdges": [
+    {
+      "edgeId": "te1",
+      "fromEventId": "e1",
+      "toEventId": "e2",
+      "relation": "BEFORE",
+      "confidence": 0.9
+    },
+    {
+      "edgeId": "te2",
+      "fromEventId": "e2",
+      "toEventId": "e3",
+      "relation": "BEFORE",
+      "confidence": 0.9
+    }
+  ],
+  "plannerView": {
+    "bodies": [
+      {
+        "objectId": "r_cube",
+        "mobility": "MOVABLE"
+      },
+      {
+        "objectId": "r_tray",
+        "mobility": "STATIC"
+      }
+    ],
+    "stages": [
+      {
+        "stageId": "s1",
+        "goalConstraints": [
+          {
+            "constraintId": "g1",
+            "kind": "OBJECT_RELATION_GOAL",
+            "hard": true,
+            "confidence": 0.95,
+            "relation": {
+              "subjectObjectId": "r_cube",
+              "objectObjectId": "r_tray",
+              "desiredRelation": "INSIDE"
+            }
+          }
+        ],
+        "contactPermissions": [
+          {
+            "a": {
+              "kind": "ROBOT_PART_ENTITY",
+              "id": "robot_gripper"
+            },
+            "b": {
+              "kind": "OBJECT_ENTITY",
+              "id": "r_cube"
+            },
+            "permission": "CONTACT_ALLOWED"
+          }
+        ],
+        "confidence": 0.95
+      }
+    ]
+  }
+}

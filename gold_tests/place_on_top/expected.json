@@ -1,0 +1,13 @@
+{
+  "robot_success": {
+    "passed": true
+  },
+  "robot_wrong_relation": {
+    "expect_mismatch": [
+      "terminal_state",
+      "relation_transitions",
+      "goal_satisfaction"
+    ],
+    "passed": false
+  }
+}

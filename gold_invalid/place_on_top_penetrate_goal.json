@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "csg.invalid_fixture.v1",
+  "fixtureId": "place_on_top__penetrate_goal",
+  "task": "place_on_top",
+  "target": "../gold_tests/place_on_top/target.json",
+  "solverConfig": {
+    "backend": "mujoco",
+    "sabotage": "penetrate_goal"
+  },
+  "expected": {
+    "passed": false,
+    "physicalValidity": false,
+    "failureCategory": "physical_invalidity",
+    "failedValidityCheck": "non_penetration"
+  }
+}

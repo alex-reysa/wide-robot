@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "csg.invalid_fixture.v1",
+  "fixtureId": "put_cube_in_tray__early_release",
+  "task": "put_cube_in_tray",
+  "target": "../gold_tests/put_cube_in_tray/target.json",
+  "solverConfig": {
+    "backend": "mujoco",
+    "sabotage": "early_release"
+  },
+  "expected": {
+    "passed": false,
+    "physicalValidity": false,
+    "failureCategory": "physical_invalidity",
+    "failedValidityCheck": "quasi_static_support_at_release"
+  }
+}

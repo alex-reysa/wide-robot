@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "csg.invalid_fixture.v1",
+  "fixtureId": "place_on_top__wrong_relation",
+  "task": "place_on_top",
+  "target": "../gold_tests/place_on_top/target.json",
+  "solverConfig": {
+    "backend": "mujoco",
+    "sabotage": "wrong_relation"
+  },
+  "expected": {
+    "passed": false,
+    "physicalValidity": true,
+    "failureCategory": "relation_not_achieved",
+    "hardMismatch": "goal_satisfaction"
+  }
+}

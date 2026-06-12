@@ -1,0 +1,29 @@
+{
+  "robot_missing_contact": {
+    "passed": false
+  },
+  "robot_removed_at_end": {
+    "expect_mismatch": [
+      "terminal_state",
+      "goal_satisfaction"
+    ],
+    "passed": false
+  },
+  "robot_success": {
+    "passed": true
+  },
+  "robot_wrong_order": {
+    "expect_mismatch": [
+      "event_order"
+    ],
+    "passed": false
+  },
+  "robot_wrong_relation": {
+    "expect_mismatch": [
+      "terminal_state",
+      "relation_transitions",
+      "goal_satisfaction"
+    ],
+    "passed": false
+  }
+}

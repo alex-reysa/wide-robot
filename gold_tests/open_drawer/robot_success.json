@@ -1,0 +1,687 @@
+{
+  "agentParts": [
+    {
+      "agentKind": "ROBOT",
+      "agentPartId": "robot_gripper",
+      "label": "robot_gripper",
+      "partKind": "ROBOT_GRIPPER"
+    }
+  ],
+  "contacts": [
+    {
+      "a": {
+        "id": "robot_gripper",
+        "kind": "ROBOT_PART_ENTITY"
+      },
+      "b": {
+        "id": "r_drawer",
+        "kind": "OBJECT_ENTITY"
+      },
+      "confidence": 1.0,
+      "contactEvidence": {
+        "motionCorrelation": 0.0,
+        "stateChangeNearContactBoundary": false
+      },
+      "contactId": "contact_robot_gripper_r_drawer",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "mode": "GRASP_LIKELY",
+      "relativeMotion": "STICKING_LIKELY",
+      "timeSpan": {
+        "endTimeNs": "2250000000",
+        "startTimeNs": "1000000000"
+      }
+    }
+  ],
+  "events": [
+    {
+      "confidence": 1.0,
+      "contactIds": [
+        "contact_robot_gripper_r_drawer"
+      ],
+      "eventId": "ev_contact_begin_r_drawer",
+      "eventKind": "CONTACT_BEGIN",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "involvedObjectIds": [
+        "r_drawer"
+      ],
+      "timeSpan": {
+        "endTimeNs": "1000000000",
+        "startTimeNs": "1000000000"
+      }
+    },
+    {
+      "confidence": 1.0,
+      "eventId": "ev_release_r_drawer",
+      "eventKind": "RELEASE_INFERRED",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "involvedObjectIds": [
+        "r_drawer"
+      ],
+      "timeSpan": {
+        "endTimeNs": "2500000000",
+        "startTimeNs": "2500000000"
+      }
+    },
+    {
+      "confidence": 1.0,
+      "eventId": "ev_articulation_change_r_drawer",
+      "eventKind": "ARTICULATION_CHANGE",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "involvedObjectIds": [
+        "r_drawer"
+      ],
+      "observedDeltas": [
+        {
+          "articulationTransition": {
+            "articulatedObjectId": "r_drawer",
+            "fromState": {
+              "articulatedObjectId": "r_drawer",
+              "jointKind": "PRISMATIC",
+              "jointValue": 0.02,
+              "valueKind": "EXTENSION_M"
+            },
+            "toState": {
+              "articulatedObjectId": "r_drawer",
+              "jointKind": "PRISMATIC",
+              "jointValue": 0.18,
+              "valueKind": "EXTENSION_M"
+            }
+          },
+          "confidence": 1.0,
+          "objectId": "r_drawer"
+        }
+      ],
+      "timeSpan": {
+        "endTimeNs": "3000000000",
+        "startTimeNs": "2000000000"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "estimator": "SIM_STATE_EXTRACTION",
+      "evidenceId": "ev_sim_state_extraction",
+      "modelName": "csg.rollout_extract",
+      "modelVersion": "csg.predicates.v0"
+    }
+  ],
+  "extractionMetadata": {
+    "numFrames": 17,
+    "predicatesVersion": "csg.predicates.v0",
+    "readTargetCsg": false,
+    "source": "rollout_frames"
+  },
+  "graphId": "robot_symbolic_rollout",
+  "objectStates": [
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_0",
+      "timeNs": "0"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_1",
+      "timeNs": "250000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_2",
+      "timeNs": "500000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_3",
+      "timeNs": "750000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_4",
+      "timeNs": "1000000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_5",
+      "timeNs": "1250000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_6",
+      "timeNs": "1500000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_7",
+      "timeNs": "1750000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.02,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_8",
+      "timeNs": "2000000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.06,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_9",
+      "timeNs": "2250000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.1,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_10",
+      "timeNs": "2500000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.13999999999999999,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_11",
+      "timeNs": "2750000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.18,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_12",
+      "timeNs": "3000000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.18,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_13",
+      "timeNs": "3250000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.18,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_14",
+      "timeNs": "3500000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.18,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_15",
+      "timeNs": "3750000000"
+    },
+    {
+      "articulation": {
+        "articulatedObjectId": "r_drawer",
+        "confidence": 1.0,
+        "jointKind": "PRISMATIC",
+        "jointValue": 0.18,
+        "valueKind": "EXTENSION_M"
+      },
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "r_drawer",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.22,
+          "y": -0.12,
+          "z": 0.03
+        }
+      },
+      "stateId": "st_r_drawer_16",
+      "timeNs": "4000000000"
+    }
+  ],
+  "objects": [
+    {
+      "categoryConfidence": 1.0,
+      "categoryLabel": "drawer",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "geometry": {
+        "orientedBox": {
+          "sizeM": {
+            "x": 0.4,
+            "y": 0.3,
+            "z": 0.15
+          }
+        },
+        "source": "FROM_MULTIVIEW_RECONSTRUCTION"
+      },
+      "objectId": "r_drawer",
+      "parts": [
+        {
+          "kind": "HANDLE",
+          "partId": "p1"
+        }
+      ],
+      "physicalKind": "ARTICULATED_OBJECT"
+    }
+  ],
+  "relations": [],
+  "schemaVersion": "csg.v0"
+}

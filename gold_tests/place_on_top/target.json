@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "human_place_on_top",
+  "taskCaption": "human places a red cube on top of a blue block",
+  "objects": [
+    {"objectId": "h_cube", "categoryLabel": "red cube", "categoryConfidence": 0.95, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_6D_POSE_AND_CAD", "orientedBox": {"sizeM": {"x": 0.04, "y": 0.04, "z": 0.04}}}, "visualAttributes": [{"name": "color", "value": "red", "confidence": 0.9}]},
+    {"objectId": "h_block", "categoryLabel": "blue block", "categoryConfidence": 0.92, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_6D_POSE_AND_CAD", "orientedBox": {"sizeM": {"x": 0.08, "y": 0.08, "z": 0.06}}}, "visualAttributes": [{"name": "color", "value": "blue", "confidence": 0.9}]}
+  ],
+  "agentParts": [{"agentPartId": "right_hand", "partKind": "RIGHT_HAND"}],
+  "objectStates": [
+    {"stateId": "s_cube_0", "objectId": "h_cube", "timeNs": "0", "pose3D": {"frameId": "world", "positionM": {"x": 0.20, "y": 0.10, "z": 0.02}, "confidence": 0.9}, "confidence": 0.9},
+    {"stateId": "s_block_0", "objectId": "h_block", "timeNs": "0", "pose3D": {"frameId": "world", "positionM": {"x": 0.45, "y": -0.05, "z": 0.03}, "confidence": 0.9}, "confidence": 0.9}
+  ],
+  "relations": [
+    {"relationId": "r0", "timeNs": "0", "subjectObjectId": "h_cube", "objectObjectId": "h_block", "relation": "FAR_FROM", "confidence": 0.9},
+    {"relationId": "r1", "timeNs": "5000000000", "subjectObjectId": "h_cube", "objectObjectId": "h_block", "relation": "ON_TOP_OF", "confidence": 0.95}
+  ],
+  "contacts": [
+    {"contactId": "c1", "a": {"kind": "HUMAN_PART_ENTITY", "id": "right_hand"}, "b": {"kind": "OBJECT_ENTITY", "id": "h_cube"}, "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "4600000000"}, "mode": "GRASP_LIKELY", "relativeMotion": "STICKING_LIKELY", "confidence": 0.9, "contactEvidence": {"motionCorrelation": 0.95, "stateChangeNearContactBoundary": true}}
+  ],
+  "events": [
+    {"eventId": "e1", "eventKind": "CONTACT_BEGIN", "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "1100000000"}, "involvedObjectIds": ["h_cube"], "involvedAgentPartIds": ["right_hand"], "contactIds": ["c1"], "confidence": 0.9},
+    {"eventId": "e2", "eventKind": "HAND_OBJECT_CO_MOTION", "timeSpan": {"startTimeNs": "1600000000", "endTimeNs": "2600000000"}, "involvedObjectIds": ["h_cube"], "involvedAgentPartIds": ["right_hand"], "contactIds": ["c1"], "confidence": 0.9},
+    {"eventId": "e3", "eventKind": "SUPPORT_CHANGE", "timeSpan": {"startTimeNs": "4000000000", "endTimeNs": "4500000000"}, "involvedObjectIds": ["h_cube", "h_block"], "observedDeltas": [{"objectId": "h_cube", "confidence": 0.95, "relationTransition": {"subjectObjectId": "h_cube", "objectObjectId": "h_block", "fromRelation": "NEAR", "toRelation": "ON_TOP_OF"}}], "confidence": 0.95},
+    {"eventId": "e4", "eventKind": "RELEASE_INFERRED", "timeSpan": {"startTimeNs": "4600000000", "endTimeNs": "4700000000"}, "involvedObjectIds": ["h_cube"], "involvedAgentPartIds": ["right_hand"], "confidence": 0.85}
+  ],
+  "temporalEdges": [
+    {"edgeId": "te1", "fromEventId": "e1", "toEventId": "e2", "relation": "BEFORE", "confidence": 0.9},
+    {"edgeId": "te2", "fromEventId": "e2", "toEventId": "e3", "relation": "BEFORE", "confidence": 0.9}
+  ],
+  "plannerView": {
+    "bodies": [{"objectId": "h_cube", "mobility": "MOVABLE"}, {"objectId": "h_block", "mobility": "STATIC"}],
+    "stages": [{"stageId": "s1", "goalConstraints": [{"constraintId": "g1", "kind": "OBJECT_RELATION_GOAL", "hard": true, "confidence": 0.95, "relation": {"subjectObjectId": "h_cube", "objectObjectId": "h_block", "desiredRelation": "ON_TOP_OF"}}], "contactPermissions": [{"a": {"kind": "ROBOT_PART_ENTITY", "id": "robot_gripper"}, "b": {"kind": "OBJECT_ENTITY", "id": "h_cube"}, "permission": "CONTACT_ALLOWED"}], "confidence": 0.95}]
+  }
+}

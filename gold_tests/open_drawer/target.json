@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "human_open_drawer",
+  "taskCaption": "human opens a drawer",
+  "objects": [
+    {"objectId": "h_drawer", "categoryLabel": "drawer", "categoryConfidence": 0.9, "physicalKind": "ARTICULATED_OBJECT", "geometry": {"source": "FROM_MULTIVIEW_RECONSTRUCTION", "orientedBox": {"sizeM": {"x": 0.40, "y": 0.30, "z": 0.15}}}, "parts": [{"partId": "p1", "kind": "HANDLE"}]}
+  ],
+  "agentParts": [{"agentPartId": "right_hand", "partKind": "RIGHT_HAND"}],
+  "objectStates": [
+    {"stateId": "d0", "objectId": "h_drawer", "timeNs": "0", "articulation": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "jointValue": 0.02, "valueKind": "EXTENSION_M", "confidence": 0.9}, "confidence": 0.9}
+  ],
+  "contacts": [
+    {"contactId": "c1", "a": {"kind": "HUMAN_PART_ENTITY", "id": "right_hand"}, "b": {"kind": "OBJECT_ENTITY", "id": "h_drawer"}, "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "3000000000"}, "mode": "TOUCHING_LIKELY", "relativeMotion": "STICKING_LIKELY", "confidence": 0.9, "contactEvidence": {"stateChangeNearContactBoundary": true}}
+  ],
+  "events": [
+    {"eventId": "e1", "eventKind": "CONTACT_BEGIN", "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "1100000000"}, "involvedObjectIds": ["h_drawer"], "involvedAgentPartIds": ["right_hand"], "contactIds": ["c1"], "confidence": 0.9},
+    {"eventId": "e2", "eventKind": "ARTICULATION_CHANGE", "timeSpan": {"startTimeNs": "1500000000", "endTimeNs": "3000000000"}, "involvedObjectIds": ["h_drawer"], "observedDeltas": [{"objectId": "h_drawer", "confidence": 0.9, "articulationTransition": {"articulatedObjectId": "h_drawer", "fromState": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "jointValue": 0.02, "valueKind": "EXTENSION_M"}, "toState": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "jointValue": 0.18, "valueKind": "EXTENSION_M"}}}], "confidence": 0.9}
+  ],
+  "temporalEdges": [{"edgeId": "te1", "fromEventId": "e1", "toEventId": "e2", "relation": "BEFORE", "confidence": 0.9}],
+  "plannerView": {
+    "bodies": [{"objectId": "h_drawer", "mobility": "ARTICULATED"}],
+    "stages": [{"stageId": "s1", "goalConstraints": [{"constraintId": "g1", "kind": "ARTICULATION_GOAL", "hard": true, "confidence": 0.9, "articulation": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "targetJointValue": 0.18, "valueKind": "EXTENSION_M"}}], "confidence": 0.9}]
+  }
+}

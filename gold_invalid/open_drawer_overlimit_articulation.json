@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "csg.invalid_fixture.v1",
+  "fixtureId": "open_drawer__overlimit_articulation",
+  "task": "open_drawer",
+  "target": "../gold_tests/open_drawer/target.json",
+  "solverConfig": {
+    "backend": "mujoco",
+    "sabotage": "overlimit_articulation"
+  },
+  "expected": {
+    "passed": false,
+    "physicalValidity": false,
+    "failureCategory": "physical_invalidity",
+    "failedValidityCheck": "articulation_limits"
+  }
+}
