@@ -27,7 +27,10 @@ classifiers = [
 [project.optional-dependencies]
 # The MuJoCo arm backend (roadmap Phase 2C). Pulls in numpy transitively.
 # numpy must never be imported outside csg/backends/mujoco/.
-sim = ["mujoco>=3.9"]
+# Bounded so a future MuJoCo minor cannot silently change physics floats out
+# from under the recorded evidence; the exact version is recorded in
+# release_manifest.json ("environment.sim.mujoco"). Released evidence: 3.9.0.
+sim = ["mujoco>=3.9,<3.10"]
 # Test/dev tooling. Opt-in only — the runtime package stays dependency-free.
 dev = ["pytest"]
 

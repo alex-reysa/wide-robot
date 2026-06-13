@@ -33,3 +33,6 @@ MUJOCO_LOG.TXT
 .DS_Store
 .idea/
 .vscode/
+
+# Private / internal notes — never publish to the open-source repo
+.internal/

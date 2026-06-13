@@ -83,29 +83,66 @@ still runs (and stays green) without it.
 | Gold tasks | ✅ 5/5: put_cube_in_tray, place_on_top, push_object, open_drawer, insert_object — each with failure variants |
 | Cross-task confusion matrix | ✅ clean diagonal; one documented quotient equivalence (insert_object ~ put_cube_in_tray) |
 | MuJoCo physics backend (Level 2) | ✅ **all five V0 gold tasks pass gated MuJoCo tests/benchmark with real `physicalValidity: true`** (`csg/backends/mujoco/`); seeded 30-rollout/task benchmark samples every V0 task, including x-shifted push starts; now covered by an optional manual CI workflow (`.github/workflows/mujoco.yml`). Scope: verification discipline on a fixed-base arm, not general robot capability. |
-| Sim-only benchmark readiness | ✅ seeded randomized reports, failure taxonomy, symbolic/no-op/MuJoCo baseline comparison, a nine-fixture invalid suite, source provenance, release audit, release rehearsal, Git hygiene, and MIT package metadata are in place; release artifacts are regenerated from the committed clean checkout (Git-backed `sourceProvenance`, `dirty=false`) and verified end-to-end by `python -m csg.verify_release` (checksums + audit + per-report commit == tag commit) |
+| Sim-only benchmark readiness | ✅ seeded randomized reports, failure taxonomy, symbolic/no-op/MuJoCo baseline comparison, a nine-fixture invalid suite, source provenance, release audit, release rehearsal, Git hygiene, and MIT package metadata are in place; release artifacts are regenerated from the committed clean checkout (Git-backed `sourceProvenance`, `dirty=false`) and verified by `python -m csg.verify_release`, which binds every report's source snapshot and each wheel/sdist's `csg/` source to `git archive <pinned tag commit>` and reconciles `RELEASE_SHA256SUMS` + `release_manifest.json` against those anchors |
 | Perception compiler (video → target CSG) | ⬜ Phase 3 |
 | DK1 real-arm data campaign + adapter | ⬜ Phases 4–5 (playbook in `roadmap.md` §7) |
 
 ## Reproducibility
 
 Continuous integration runs the dependency-free suite on every push/PR
-(`.github/workflows/ci.yml`, Python 3.11–3.13); a separate **manual** workflow
-exercises the MuJoCo backend (`.github/workflows/mujoco.yml`). Every tagged
-release ships `RELEASE_SHA256SUMS` and a `release_manifest.json` (commit, tag,
-asset SHA-256s, expected benchmark summaries, exact commands). To re-verify a
-published release end to end — download assets, check `RELEASE_SHA256SUMS`, run
-the release audit, and confirm every report's `sourceProvenance.git.commit`
-equals the tag commit:
+(`.github/workflows/ci.yml`, Python 3.11–3.13) — including an integration test
+that drives `csg.verify_release` over a release built from the live git history,
+so the verifier's real git/tar/snapshot path is exercised on every push. A
+separate **manual** workflow exercises the MuJoCo backend
+(`.github/workflows/mujoco.yml`).
+
+Every tagged release ships `RELEASE_SHA256SUMS` and a `release_manifest.json`
+(commit, tag, asset SHA-256s, recorded sim environment, expected benchmark
+summaries, exact commands). `csg.verify_release` re-verifies a published release
+*against the tagged source*:
 
 ```bash
-python3 -m csg.verify_release --tag v0.3.0       # verify a published release
-bash scripts/clean_clone_rehearsal.sh v0.3.0     # reproduce from a clean clone
+python3 -m csg.verify_release --tag v0.3.1       # verify the canonical release
+bash scripts/clean_clone_rehearsal.sh v0.3.1     # reproduce from a clean clone
 ```
 
-`verify_release` exits 0 (ok), 2 (release fails verification), or 3 (operational
-error, e.g. `gh`/`git` missing). The claim boundary is unchanged: this hardens
-*verification discipline*, not robot capability.
+What that actually proves — the trust model is documented at the top of
+`csg/verify_release.py`:
+
+- **Anchored to the commit (the publisher cannot forge it).** The expected
+  commit comes from an in-source pin (`KNOWN_TAG_COMMITS`), not from the release,
+  and `origin` is never trusted to choose which repo to verify. `git archive
+  <commit>` reconstructs the committed source from git's object store, and the
+  verifier requires (a) every report's `sourceProvenance.snapshot` to equal the
+  snapshot recomputed from that tree and (b) the `csg/` Python source inside
+  every wheel/sdist to be byte-identical to it. A fabricated report or a trojan
+  wheel fails these bindings.
+- **Checksum-pinned for tamper-evidence only.** `RELEASE_SHA256SUMS` and the
+  manifest are publisher-supplied, so they are *reconciled* against the anchored
+  facts and the recomputed asset bytes — never trusted on their own. A wheel's
+  *compiled metadata / non-source bytes* are pinned for transit integrity but are
+  **not** re-derived from source; byte-for-byte rebuild reproducibility of the
+  wheel itself is out of scope.
+
+Reproducibility scope (be precise about what "reproducible" means here):
+
+- The release tooling packs the report-artifacts tarball **deterministically**
+  (`csg.release_manifest --build-report-tarball`: sorted entries, fixed
+  mtime/uid/gid), so re-packing an identical report tree reproduces its SHA-256.
+  This applies to releases cut with the current tooling; the **v0.3.1** tarball
+  was packed before that builder existed, so its bytes are checksum-pinned for
+  tamper-evidence, not byte-reproducible.
+- MuJoCo report **content** carries machine-dependent physics floats (MuJoCo /
+  numpy / BLAS), so a clean re-run does not bit-match across machines — the
+  recorded `environment` (manifest `environment.sim`) and the bounded
+  `mujoco>=3.9,<3.10` pin make the build environment auditable. The genuinely
+  bit-reproducible guarantees are the git-anchored ones above (report source
+  snapshot + distributed `csg/` source), not the floating-point evidence.
+
+`verify_release` exits 0 (ok), 2 (the release fails verification — bad or forged
+content), or 3 (operational error, e.g. `gh`/`git` missing); hostile release
+bytes are classified as 2, never a traceback. The claim boundary is unchanged:
+this hardens *verification discipline*, not robot capability.
 
 ## Repository map
 
