@@ -66,6 +66,7 @@ CANONICAL_REPO = "alex-reysa/wide-robot"
 KNOWN_TAG_COMMITS: Dict[str, str] = {
     "v0.3.0": "74e893bcb73992bb4ac7b7760516fafc17e48231",
     "v0.3.1": "8e0c6af4ddc09ca18c1d1a9c8dfdac5134fc2dac",
+    "v0.3.2": "15094fd156eca7801e109258698c62f223f1d20e",
 }
 
 REPORT_FILENAMES = (
