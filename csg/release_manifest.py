@@ -17,7 +17,11 @@ never ``sha256sum``.
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
+import platform
+import subprocess
+import tarfile
 import tomllib
 from pathlib import Path
 from typing import Dict, List
@@ -32,6 +36,90 @@ from .verify_release import (
 
 SUMS_NAME = "RELEASE_SHA256SUMS"
 MANIFEST_NAME = "release_manifest.json"
+
+
+# -----------------------------------------------------------------------------
+# Deterministic report tarball (F5: re-tarring the same tree must byte-match)
+# -----------------------------------------------------------------------------
+
+
+def build_report_tarball(reports_root: str | Path, out: str | Path, *, mtime: int = 0) -> Path:
+    """Pack ``reports_root`` into a byte-reproducible ``.tar.gz``.
+
+    Members are sorted by name; uid/gid/uname/gname/mtime/mode are normalized;
+    the gzip header mtime is fixed. Two runs over an identical tree produce an
+    identical SHA-256 — so a clean-clone re-derivation can assert byte equality.
+    """
+    reports_root = Path(reports_root)
+    out = Path(out)
+    files = sorted(p for p in reports_root.rglob("*") if p.is_file())
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "wb") as raw:
+        # filename="" and a fixed mtime keep the gzip header deterministic.
+        with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=mtime) as gz:
+            with tarfile.open(fileobj=gz, mode="w") as tar:  # type: ignore[arg-type]
+                for path in files:
+                    arc = path.relative_to(reports_root).as_posix()
+                    info = tarfile.TarInfo(arc)
+                    info.size = path.stat().st_size
+                    info.mtime = mtime
+                    info.mode = 0o644
+                    info.uid = info.gid = 0
+                    info.uname = info.gname = ""
+                    info.type = tarfile.REGTYPE
+                    with open(path, "rb") as handle:
+                        tar.addfile(info, handle)
+    return out
+
+
+def commit_epoch(commit: str, *, cwd: str | Path = ".") -> int:
+    """Committer timestamp of ``commit`` (for a reproducible tarball mtime)."""
+    try:
+        out = subprocess.run(
+            ["git", "show", "-s", "--format=%ct", commit],
+            cwd=cwd, check=True, text=True, capture_output=True,
+        ).stdout.strip()
+        return int(out)
+    except (FileNotFoundError, subprocess.CalledProcessError, ValueError):
+        return 0
+
+
+def _environment(sim_python: str | Path | None = None) -> Json:
+    """Record the build/run environment so reproducibility is auditable.
+
+    ``mujoco``/``numpy`` live in the sim interpreter, so when ``sim_python`` is
+    given we introspect *that* interpreter; otherwise we report only what the
+    current (build) interpreter can see.
+    """
+    env: Json = {"buildPython": platform.python_version(), "sim": None}
+    if sim_python is not None:
+        script = (
+            "import json,platform\n"
+            "out={'python':platform.python_version()}\n"
+            "import importlib\n"
+            "for m in ('mujoco','numpy'):\n"
+            "    try: out[m]=getattr(importlib.import_module(m),'__version__',None)\n"
+            "    except Exception: out[m]=None\n"
+            "print(json.dumps(out))"
+        )
+        try:
+            raw = subprocess.run([str(sim_python), "-c", script], check=True, text=True,
+                                 capture_output=True).stdout.strip()
+            env["sim"] = json.loads(raw)
+        except (FileNotFoundError, subprocess.CalledProcessError, json.JSONDecodeError):
+            env["sim"] = None
+    return env
+
+
+def _generated_from(project_root: str | Path = ".") -> str:
+    """Observe whether generation happened in a clean git checkout (not a
+    hardcoded literal): ``clean-checkout`` / ``dirty-working-tree`` /
+    ``non-git-source``."""
+    from .benchmark import _git_provenance
+    git = _git_provenance(Path(project_root))
+    if git is None:
+        return "non-git-source"
+    return "clean-checkout" if not git.get("dirty") else "dirty-working-tree"
 
 
 def _pyproject_version(pyproject: str | Path | None = None) -> str | None:
@@ -128,14 +216,18 @@ def build_manifest(
     reports_root: str | Path,
     version: str | None = None,
     seeds: int = 30,
-    generated_from: str = "clean-checkout",
+    generated_from: str | None = None,
+    project_root: str | Path = ".",
+    sim_python: str | Path | None = None,
 ) -> Json:
     return {
         "schemaVersion": "csg.release_manifest.v1",
         "version": version or _pyproject_version(),
         "tag": tag,
         "commit": commit,
-        "generatedFrom": generated_from,
+        # Observed, not assumed: reflects whether generation was a clean checkout.
+        "generatedFrom": generated_from if generated_from is not None else _generated_from(project_root),
+        "environment": _environment(sim_python),
         "checksumsFile": SUMS_NAME,
         "assets": collect_assets(asset_dir),
         "expectedBenchmarkSummaries": expected_benchmark_summaries(reports_root, seeds=seeds),
@@ -152,18 +244,31 @@ def main(argv: List[str] | None = None) -> int:
     parser.add_argument("--commit", default=None, help="release commit (default: resolve from tag)")
     parser.add_argument("--seeds", type=int, default=30)
     parser.add_argument("--out", default=None, help="manifest output path (default: <asset-dir>/release_manifest.json)")
+    parser.add_argument("--project-root", default=".", help="project root for observing generatedFrom")
+    parser.add_argument("--sim-python", default=None, help="sim interpreter to record mujoco/numpy versions from")
+    parser.add_argument("--build-report-tarball", default=None,
+                        help="deterministically (re)pack <reports-root> into <asset-dir>/<NAME> before hashing")
     parser.add_argument("--write-checksums", action="store_true", help="also (re)write RELEASE_SHA256SUMS first")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args(argv)
-
-    if args.write_checksums:
-        write_sha256sums(args.asset_dir)
 
     try:
         commit = args.commit or resolve_tag_commit(args.tag)
     except VerifyReleaseError as exc:
         print(f"release-manifest ERROR: {exc}")
         return 3
+
+    # Build the report tarball deterministically (fixed mtime = commit date) so
+    # the published bytes are reproducible, before they are hashed/listed.
+    if args.build_report_tarball:
+        build_report_tarball(
+            args.reports_root,
+            Path(args.asset_dir) / args.build_report_tarball,
+            mtime=commit_epoch(commit, cwd=args.project_root),
+        )
+
+    if args.write_checksums:
+        write_sha256sums(args.asset_dir)
 
     manifest = build_manifest(
         tag=args.tag,
@@ -172,6 +277,8 @@ def main(argv: List[str] | None = None) -> int:
         reports_root=args.reports_root,
         version=args.version,
         seeds=args.seeds,
+        project_root=args.project_root,
+        sim_python=args.sim_python,
     )
     out = Path(args.out) if args.out else Path(args.asset_dir) / MANIFEST_NAME
     write_json(out, manifest)

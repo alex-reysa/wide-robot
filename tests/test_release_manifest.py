@@ -90,3 +90,33 @@ def test_exact_commands_are_canonical():
 def test_pyproject_version_is_readable():
     version = rm._pyproject_version()
     assert isinstance(version, str) and version
+
+
+def test_build_report_tarball_is_byte_deterministic(tmp_path):
+    reports = tmp_path / "reports"
+    (reports / "symbolic").mkdir(parents=True)
+    (reports / "symbolic" / "report.json").write_text('{"a": 1}\n')
+    (reports / "mujoco" / "nested").mkdir(parents=True)
+    (reports / "mujoco" / "nested" / "summary.csv").write_text("x,y\n1,2\n")
+
+    one = rm.build_report_tarball(reports, tmp_path / "a.tar.gz", mtime=1700000000)
+    two = rm.build_report_tarball(reports, tmp_path / "b.tar.gz", mtime=1700000000)
+    assert vr.sha256_file(one) == vr.sha256_file(two)  # F5: re-tarring must byte-match
+
+    # The deterministic tarball round-trips through the safe extractor.
+    out = vr.unpack_report_tarball(one, tmp_path / "unpacked")
+    assert (out / "symbolic" / "report.json").read_text() == '{"a": 1}\n'
+
+
+def test_manifest_records_environment_and_observed_generated_from(tmp_path):
+    reports = tmp_path / "reports"
+    _reports(reports)
+    assets = tmp_path / "assets"
+    assets.mkdir()
+    (assets / "csg-1.2.3.tar.gz").write_bytes(b"sdist")
+    manifest = rm.build_manifest(tag="v1.2.3", commit="a" * 40, asset_dir=assets,
+                                 reports_root=reports, version="1.2.3", seeds=30,
+                                 project_root=tmp_path)
+    assert "environment" in manifest and "buildPython" in manifest["environment"]
+    # tmp_path is not a git repo → generatedFrom is observed as non-git-source.
+    assert manifest["generatedFrom"] == "non-git-source"

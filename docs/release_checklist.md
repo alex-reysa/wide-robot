@@ -56,10 +56,18 @@ python3 -m csg.release_rehearsal --out <release-out> \
   --project-root .
 # Reproduce from a clean clone (base + sim), then verify the published release:
 bash scripts/clean_clone_rehearsal.sh <ref>
+# Pack the report tarball deterministically (reproducible SHA), record the sim
+# environment (mujoco/numpy versions), then pin everything in the manifest:
 python3 -m csg.release_manifest --tag <tag> \
-  --asset-dir <assets> --reports-root <release-out> --write-checksums
+  --asset-dir <assets> --reports-root <release-out> \
+  --build-report-tarball phase2e-report-artifacts.tar.gz \
+  --sim-python .venv-sim/bin/python --project-root . --write-checksums
 python3 -m csg.verify_release --tag <tag>
 ```
+
+After tagging a NEW release, add its `tag -> commit` to `KNOWN_TAG_COMMITS` in
+`csg/verify_release.py` (the in-source trust anchor `verify_release` checks
+against) — otherwise the new tag verifies without a pinned-commit anchor.
 
 ## Required Report Artifacts
 
