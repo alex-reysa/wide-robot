@@ -22,10 +22,10 @@ jobs:
     env:
       MUJOCO_GL: egl  # headless; falls back to osmesa if EGL is unavailable
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Install headless GL libraries
@@ -48,7 +48,7 @@ jobs:
             --json
       - name: Upload report artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: phase2e-report-artifacts
           path: phase2e_release_out/**
