@@ -54,26 +54,31 @@ python3 -m csg.release_audit \
 python3 -m csg.release_rehearsal --out <release-out> \
   --require-final-metadata \
   --project-root .
+# Reproduce from a clean clone (base + sim), then verify the published release:
+bash scripts/clean_clone_rehearsal.sh <ref>
+python3 -m csg.release_manifest --tag <tag> \
+  --asset-dir <assets> --reports-root <release-out> --write-checksums
+python3 -m csg.verify_release --tag <tag>
 ```
 
 ## Required Report Artifacts
 
-- [ ] `report.json`, `report.md`, `summary.csv`, and
+- [x] `report.json`, `report.md`, `summary.csv`, and
       `failure_classification.json` for symbolic gold benchmark.
       `report.json` must expose summary counts for failure class,
       physical-validity state, and leakage cleanliness.
-- [ ] Same artifacts for MuJoCo gold benchmark.
-- [ ] Same artifacts for 30-seed MuJoCo randomized benchmark.
-- [ ] `comparison_report.json` plus per-baseline outputs for symbolic, no-op
+- [x] Same artifacts for MuJoCo gold benchmark.
+- [x] Same artifacts for 30-seed MuJoCo randomized benchmark.
+- [x] `comparison_report.json` plus per-baseline outputs for symbolic, no-op
       expected-failure, and MuJoCo.
-- [ ] Frozen invalid fixture report with expected failed probe/check
+- [x] Frozen invalid fixture report with expected failed probe/check
       for every invalid fixture (`gold_invalid/`).
-- [ ] Final public benchmark report regenerated from clean-checkout evidence
+- [x] Final public benchmark report regenerated from clean-checkout evidence
       and linked to a tagged/source-snapshot release.
-- [ ] Release artifact audit passes for the generated output directories.
-- [ ] Strict release artifact audit passes with `--require-final-metadata`
+- [x] Release artifact audit passes for the generated output directories.
+- [x] Strict release artifact audit passes with `--require-final-metadata`
       after `.git`, Git-backed report provenance, and license metadata exist.
-- [ ] Release rehearsal result (`release_rehearsal_result.json`) is attached to
+- [x] Release rehearsal result (`release_rehearsal_result.json`) is attached to
       the final tagged/source-snapshot release.
 
 ## Current Status Notes

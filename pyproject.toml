@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "csg"
-version = "0.3.0"
+version = "0.3.1"
 description = "Arm-Bounded Demonstration Compiler — leakage-clean compiler/verifier loop for fixed-base robotic-arm manipulation"
 readme = "README.md"
 license = "MIT"
@@ -26,16 +26,20 @@ classifiers = [
 # The MuJoCo arm backend (roadmap Phase 2C). Pulls in numpy transitively.
 # numpy must never be imported outside csg/backends/mujoco/.
 sim = ["mujoco>=3.9"]
+# Test/dev tooling. Opt-in only — the runtime package stays dependency-free.
+dev = ["pytest"]
 
 [project.scripts]
 csg-benchmark = "csg.benchmark:main"
 csg-matcher = "csg.matcher:main"
 csg-release-audit = "csg.release_audit:main"
+csg-release-manifest = "csg.release_manifest:main"
 csg-release-rehearsal = "csg.release_rehearsal:main"
 csg-rollout-extract = "csg.rollout_extract:main"
 csg-skills = "csg.skills:main"
 csg-solver = "csg.solver:main"
 csg-to-sim = "csg.to_sim:main"
+csg-verify-release = "csg.verify_release:main"
 
 [tool.setuptools]
 packages = ["csg", "csg.backends", "csg.backends.mujoco"]

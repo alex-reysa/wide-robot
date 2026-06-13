@@ -1,0 +1,55 @@
+name: mujoco
+
+# Optional / MANUAL MuJoCo suite. Heavier and headless-GL-sensitive, so it is
+# never triggered by push/PR — run it on demand from the Actions tab. It installs
+# the `sim` extra on Python 3.12 (mujoco wheels target CPython <= 3.13) and runs
+# the full release rehearsal (MuJoCo gold + 30-seed randomized + baseline
+# comparison + invalid fixtures + strict release audit).
+on:
+  workflow_dispatch:
+    inputs:
+      seeds:
+        description: 'randomized seeds for the MuJoCo sweep'
+        default: '30'
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  sim:
+    runs-on: ubuntu-latest
+    env:
+      MUJOCO_GL: egl  # headless; falls back to osmesa if EGL is unavailable
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install headless GL libraries
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libgl1 libosmesa6
+      - name: Install sim extra + test deps (editable for Git-backed provenance)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,sim]"
+      - name: Run full test suite (includes MuJoCo backend)
+        run: python -m pytest tests/ -q
+      - name: Release rehearsal (strict, Git-backed provenance)
+        run: |
+          python -m csg.release_rehearsal \
+            --out phase2e_release_out \
+            --python python \
+            --sim-python python \
+            --seeds "${{ github.event.inputs.seeds }}" \
+            --require-final-metadata \
+            --project-root . \
+            --json
+      - name: Upload report artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase2e-report-artifacts
+          path: phase2e_release_out/**
+          if-no-files-found: warn

@@ -73,7 +73,7 @@ mujoco's macOS/Linux wheels target CPython ≤ 3.13 today; if your default
 The mujoco-dependent tests `pytest.importorskip("mujoco")`, so the core suite
 still runs (and stays green) without it.
 
-## Current status (V0.3, 2026-06-13)
+## Current status (V0.3.1, 2026-06-13)
 
 | What | State |
 | --- | --- |
@@ -82,10 +82,30 @@ still runs (and stays green) without it.
 | Symbolic solver backend (Level 0) | ✅ done — proves the loop, reports `physicalValidity: None` honestly |
 | Gold tasks | ✅ 5/5: put_cube_in_tray, place_on_top, push_object, open_drawer, insert_object — each with failure variants |
 | Cross-task confusion matrix | ✅ clean diagonal; one documented quotient equivalence (insert_object ~ put_cube_in_tray) |
-| MuJoCo physics backend (Level 2) | 🟡 **all five V0 gold tasks pass gated MuJoCo tests/benchmark with real `physicalValidity: true`** (`csg/backends/mujoco/`); seeded 30-rollout/task benchmark now samples every V0 task, including x-shifted push starts |
-| Sim-only benchmark readiness | 🟡 seeded randomized reports, failure taxonomy, symbolic/no-op/MuJoCo baseline comparison, a nine-fixture invalid suite, source provenance, release audit, release rehearsal, Git hygiene, and MIT package metadata are in place; final release artifacts must be regenerated from the committed checkout |
+| MuJoCo physics backend (Level 2) | ✅ **all five V0 gold tasks pass gated MuJoCo tests/benchmark with real `physicalValidity: true`** (`csg/backends/mujoco/`); seeded 30-rollout/task benchmark samples every V0 task, including x-shifted push starts; now covered by an optional manual CI workflow (`.github/workflows/mujoco.yml`). Scope: verification discipline on a fixed-base arm, not general robot capability. |
+| Sim-only benchmark readiness | ✅ seeded randomized reports, failure taxonomy, symbolic/no-op/MuJoCo baseline comparison, a nine-fixture invalid suite, source provenance, release audit, release rehearsal, Git hygiene, and MIT package metadata are in place; release artifacts are regenerated from the committed clean checkout (Git-backed `sourceProvenance`, `dirty=false`) and verified end-to-end by `python -m csg.verify_release` (checksums + audit + per-report commit == tag commit) |
 | Perception compiler (video → target CSG) | ⬜ Phase 3 |
 | DK1 real-arm data campaign + adapter | ⬜ Phases 4–5 (playbook in `roadmap.md` §7) |
+
+## Reproducibility
+
+Continuous integration runs the dependency-free suite on every push/PR
+(`.github/workflows/ci.yml`, Python 3.10–3.13); a separate **manual** workflow
+exercises the MuJoCo backend (`.github/workflows/mujoco.yml`). Every tagged
+release ships `RELEASE_SHA256SUMS` and a `release_manifest.json` (commit, tag,
+asset SHA-256s, expected benchmark summaries, exact commands). To re-verify a
+published release end to end — download assets, check `RELEASE_SHA256SUMS`, run
+the release audit, and confirm every report's `sourceProvenance.git.commit`
+equals the tag commit:
+
+```bash
+python3 -m csg.verify_release --tag v0.3.0       # verify a published release
+bash scripts/clean_clone_rehearsal.sh v0.3.0     # reproduce from a clean clone
+```
+
+`verify_release` exits 0 (ok), 2 (release fails verification), or 3 (operational
+error, e.g. `gh`/`git` missing). The claim boundary is unchanged: this hardens
+*verification discipline*, not robot capability.
 
 ## Repository map
 

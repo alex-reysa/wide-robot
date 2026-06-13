@@ -1,0 +1,38 @@
+name: ci
+
+# Non-MuJoCo suite on every push and pull request. The base package is
+# dependency-free, so this proves the verifier loop + symbolic backend stay green
+# across every supported Python. MuJoCo tests self-skip (pytest.importorskip).
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # tags + history for provenance/version resolution
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install base package + test deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install ".[dev]"
+      - name: Run non-MuJoCo test suite
+        run: python -m pytest tests/ -q
+      - name: Symbolic gold benchmark (fails on any leakage / unexpected pass)
+        run: python -m csg.benchmark gold_tests --confusion --require-pass
