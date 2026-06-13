@@ -90,7 +90,7 @@ still runs (and stays green) without it.
 ## Reproducibility
 
 Continuous integration runs the dependency-free suite on every push/PR
-(`.github/workflows/ci.yml`, Python 3.10–3.13); a separate **manual** workflow
+(`.github/workflows/ci.yml`, Python 3.11–3.13); a separate **manual** workflow
 exercises the MuJoCo backend (`.github/workflows/mujoco.yml`). Every tagged
 release ships `RELEASE_SHA256SUMS` and a `release_manifest.json` (commit, tag,
 asset SHA-256s, expected benchmark summaries, exact commands). To re-verify a

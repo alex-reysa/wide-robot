@@ -4,12 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "csg"
-version = "0.3.1"
+version = "0.3.2"
 description = "Arm-Bounded Demonstration Compiler — leakage-clean compiler/verifier loop for fixed-base robotic-arm manipulation"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-requires-python = ">=3.10"
+# The release tooling parses pyproject.toml with the stdlib `tomllib`, which is
+# Python 3.11+. The core verifier loop is otherwise pure standard library.
+requires-python = ">=3.11"
 # Base install is intentionally dependency-free: the verifier loop (compiler,
 # extractor, matcher, benchmark, symbolic backend) is pure standard library, so
 # the frozen verifier has no third-party surface. Physics simulation is opt-in.
