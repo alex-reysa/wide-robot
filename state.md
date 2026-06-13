@@ -1283,3 +1283,31 @@ Acceptance:
     -> exit 0; symbolic `passed=5/5`, noop `passed=0/5`, noop classes
     `{"contact_missing": 1, "event_order_wrong": 4}`, unexpected confusion
     `0`, missed diagonal `5`.
+- 2026-06-13 public release packaging:
+  - Initialized Git on `main`, created public GitHub repository
+    `https://github.com/alex-reysa/wide-robot`, and published release tag
+    `v0.3.0`.
+  - Strict release rehearsal command:
+    `python3 -m csg.release_rehearsal --out /tmp/wide_robot_phase2e_release_final --sim-python .venv-sim/bin/python --require-final-metadata --project-root .`
+    -> `release rehearsal ok=True steps=8/8`; steps
+    `core_tests`, `symbolic_gold`, `mujoco_tests`, `mujoco_gold`,
+    `mujoco_randomized`, `backend_comparison`, `invalid_fixtures`, and
+    `release_audit` all returned `0`.
+  - Strict release audit:
+    `python3 -m csg.release_audit --symbolic /tmp/wide_robot_phase2e_release_final/symbolic --mujoco /tmp/wide_robot_phase2e_release_final/mujoco --randomized /tmp/wide_robot_phase2e_release_final/mujoco_randomized_30 --comparison /tmp/wide_robot_phase2e_release_final/comparison --invalid-fixtures /tmp/wide_robot_phase2e_release_final/invalid_fixtures --require-final-metadata --project-root .`
+    -> `release audit ok=True checks=84/84`.
+  - Final report evidence:
+    symbolic `passed=5/5`, `physicalValidity={"unverified": 5}`;
+    MuJoCo `passed=5/5`, `physicalValidity={"valid": 5}`;
+    randomized MuJoCo `passed=150/150`, `physicalValidity={"valid": 150}`,
+    leakage `{"clean": 150, "dirty": 0}`;
+    invalid fixtures `matched=9/9`;
+    comparison order `["symbolic", "noop", "mujoco"]`.
+  - No-op diagnostic baseline evidence:
+    `expectedFailure=true`, `passed=0/5`, failure classes
+    `{"contact_missing": 1, "event_order_wrong": 4}`, leakage clean `5/5`,
+    physical validity unverified `5/5`.
+  - Release artifacts assembled under
+    `/tmp/wide_robot_phase2e_release_final/package/`:
+    `phase2e-report-artifacts.tar.gz`, `csg-0.3.0-py3-none-any.whl`,
+    `csg-0.3.0.tar.gz`, and `wide-robot-0.3.0-source.tar.gz`.
