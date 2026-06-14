@@ -109,14 +109,27 @@ bash scripts/clean_clone_rehearsal.sh v0.3.1     # reproduce from a clean clone
 What that actually proves — the trust model is documented at the top of
 `csg/verify_release.py`:
 
-- **Anchored to the commit (the publisher cannot forge it).** The expected
-  commit comes from an in-source pin (`KNOWN_TAG_COMMITS`), not from the release,
-  and `origin` is never trusted to choose which repo to verify. `git archive
-  <commit>` reconstructs the committed source from git's object store, and the
-  verifier requires (a) every report's `sourceProvenance.snapshot` to equal the
-  snapshot recomputed from that tree and (b) the `csg/` Python source inside
-  every wheel/sdist to be byte-identical to it. A fabricated report or a trojan
-  wheel fails these bindings.
+- **Source identity anchored to the commit (the publisher cannot forge it).** The
+  expected commit comes from an in-source pin (`KNOWN_TAG_COMMITS`), not from the
+  release, and `origin` is never trusted to choose which repo to verify. `git
+  archive <commit>` reconstructs the committed source, and the verifier requires
+  (a) the `csg/` Python source inside every wheel/sdist to be byte-identical to it
+  (defeats a trojan wheel) and (b) every report's `sourceProvenance.snapshot` to
+  equal the snapshot recomputed from that tree. Note (b) binds *which commit* a
+  report claims, **not** its numbers — the snapshot is computable from the public
+  source, so a report citing the real commit with fabricated results would pass (b)
+  alone. The numbers are bound separately:
+- **Benchmark numbers bound to the source.** The deterministic evidence (symbolic /
+  no-op / invalid-fixture benchmarks — pure stdlib) is **re-derived**: `verify_release`
+  re-runs them from the `git archive` tree and diffs the results against the published
+  reports, so a fabricated number diverges (this is what actually defeats a fabricated
+  report; `--no-rederive` opts out). MuJoCo numbers are machine-dependent floats that
+  cannot be re-derived cross-machine, so releases cut by `.github/workflows/release.yml`
+  carry a GitHub **build-provenance attestation** binding every asset to that CI run's
+  OIDC identity; `verify_release` checks it (`gh attestation verify`) against an
+  in-source-pinned signer workflow (`ATTESTED_TAGS`). A tag predating attestation
+  reports its MuJoCo evidence as `attestation:skipped` (self-attested), never silently
+  blessed.
 - **Checksum-pinned for tamper-evidence only.** `RELEASE_SHA256SUMS` and the
   manifest are publisher-supplied, so they are *reconciled* against the anchored
   facts and the recomputed asset bytes — never trusted on their own. A wheel's
@@ -132,17 +145,34 @@ Reproducibility scope (be precise about what "reproducible" means here):
   This applies to releases cut with the current tooling; the **v0.3.1** tarball
   was packed before that builder existed, so its bytes are checksum-pinned for
   tamper-evidence, not byte-reproducible.
+- The **symbolic / no-op / invalid-fixture** evidence is deterministic and is
+  re-derived and diffed by `verify_release` (above), so those numbers are bound to
+  the tagged source, not merely asserted.
 - MuJoCo report **content** carries machine-dependent physics floats (MuJoCo /
-  numpy / BLAS), so a clean re-run does not bit-match across machines — the
-  recorded `environment` (manifest `environment.sim`) and the bounded
-  `mujoco>=3.9,<3.10` pin make the build environment auditable. The genuinely
-  bit-reproducible guarantees are the git-anchored ones above (report source
-  snapshot + distributed `csg/` source), not the floating-point evidence.
+  numpy / BLAS), so a clean re-run does not bit-match across machines and cannot be
+  re-derived. For these, the trust root is the CI **build-provenance attestation**
+  (attested tags) plus the recorded `environment` (manifest `environment.sim`) and
+  the bounded `mujoco>=3.9,<3.10` pin. Tags predating attestation (e.g. **v0.3.1**,
+  **v0.3.2**) are self-attested for the MuJoCo evidence.
+
+So a self-attested release must not read like a fully-verified one. Every verdict
+reports its **coverage** (`evidence.deterministicReDerived`, `evidence.mujocoCoverage`,
+`evidence.complete`): such a release still passes by default but prints a loud
+`WARNING: evidence coverage INCOMPLETE — MuJoCo/randomized numbers are self-attested`,
+and `--strict` turns an incomplete binding (self-attested MuJoCo, or any skipped layer
+such as `--no-rederive`) into a hard failure (exit 2). The genuine v0.3.1/v0.3.2
+releases pass today; under `--strict` they fail until re-cut through `release.yml`.
 
 `verify_release` exits 0 (ok), 2 (the release fails verification — bad or forged
-content), or 3 (operational error, e.g. `gh`/`git` missing); hostile release
-bytes are classified as 2, never a traceback. The claim boundary is unchanged:
-this hardens *verification discipline*, not robot capability.
+content: a published number that diverges from re-derivation, a *refuted* attestation,
+or — under `--strict` — self-attested/skipped evidence), or 3 (operational error:
+`gh`/`git` missing, tag/commit unresolved, download / `git archive` / re-derivation
+failure, an attestation that cannot be *reached* (offline/unauthenticated `gh`), or a
+filesystem/environment failure such as an unwritable work dir). Hostile release bytes
+are classified as 2, never a traceback; environment failures (incl. an unreachable
+attestation) are 3 — being unable to *complete* a check must never read as "the release
+is bad". The claim boundary is unchanged: this hardens *verification discipline*, not
+robot capability.
 
 ## Repository map
 

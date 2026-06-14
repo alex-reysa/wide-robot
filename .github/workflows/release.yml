@@ -1,0 +1,89 @@
+name: release
+
+# Cut a release ENTIRELY inside GitHub Actions so its evidence carries a trust root
+# the publisher cannot forge off a laptop. On a `v*` tag this runs the full rehearsal
+# (producing the machine-dependent MuJoCo numbers in CI), builds wheel/sdist, packs the
+# deterministic report tarball + RELEASE_SHA256SUMS + release_manifest.json via the SAME
+# csg.release_manifest module the maintainer would use locally, then signs every asset
+# with a build-provenance attestation bound to this workflow's OIDC identity and
+# publishes the GitHub release. `csg.verify_release` later checks that attestation
+# against the in-source-pinned EXPECTED_SIGNER_WORKFLOW (see ATTESTED_TAGS).
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write       # create the GitHub release
+  id-token: write       # OIDC token for Sigstore signing
+  attestations: write   # actions/attest-build-provenance
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  cut:
+    runs-on: ubuntu-latest
+    env:
+      MUJOCO_GL: egl  # headless; falls back to osmesa if EGL is unavailable
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # tags + history for provenance / version resolution
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'  # mujoco wheels target CPython <= 3.13
+      - name: Install headless GL libraries
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libgl1 libosmesa6
+      - name: Install package (editable, sim extra) + build frontend
+        # Editable so report sourceProvenance is Git-backed (kind=git, dirty=false),
+        # which --require-final-metadata enforces.
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev,sim]"
+          pip install build
+      - name: Full rehearsal (produces the MuJoCo evidence IN CI)
+        run: |
+          python -m csg.release_rehearsal \
+            --out phase2e_release_out \
+            --python python \
+            --sim-python python \
+            --seeds 30 \
+            --require-final-metadata \
+            --project-root . \
+            --json
+      - name: Build wheel + sdist into the asset dir
+        run: |
+          mkdir -p assets
+          python -m build --outdir assets .
+      - name: Pack deterministic report tarball + checksums + manifest (same module as local)
+        run: |
+          python -m csg.release_manifest \
+            --asset-dir assets \
+            --reports-root phase2e_release_out \
+            --tag "${GITHUB_REF_NAME}" \
+            --seeds 30 \
+            --build-report-tarball phase2e-report-artifacts.tar.gz \
+            --sim-python python \
+            --project-root . \
+            --write-checksums
+      - name: Attest build provenance over every released asset
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            assets/*.whl
+            assets/*.tar.gz
+            assets/RELEASE_SHA256SUMS
+            assets/release_manifest.json
+      - name: Publish the GitHub release with the attested assets
+        run: |
+          gh release create "${GITHUB_REF_NAME}" assets/* \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes
+      # NOTE: after this run, add ${GITHUB_REF_NAME} to BOTH KNOWN_TAG_COMMITS and
+      # ATTESTED_TAGS in csg/verify_release.py in a follow-up commit on the branch
+      # (the pin is read from the verifier's own checkout, not the tagged commit).
+      # Until then the tag verifies via the unpinned (still git-archive-bound) path
+      # and attestation is reported as 'skipped'. See docs/release_checklist.md.

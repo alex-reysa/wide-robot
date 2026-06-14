@@ -65,9 +65,36 @@ python3 -m csg.release_manifest --tag <tag> \
 python3 -m csg.verify_release --tag <tag>
 ```
 
-After tagging a NEW release, add its `tag -> commit` to `KNOWN_TAG_COMMITS` in
-`csg/verify_release.py` (the in-source trust anchor `verify_release` checks
-against) — otherwise the new tag verifies without a pinned-commit anchor.
+## Cutting a release in CI (attested) vs. on a laptop (self-attested)
+
+Prefer the CI path: pushing a `v*` tag triggers `.github/workflows/release.yml`,
+which runs the full rehearsal **inside GitHub Actions** (so the machine-dependent
+MuJoCo numbers are produced there), packs the deterministic tarball + checksums +
+manifest via `csg.release_manifest`, signs every asset with a build-provenance
+**attestation** bound to the workflow's OIDC identity, and publishes the release.
+This is what lets `csg.verify_release` trust the MuJoCo evidence it cannot re-derive
+locally. A laptop-cut release (the manual commands above) has no attestation: its
+MuJoCo numbers are self-attested and `verify_release` reports `attestation:skipped`.
+
+What `verify_release` now checks for every release:
+- **source identity** — reports + wheel/sdist `csg/` bound to `git archive` of the
+  in-source-pinned commit;
+- **deterministic evidence** — it re-runs the symbolic / noop / invalid benchmarks
+  from the tagged source and diffs the numbers (a fabricated number fails);
+- **MuJoCo evidence** — covered by the CI attestation for attested tags, or flagged
+  self-attested otherwise;
+- **integrity** — `RELEASE_SHA256SUMS` + `release_manifest.json` reconciled.
+
+### After tagging a NEW release — update the in-source anchors
+
+In a **follow-up commit on the branch** (the pins are read from the verifier's own
+checkout, not from the tagged commit, so they cannot live inside the tagged commit):
+
+1. Add `tag -> commit` to `KNOWN_TAG_COMMITS` in `csg/verify_release.py`.
+2. If the tag was cut by `release.yml` (attested), also add it to `ATTESTED_TAGS`.
+
+Until those lines land, the tag is "provisional": it still verifies via the unpinned
+(but git-archive-bound) path, and attestation is reported as `skipped`.
 
 ## Required Report Artifacts
 
