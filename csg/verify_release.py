@@ -15,7 +15,14 @@ they are never read from the release being checked:
   * ``git archive <pinned-commit>`` reconstructs the exact committed source tree
     from git's content-addressed object store. Facts are then *bound* to it:
       - the distributed ``csg/`` Python source inside every wheel/sdist must be
-        byte-identical to that tree (defeats a trojan wheel), and
+        byte-identical to that tree (defeats a trojan wheel); a wheel additionally
+        may carry no top-level package other than ``csg``;
+      - for tarball distributions (the sdist *and* the full ``*-source.tar.gz``)
+        EVERY file is bound, not just ``csg/``: a path in the tree must match it
+        byte-for-byte and a path absent from the tree is allowed only if it is
+        setuptools-generated sdist metadata, so a backdoor placed outside ``csg/``
+        (a sibling package, a tampered ``scripts/``/``gold_tests/`` file, a planted
+        ``setup.py``) cannot ride along unbound; and
       - every report's ``sourceProvenance.snapshot`` must equal the snapshot
         recomputed from that tree. NB: the snapshot is computable from the public
         source, so it binds *source identity*, not the benchmark *numbers* — a
@@ -43,19 +50,28 @@ were built from the commit. Those are pinned only for transit tamper-evidence
 
 Evidence coverage: a verdict reports which guarantees it actually established —
 ``evidence.deterministicReDerived`` (symbolic/noop/invalid re-run and matched) and
-``evidence.mujocoCoverage`` (``attested`` vs ``self-attested``). A self-attested
-release (MuJoCo numbers not CI-attested) still passes by default but says so loudly
-and sets ``evidence.complete=False``; ``--strict`` turns an incomplete binding into a
-failure so a self-attested pass never silently reads like a fully verified one.
+``evidence.mujocoCoverage`` (``attested`` vs ``self-attested``). NB
+``deterministicReDerived`` covers ONLY the deterministic subset; it is *not* a
+"numbers verified" stamp over the physics. The MuJoCo/randomized floats — the thing
+this benchmark exists to demonstrate — are bound only by a CI attestation
+(``ATTESTED_TAGS``); a tag not listed there has its physics numbers *self-attested*,
+i.e. taken on the publisher's word. Such a release sets ``evidence.complete=False``,
+says so loudly, and — by default — exits 1, not 0, so it can never read as a clean
+"all verified" pass. ``--strict`` escalates that incompleteness to a hard failure
+(exit 2) for consumers who must gate on fully-bound evidence.
 
-Exit codes (``main``): 0 ok, 2 the release fails verification (bad or forged
-content — a diverging re-derived number, a *refuted* attestation, or — under
-``--strict`` — self-attested/skipped evidence), 3 operational error (``gh``/``git``
-missing, tag/commit unresolved, download / ``git archive`` / re-derivation failure,
-an attestation that cannot be *reached* (offline/unauthenticated ``gh``), or a
-filesystem/environment failure such as an unwritable work dir or out-of-disk).
-Hostile or corrupt *release* bytes are classified as 2 and never escape as a
-traceback; environment failures (incl. an unreachable attestation) are 3 — being
+Exit codes (``main``): 0 the release verified AND its evidence is fully bound
+(deterministic re-derived *and* MuJoCo CI-attested); 1 every check passed but the
+evidence coverage is incomplete (e.g. a self-attested tag whose MuJoCo physics is
+not independently verified, or a binding layer was skipped) — a deliberate non-zero
+so a partial verification is never mistaken for a full one; 2 the release fails
+verification (bad or forged content — a diverging re-derived number, a *refuted*
+attestation, or — under ``--strict`` — self-attested/skipped evidence); 3 operational
+error (``gh``/``git`` missing, tag/commit unresolved, download / ``git archive`` /
+re-derivation failure, an attestation that cannot be *reached* (offline/unauthenticated
+``gh``), or a filesystem/environment failure such as an unwritable work dir or
+out-of-disk). Hostile or corrupt *release* bytes are classified as 2 and never escape
+as a traceback; environment failures (incl. an unreachable attestation) are 3 — being
 unable to *complete* a check must never read as "the release is bad".
 """
 from __future__ import annotations
@@ -546,23 +562,124 @@ def _tree_csg_sources(tree: str | Path) -> Dict[str, str]:
     return out
 
 
-def _wheel_top_level_violations(path: str | Path) -> List[str]:
-    """Top-level wheel entries that are neither the ``csg`` package nor build
-    metadata. The canonical wheel ships *only* the ``csg`` package (see
-    ``[tool.setuptools] packages`` in pyproject), so a smuggled sibling module —
-    a backdoor placed *outside* ``csg/`` that the source-snapshot binding would
-    not see — shows up here. Update the allowlist if packaging ever changes."""
-    violations: set[str] = set()
+def _tree_all_files(tree: str | Path) -> Dict[str, str]:
+    """``{relpath: sha256}`` for *every* file in the git-archive tree.
+
+    This is the trust anchor for binding an sdist / full source tarball in its
+    entirety — not just its ``csg/`` package. The source-snapshot binding only
+    covers ``SOURCE_PROVENANCE_GLOBS`` (e.g. it misses ``scripts/``, ``.github/``),
+    so it cannot, by itself, catch a tampered build script or a planted file
+    outside those globs. The git archive *is* the whole committed tree, so hashing
+    all of it gives a complete reference. Uses :func:`os.walk` (not ``rglob``) so
+    dotfiles/dot-dirs such as ``.github/`` and ``.gitignore`` are always included
+    regardless of the Python version's glob semantics. ``__pycache__`` and a stray
+    ``.git`` (when a working tree is passed in tests) are skipped."""
+    root = Path(tree)
+    out: Dict[str, str] = {}
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in ("__pycache__", ".git")]
+        for fname in filenames:
+            p = Path(dirpath) / fname
+            if not p.is_file():  # skip symlinks/specials defensively
+                continue
+            out[p.relative_to(root).as_posix()] = sha256_file(p)
+    return out
+
+
+# Files that legitimately appear in a setuptools-built *sdist* but are NOT in the
+# committed git tree: build-backend-generated metadata. Everything else that is
+# absent from the git-archive tree is an unbound smuggled file (a backdoor module,
+# a build-time ``setup.py``/``.pth``, a planted script). The allowlist is exact —
+# arbitrary ``*.py`` inside an ``.egg-info/`` directory is NOT permitted, so a
+# package cannot hide importable code behind a metadata-looking path.
+_SDIST_GENERATED_OK = re.compile(
+    r"(?:^|/)(?:PKG-INFO|setup\.cfg|MANIFEST\.in)$"
+    r"|(?:^|/)[^/]+\.egg-info/(?:PKG-INFO|SOURCES\.txt|dependency_links\.txt|"
+    r"entry_points\.txt|requires\.txt|top_level\.txt|not-zip-safe|zip-safe|"
+    r"namespace_packages\.txt)$"
+)
+
+
+# The single ``<distribution>-<version>.dist-info`` directory of the canonical wheel.
+# Anchored to the ``csg`` distribution name + an exact ``.dist-info`` suffix so a *decoy*
+# top-level dir whose name merely *ends* ``.dist-info`` (pip would install it into
+# site-packages like any other package) is NOT mistaken for trusted metadata.
+_WHEEL_DIST_INFO_RE = re.compile(r"csg-[^/]+\.dist-info")
+
+
+def _wheel_entry_point_violations(blob: bytes, label: str) -> List[str]:
+    """Entry-point declarations that pip would turn into an executable on ``PATH``
+    targeting code *outside* the byte-bound ``csg`` package.
+
+    pip materialises every ``[console_scripts]`` / ``[gui_scripts]`` line of a wheel's
+    ``entry_points.txt`` into a launcher in ``$PREFIX/bin`` at install time. The
+    canonical wheel's targets are all ``csg.*:main`` (pyproject ``[project.scripts]``),
+    so any target whose module is not the ``csg`` package can only invoke non-csg code
+    and is rejected. A csg-targeted entry can at worst alias genuine, byte-bound code."""
+    import configparser
+    cp = configparser.ConfigParser(delimiters=("=",), strict=False)
+    cp.optionxform = str  # preserve entry-point names verbatim
+    try:
+        cp.read_string(blob.decode("utf-8", "replace"))
+    except configparser.Error:
+        return [f"{label}:unparseable-entry-points"]
+    bad: List[str] = []
+    for section in ("console_scripts", "gui_scripts"):
+        if not cp.has_section(section):
+            continue
+        for ep_name, value in cp.items(section):
+            module = value.split(":", 1)[0].strip()
+            if module != "csg" and not module.startswith("csg."):
+                bad.append(f"{label}[{section}] {ep_name} = {value.strip()}")
+    return bad
+
+
+def _wheel_binding_violations(
+    path: str | Path, tree_all: Mapping[str, str] | None,
+) -> tuple[List[str], List[str], List[str]]:
+    """Bind a wheel's *entire* contents to the ``git archive`` tree, mirroring the
+    sdist/source-tarball whole-tree binding. Returns ``(rogue, tree_mismatch, unbound)``.
+
+    The canonical wheel ships only the pure-Python ``csg`` package (byte-bound to the
+    archive) plus a single ``csg-<ver>.dist-info`` metadata dir. So every wheel member
+    is checked against the archive: a path present in the tree must byte-match (else
+    ``tree_mismatch``); a path *absent* from the tree is allowed ONLY if it lives under
+    that exact ``.dist-info`` dir (compiled wheel metadata is out of scope — see README
+    "Reproducibility" — and is not reconstructable from source). Everything else is
+    ``unbound``: a native ``*.so`` / ``*.pyc`` (or ``__pycache__``) dropped into the
+    installed ``csg`` package; ANY ``*.data`` install payload (``scripts`` onto PATH,
+    ``purelib``/``platlib``/``data`` into site-packages or the prefix); or a decoy
+    ``*.data`` / ``*.dist-info`` dir whose stem is not ``csg``. The one metadata file we
+    DO bind is ``entry_points.txt`` (see :func:`_wheel_entry_point_violations`): a
+    ``[console_scripts]`` target outside ``csg`` becomes a PATH executable → ``rogue``.
+
+    With ``tree_all=None`` (legacy, no archive) the whole-tree layer is unavailable, so
+    only ``csg/*.py`` (covered by the separate csg-source byte check) and ``.dist-info``
+    are tolerated; any other member is still ``unbound``."""
+    rogue: List[str] = []
+    tree_mismatch: List[str] = []
+    unbound: List[str] = []
     with zipfile.ZipFile(path) as zf:
         for info in zf.infolist():
-            name = info.filename
-            if not name:
+            if info.is_dir():
                 continue
-            top = name.split("/", 1)[0]
-            if top == "csg" or top.endswith(".dist-info") or top.endswith(".data"):
+            rel = info.filename
+            if not rel:
                 continue
-            violations.add(top)
-    return sorted(violations)
+            top = rel.split("/", 1)[0]
+            if _WHEEL_DIST_INFO_RE.fullmatch(top):
+                if rel.rsplit("/", 1)[-1] == "entry_points.txt":
+                    rogue.extend(_wheel_entry_point_violations(zf.read(info), rel))
+                continue  # other dist-info metadata: out of scope (not in the archive)
+            if tree_all is not None and rel in tree_all:
+                if hashlib.sha256(zf.read(info)).hexdigest() != tree_all[rel]:
+                    tree_mismatch.append(rel)
+            elif (tree_all is None and top == "csg" and rel.endswith(".py")
+                  and "__pycache__" not in rel.split("/")):
+                continue  # legacy: csg/*.py is byte-bound by the csg-source check
+            else:
+                unbound.append(rel)
+    return sorted(rogue), sorted(tree_mismatch), sorted(unbound)
 
 
 def _dist_csg_sources(path: str | Path) -> Dict[str, str]:
@@ -598,15 +715,75 @@ def _dist_csg_sources(path: str | Path) -> Dict[str, str]:
     return out
 
 
+def _dist_all_files(path: str | Path) -> Dict[str, str]:
+    """``{relpath: sha256}`` for *every* file in a tarball/zip distribution,
+    read in memory (no extraction → no symlink/traversal exposure).
+
+    A single common leading directory (the sdist / source-tarball
+    ``<name>-<ver>/`` prefix) is stripped so paths line up with the git-archive
+    tree. A distribution whose members do not share one top dir (a bare-root
+    archive, or one with a planted ``../`` member) is left unstripped, so such a
+    member simply fails to match the tree and is reported as unbound."""
+    path = Path(path)
+    raw: Dict[str, str] = {}
+    if path.name.endswith((".whl", ".zip")):
+        with zipfile.ZipFile(path) as zf:
+            for info in zf.infolist():
+                if info.is_dir():
+                    continue
+                name = info.filename
+                if "__pycache__" in name.split("/"):
+                    continue
+                raw[name] = hashlib.sha256(zf.read(info)).hexdigest()
+    else:
+        with tarfile.open(path, "r:*") as tar:
+            for member in tar.getmembers():
+                if not member.isfile():
+                    continue
+                name = member.name
+                if "__pycache__" in name.split("/"):
+                    continue
+                handle = tar.extractfile(member)
+                if handle is None:
+                    continue
+                raw[name] = hashlib.sha256(handle.read()).hexdigest()
+    names = list(raw)
+    tops = {n.split("/", 1)[0] for n in names}
+    if len(tops) == 1 and all("/" in n for n in names):
+        prefix = next(iter(tops)) + "/"
+        return {n[len(prefix):]: sha for n, sha in raw.items()}
+    return raw
+
+
 def verify_source_distributions(
     assets: Mapping[str, Path],
     expected_sources: Mapping[str, str],
     *,
+    tree_all: Mapping[str, str] | None = None,
     skip: frozenset[str] = frozenset(),
 ) -> List[Json]:
-    """Require every distribution's ``csg/`` Python source to be byte-identical
-    to ``expected_sources`` (recomputed from ``git archive``). This is what
-    makes a trojan wheel fail rather than pass on a matching checksum."""
+    """Bind every distribution to the tagged ``git archive`` tree.
+
+    Two layers, so neither a trojan wheel nor a backdoor smuggled *outside*
+    ``csg/`` in an sdist / source tarball can pass on a matching checksum:
+
+      * **csg source** — every distribution's ``csg/`` Python source must be
+        byte-identical to ``expected_sources`` (recomputed from ``git archive``).
+      * **whole-tree** — *every* file is also bound: a path present in the git
+        tree must match it byte-for-byte; a path absent from the tree is permitted
+        only if it is build-backend metadata. For tarball distributions (sdist +
+        full source tarball) the allowlist is setuptools-generated sdist metadata
+        (:data:`_SDIST_GENERATED_OK`); for wheels it is the single
+        ``csg-<ver>.dist-info`` dir (:func:`_wheel_binding_violations`), whose
+        ``entry_points.txt`` is additionally checked so a ``[console_scripts]``
+        target outside ``csg`` cannot smuggle a PATH executable. Anything else — a
+        sibling package, a planted ``setup.py``/``.pth``, a tampered
+        ``scripts/``/``gold_tests/`` file, a native ``*.so`` or ``*.data`` install
+        payload in a wheel — is reported as ``unbound`` or ``treeMismatch``.
+
+    ``tree_all`` is the full ``{relpath: sha256}`` of the archive tree
+    (:func:`_tree_all_files`); when omitted, the whole-tree layer is skipped
+    (legacy csg-only behaviour)."""
     checks: List[Json] = []
     expected = dict(expected_sources)
     if not expected:
@@ -633,20 +810,36 @@ def verify_source_distributions(
         missing = sorted(set(expected) - set(got))
         extra = sorted(set(got) - set(expected))
         mismatch = sorted(k for k in expected if k in got and expected[k] != got[k])
-        # For wheels (the install artifact), also reject any top-level package
-        # smuggled alongside csg/ — a backdoor outside csg/ that the csg-source
-        # binding alone would not catch.
+        is_wheel = name.endswith(".whl")
+        # Bind the WHOLE distribution to the archive tree, not just csg/. A backdoor
+        # placed outside csg/ (a sibling package, a tampered script, a native *.so /
+        # *.pyc dropped into the installed package, an install-time .data/scripts PATH
+        # payload, or a rogue console-script entry point) is invisible to the csg-only
+        # binding above. ``rogue`` = structurally illegitimate wheel content (bad entry
+        # points); ``tree_mismatch`` / ``unbound`` = a tracked path that diverges, or a
+        # path absent from the archive that is not allowlisted metadata.
         rogue: List[str] = []
-        if name.endswith(".whl"):
-            try:
-                rogue = _wheel_top_level_violations(assets[name])
-            except (zipfile.BadZipFile, OSError) as exc:
-                _check(checks, f"source_dist:{name}", False, f"could not inspect wheel layout {name}: {exc}")
-                continue
-        ok = not missing and not extra and not mismatch and not rogue
+        tree_mismatch: List[str] = []
+        unbound: List[str] = []
+        try:
+            if is_wheel:
+                rogue, tree_mismatch, unbound = _wheel_binding_violations(assets[name], tree_all)
+            elif tree_all is not None:
+                for rel, sha in sorted(_dist_all_files(assets[name]).items()):
+                    ref = tree_all.get(rel)
+                    if ref is not None:
+                        if ref != sha:
+                            tree_mismatch.append(rel)
+                    elif not _SDIST_GENERATED_OK.search(rel):
+                        unbound.append(rel)
+        except (zipfile.BadZipFile, tarfile.TarError, EOFError, OSError, ValueError) as exc:
+            _check(checks, f"source_dist:{name}", False, f"could not inspect distribution layout {name}: {exc}")
+            continue
+        ok = not (missing or extra or mismatch or rogue or tree_mismatch or unbound)
         _check(checks, f"source_dist:{name}", ok,
-               f"{name} csg source vs git archive: "
-               f"missing={missing} extra={extra} mismatch={mismatch} rogueTopLevel={rogue}")
+               f"{name} vs git archive: "
+               f"missing={missing} extra={extra} mismatch={mismatch} rogueTopLevel={rogue} "
+               f"treeMismatch={tree_mismatch} unbound={unbound}")
     return checks
 
 
@@ -932,25 +1125,87 @@ def rederive_evidence(
 # are reported (loudly) as self-attested, never silently blessed.
 
 
-# gh-stderr substrings that mark a genuine *verification refutation* (the attestation
-# is absent, invalid, or its signer identity does not match) — a release problem (exit
-# 2). Any OTHER non-zero exit (network down, unauthenticated, rate-limited, API/transport
-# error) is operational (exit 3): being unable to REACH the attestation must never read
-# as "the release is forged" (that would re-introduce the exit-2/3 confusion this tool
-# fixes). Defaulting to operational keeps an offline run honest; real refutations carry
-# one of these markers.
-_GH_ATTESTATION_REFUTED_MARKERS = (
-    "no attestation", "no attestations", "verification failed", "failed verification",
-    "does not match", "no matching attestation", "signature", "identity",
+# Classifying a NON-zero ``gh attestation verify`` exit as "the release is bad"
+# (refuted → 2) vs "we could not complete the check" (operational → 3) must key on
+# structured signals — HTTP status codes and Go transport-error substrings — NOT on
+# loose English. The earlier marker list keyed on words like ``signature``/``identity``
+# which also appear in TLS handshake errors (a network blip → wrongly "bad"), while the
+# real gh "no attestation" message (``HTTP 404: Not Found``) contained none of them (a
+# missing attestation → wrongly "operational"). Both inversions broke the fail-closed
+# contract the moment ATTESTED_TAGS was populated.
+#
+# Substrings that mark gh being UNABLE TO REACH/COMPLETE the attestations API — a
+# transport/auth/server failure (operational, exit 3). These are stable Go ``net``/
+# ``net/http`` error fragments plus GitHub-API auth wording; none of them can appear in
+# a Sigstore *verification* verdict, so matching one here never masks a real refutation.
+_GH_ATTESTATION_OPERATIONAL_MARKERS = (
+    "dial tcp",                            # Go dialer: DNS/connect failure
+    "no such host",                        # DNS resolution failure
+    "could not resolve host",
+    "temporary failure in name resolution",
+    "connection refused",
+    "connection reset",
+    "network is unreachable",
+    "no route to host",
+    "i/o timeout",
+    "operation timed out",
+    "context deadline exceeded",
+    "client.timeout exceeded",
+    "request canceled",
+    "tls handshake",                       # TLS *transport*, not a signer-identity verdict
+    "handshake timeout",
+    "server misbehaving",
+    "unexpected eof",
+    "requires authentication",             # GitHub API 401 body
+    "bad credentials",                     # GitHub API 401 body
+    "must be authenticated",
+    "gh auth login",                       # gh's own "not logged in" hint
+    "no github token",
 )
+# HTTP status codes that are operational (gh reached the API but it could not serve the
+# request: auth, rate-limit, request timeout, or a server-side error). 404 is pointedly
+# NOT here: "no attestation exists for these assets" is a *refutation*, not a transport
+# failure, and is matched as such ahead of this set in _classify_gh_attestation_failure.
+_GH_ATTESTATION_OPERATIONAL_HTTP = frozenset({401, 403, 408, 429})
+_HTTP_STATUS_RE = re.compile(r"http (\d{3})\b")
+
+
+def _classify_gh_attestation_failure(blob: str) -> str:
+    """Classify a NON-zero ``gh attestation verify`` result as ``"operational"``
+    (gh could not complete the check → exit 3) or ``"refuted"`` (the attestation is
+    missing / invalid / identity-mismatched → release-bad, exit 2).
+
+    Operational is the *reserved, enumerated* category: a recognised transport/auth/
+    server failure. Everything else — including ``HTTP 404`` (no attestation exists),
+    a signer/SAN mismatch, or a Sigstore verification failure — defaults to
+    ``"refuted"``. That default is what makes the check **fail-closed**: a non-zero gh
+    result that is not a known transport error is treated as a failed verification,
+    never silently downgraded to "couldn't check"."""
+    low = blob.lower()
+    # A definitive "the attestation does not exist" verdict wins outright, so a
+    # transient marker that happens to share the same blob cannot mask it. These are the
+    # server's verdict (404 / nothing found), NOT a mere "unable to fetch" — a transport
+    # error that only references a URL does not trip them.
+    if ("http 404" in low or "no attestation" in low or "no attestations" in low
+            or "no matching attestation" in low):
+        return "refuted"
+    if any(m in low for m in _GH_ATTESTATION_OPERATIONAL_MARKERS):
+        return "operational"
+    for code in _HTTP_STATUS_RE.findall(low):
+        n = int(code)
+        if n in _GH_ATTESTATION_OPERATIONAL_HTTP or 500 <= n <= 599:
+            return "operational"
+        # Any other client code (e.g. 422) is a verdict about the attestation, not a
+        # transport failure → fall through to fail-closed "refuted".
+    return "refuted"
 
 
 def _gh_attestation_verify(asset: Path, repo: str, signer_workflow: str) -> tuple[str, str]:
     """Run ``gh attestation verify`` for one asset. Returns ``(status, message)`` where
-    status is ``"verified"`` (rc 0), ``"refuted"`` (a real verification failure →
-    release-bad, exit 2), or ``"operational"`` (could not complete the check, e.g.
-    offline/unauthenticated → exit 3). Raises :class:`VerifyReleaseError` only when
-    ``gh`` is entirely absent."""
+    status is ``"verified"`` (rc 0), ``"refuted"`` (a real verification failure incl. a
+    missing/404 attestation → release-bad, exit 2), or ``"operational"`` (could not
+    complete the check, e.g. offline/unauthenticated/5xx → exit 3). Raises
+    :class:`VerifyReleaseError` only when ``gh`` is entirely absent."""
     argv = ["gh", "attestation", "verify", str(asset),
             "--repo", repo, "--signer-workflow", signer_workflow]
     try:
@@ -962,10 +1217,7 @@ def _gh_attestation_verify(asset: Path, repo: str, signer_workflow: str) -> tupl
     msg = lines[-1].strip() if lines else f"rc={proc.returncode}"
     if proc.returncode == 0:
         return "verified", msg
-    low = blob.lower()
-    if any(m in low for m in _GH_ATTESTATION_REFUTED_MARKERS):
-        return "refuted", msg
-    return "operational", msg
+    return _classify_gh_attestation_failure(blob), msg
 
 
 def verify_attestation(
@@ -978,10 +1230,14 @@ def verify_attestation(
     """Verify the CI build-provenance attestation over every distributable asset.
 
     For a tag in :data:`ATTESTED_TAGS`, every asset must verify against the pinned
-    :data:`EXPECTED_SIGNER_WORKFLOW` (fail-closed: missing/invalid/uncheckable → a
-    failed check → exit 2). For any other tag, attestation is not expected: a single
-    loud ``attestation:skipped`` check records that the MuJoCo evidence is self-attested
-    for that (grandfathered) tag rather than silently passing it."""
+    :data:`EXPECTED_SIGNER_WORKFLOW`. Fail-closed: a *missing* (HTTP 404), invalid, or
+    identity-mismatched attestation is a failed check → exit 2. Only an attestation we
+    cannot *reach* (offline / unauthenticated / rate-limited / 5xx) is operational →
+    exit 3, so a network blip never brands a genuine release "bad" (see
+    :func:`_classify_gh_attestation_failure`). For any other tag, attestation is not
+    expected: a single loud ``attestation:skipped`` check records that the MuJoCo
+    evidence is self-attested for that (grandfathered) tag rather than silently passing
+    it."""
     checks: List[Json] = []
     if tag not in ATTESTED_TAGS:
         _check(checks, "attestation:skipped", True,
@@ -1106,9 +1362,11 @@ def verify_release(
             src = resolve_source_tree(expected_commit, base / "source", cwd=cwd)
         else:
             src = Path(source_tree)
+        expected_tree: Dict[str, str] = {}
         try:
             expected_snapshot = compute_source_snapshot(src)
             expected_sources = _tree_csg_sources(src)
+            expected_tree = _tree_all_files(src)
             _check(checks, "source:snapshot", bool(expected_snapshot.get("digest")),
                    f"recomputed source snapshot from git archive {expected_commit}: "
                    f"{expected_snapshot.get('algorithm')}:{expected_snapshot.get('digest')} "
@@ -1174,10 +1432,11 @@ def verify_release(
                 if rederive:
                     checks.extend(rederive_evidence(src, reports_root, base, expected_snapshot))
 
-        # --- Source-distribution binding (trojan wheel defeat) ---
+        # --- Source-distribution binding (trojan wheel / sdist / source tarball) ---
         if verify_distributions:
             skip = frozenset(report_tarballs) | {SUMS_NAME, MANIFEST_NAME}
-            checks.extend(verify_source_distributions(assets, expected_sources, skip=skip))
+            checks.extend(verify_source_distributions(
+                assets, expected_sources, tree_all=expected_tree, skip=skip))
 
         # --- Manifest reconciliation ---
         manifest_path = asset_path / MANIFEST_NAME
@@ -1328,16 +1587,27 @@ def main(argv: List[str] | None = None) -> int:
             f"mujoco={evidence.get('mujocoCoverage', 'unknown')}, complete={evidence.get('complete')}"
         )
         if not evidence.get("complete"):
-            detail = ("MuJoCo/randomized numbers are self-attested (NOT independently verified)"
+            detail = ("MuJoCo/randomized PHYSICS numbers are self-attested (NOT independently "
+                      "verified: not re-derived, not CI-attested) — the benchmark's central claim "
+                      "is unbound for this tag"
                       if evidence.get("mujocoCoverage") != "attested"
                       else "deterministic re-derivation did not bind the numbers")
             if not evidence.get("deterministicReDerived"):
                 detail += "; deterministic re-derivation did not run/pass"
-            print(f"  WARNING: evidence coverage INCOMPLETE — {detail}. Use --strict to fail on this.")
+            print(f"  WARNING: evidence coverage INCOMPLETE — {detail}. Exiting 1 (NOT a full "
+                  f"verification); --strict escalates to exit 2.")
         for check in report["checks"]:
             if not check["ok"]:
                 print(f"  FAIL {check['name']}: {check['message']}")
-    return 0 if report["ok"] else 2
+    # Exit-code contract: 2 if any check failed (bad/forged release, or --strict on
+    # incomplete evidence); 1 if every check passed but evidence coverage is incomplete
+    # (e.g. MuJoCo self-attested) so the result must NOT read as a full verification; 0
+    # only when the release verified AND its evidence is fully bound.
+    if not report["ok"]:
+        return 2
+    if not report.get("evidence", {}).get("complete", False):
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
