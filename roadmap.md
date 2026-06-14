@@ -10,29 +10,33 @@
 The project claim, stated exactly:
 
 ```text
-A leakage-clean compiler/verifier loop for fixed-base robotic-arm manipulation.
+The same semantic task description can be used to judge a human demo, a
+simulator rollout, an external simulator trace, and a real robot episode —
+without changing the verifier — and the system reports pass/fail, failure
+reason, leakage status, and evidence/validity status.
 ```
 
 ```text
-human tabletop demonstration
-→ observable target CSG (Causal Skill Graph)
-→ robotic-arm solver attempt
-→ simulated or recorded rollout
+semantic task card
+→ source binding / calibration
+→ concrete target CSG
+→ source episode evidence
+→ csg.rollout.v0
 → independently extracted rollout CSG
 → unchanged hard-probe verifier
-→ pass / fail / failure diagnosis
+→ pass / fail / failure diagnosis / leakage / validity
 ```
 
-The goal is **not** general robot intelligence. The goal is to prove that
-human demonstrations can be compiled into an inspectable, embodiment-agnostic
-task representation, and that robotic-arm rollouts can be judged against it
-**without target leakage**. The robot does not imitate the human body; the
-system maps **object-state transitions, relations, contacts, and event
-order** — never human joints to robot joints.
+The goal is **not** general robot intelligence, a robot controller, or a VLA
+model. The goal is a **source-independent verifier for embodied task
+completion**: what was supposed to happen, what actually happened, whether they
+match, why they fail when they do not, whether the evidence was clean, and
+whether physical validity was checked. The system maps **object-state
+transitions, relations, contacts, articulation, and event order** — never human
+joints to robot joints.
 
 ```text
-The project makes human-to-robot arm manipulation measurable, falsifiable,
-and leakage-clean. That is the wedge.
+The project separates task execution from task verification. That is the wedge.
 ```
 
 New readers: start at `README.md` (repo map, how to run, handoff notes), then
@@ -63,14 +67,34 @@ physically simulated robotic-arm rollouts for all five V0 gold tasks, with a
 real physical-validity verdict on the MuJoCo rollouts.
 ```
 
-**Allowed after DK1 recordings (Phase 4):**
+**Allowed now / after Phase 2F RLBench evidence:**
+
+```text
+The unchanged verifier can judge an external RLBench OpenDrawer trace through
+the same rollout/extraction/matcher path: the original uncalibrated gold target
+fails leakage-clean, while a separate RLBench-calibrated value-only target
+passes fresh live traces. This shows the verifier is not rubber-stamping
+external evidence and that source bindings are required for cross-source
+calibration.
+```
+
+**Allowed after the One Task, Four Worlds report (Phase 6):**
+
+```text
+The same semantic task card can be bound to multiple evidence sources and
+judged by the unchanged verifier across internal simulation, external
+simulation, real camera video, and real robot recordings, with pass/fail,
+failure diagnosis, leakage status, and evidence/validity status.
+```
+
+**Allowed after DK1 / real-robot recordings (Phase 5):**
 
 ```text
 The same target CSG can be evaluated across symbolic, simulated, and real
 recorded robotic-arm rollouts.
 ```
 
-**Allowed after the perception compiler (Phase 3):**
+**Allowed after the human-demo compiler (Phase 3B):**
 
 ```text
 Early evidence that observable human tabletop demonstrations can be compiled
@@ -137,17 +161,15 @@ from matcher distance.
 ## 3. Architecture
 
 ```text
-human tabletop demo / manual target
+semantic task card              (human-level invariant)
         ↓
-observable target CSG          (schema: Causal_Skill_Graph_V0.md)
+source binding / calibration    (MuJoCo, RLBench, Sony, DK1, ...)
         ↓
-CSG task classifier            (csg/skills.py)
+observable target CSG           (schema: Causal_Skill_Graph_V0.md)
         ↓
-arm skill solver               (csg/solver.py; MuJoCo in Phase 2C)
+source evidence adapter         (internal sim, external sim, camera, robot log)
         ↓
-sim or DK1 execution / teleop replay
-        ↓
-rollout traces                 (csg.rollout.v0 — csg/rollout_schema.md)
+rollout traces                  (csg.rollout.v0 — csg/rollout_schema.md)
         ↓
 independent rollout-to-CSG extractor   (csg/rollout_extract.py)
         ↓
@@ -159,9 +181,64 @@ hard-probe report + leakage report + physical-validity report
 ```
 
 The CSG is the hourglass waist. Above it: perception, tracking, contact
-likelihood, event segmentation (robot-agnostic). Below it: motion planning,
-gripper commands, calibration, safety (robot-specific). The CSG itself stays
-robot-agnostic; the DK1 adapter (Phase 5) is robot-specific.
+likelihood, event segmentation, simulator state adapters, robot log adapters,
+and source calibration (source-specific evidence). The CSG itself and the
+verifier stay source-agnostic; MuJoCo, RLBench/ManiSkill, Sony/tripod video,
+and DK1/robot recordings enter only through bindings and rollout adapters.
+
+The RLBench result established the key architectural rule:
+
+```text
+"same task" does not mean "same raw number"
+```
+
+A task card defines semantic success. A source binding defines how one evidence
+source measures that success. The verifier never changes per source.
+
+Example:
+
+```text
+Task card: open_drawer
+Semantic success:
+  drawer starts mostly closed
+  drawer articulation increases
+  terminal drawer extension is open enough
+
+Bindings:
+  MuJoCo: existing gold/mujoco drawer range
+  RLBench: terminal extension ≈ 0.234 m
+  Sony/tripod: marker- or vision-calibrated open threshold
+  DK1/robot: logged joint or calibrated camera estimate
+```
+
+Future task-card structure:
+
+```text
+tasks/
+  open_drawer/
+    task_card.md
+    bindings/
+      mujoco.json
+      rlbench.json
+      real_camera.json
+      dk1.json
+    targets/
+      open_drawer_mujoco.json
+      open_drawer_rlbench_value_only.json
+      open_drawer_rlbench_articulation_event.json
+
+  object_inside_container/
+    task_card.md
+    bindings/
+      mujoco.json
+      external_sim.json
+      sony_marker_table.json
+      dk1.json
+    targets/
+```
+
+The task card is the human-level invariant. The binding says how a source
+measures it. The concrete target is what the unchanged verifier reads.
 
 **The non-negotiable rule** (enforced by `tests/test_leakage.py` and the
 benchmark leakage gate):
@@ -210,10 +287,13 @@ quotient equivalence (`KNOWN_EQUIVALENT_TASKS`, `tests/test_confusion.py`).
 | --- | --- | --- |
 | **1** | Lock the problem | ✅ **DONE** |
 | **2** | No-hardware proof | 🟡 **2A/2B/2D done; 2C covers all five V0 gold tasks in MuJoCo with real validity verdicts; 2E shipped as the public v0.3.x sim-only benchmark release (randomized reports, invalid fixtures, failure taxonomy, baseline comparison, release hygiene, hardened `csg.verify_release`). One item open: MuJoCo physics is self-attested on the laptop-cut tags (`evidence.complete=false`/exit 1) until a CI-attested release lands.** |
-| **3** | Cheap perception (video → target CSG) | ⬜ pending |
-| **4** | DK1 data campaign | ⬜ pending (hardware-gated, 24 h access) |
-| **5** | DK1 control adapter | ⬜ pending |
-| **6** | Optional autonomy | ⬜ explicitly last |
+| **2F** | External trace verification | 🟡 **RLBench OpenDrawer value-only target is a 9/9 positive result; gold target rejects the same traces 9/9 leakage-clean; a mutation/negative suite proves the calibration is not too permissive. Next: articulation-event target, then external object-inside-container.** |
+| **3A** | Real-camera episode ingestion (video → rollout evidence) | ⬜ pending |
+| **3B** | Human-demo compiler (video → target CSG) | ⬜ pending, after 3A |
+| **4** | Cross-source flagship task | ⬜ pending: object_inside_container across MuJoCo + external sim + Sony/tripod |
+| **5** | DK1 / real robot recorded evidence | ⬜ pending (hardware-gated, data campaign first) |
+| **6** | One Task, Four Worlds report | ⬜ pending |
+| **7** | Verifier-as-a-service / dataset audit tool | ⬜ pending |
 
 ### Phase 1 — Lock the problem ✅
 
@@ -296,8 +376,9 @@ terminal drawer extension, **PASSes** them leakage-clean and non-vacuously. A de
 reproducibility rerun (3 fresh demos × bottom/middle/top = 9, committed under
 `fixtures/live_runpod_20260614_rerun/` and aggregated by `summarize_reruns`) makes (B) a
 **9/9 strong result**: value-only PASS 9/9, gold FAIL-leakage-clean 9/9, off-task-clean
-9/9. Contact/event/temporal semantics are deferred; next is a follow-on
-articulation-event target.
+9/9. The small negative/mutation suite is complete and proves the calibration is
+not too permissive; contact/event/temporal semantics are deferred, so next is a
+follow-on articulation-event target.
 `csg/` stays byte-frozen.
 
 Acceptance bar for calling Phase 2E done:
@@ -372,7 +453,48 @@ checks, randomized coverage, invalid-fixture diagnostics, and reproducible
 baseline comparisons.
 ```
 
-### Phase 3 — Cheap perception (legacy name: "Phase 7 perception compiler")
+### Phase 2F — External trace verification
+
+Purpose: prove that `csg/` is not only accepting rollouts generated by its own
+MuJoCo backend. External traces must enter through `pilots/` adapters, source
+bindings, and `csg.rollout.v0`; the verifier stays frozen.
+
+```text
+external simulator episode
+→ source adapter
+→ csg.rollout.v0
+→ extract_robot_csg
+→ frozen matcher + leakage report
+→ PASS / FAIL / failure reason
+```
+
+Current flagship result:
+
+```text
+RLBench OpenDrawer, 9 fresh live demos:
+  value-only RLBench target          PASS 9/9
+  original gold open_drawer target   FAIL 9/9, leakage-clean
+  off-task confusion                 clean 9/9
+  physicalValidity                   null 9/9
+```
+
+That result is the correct scientific split: the verifier rejects an
+uncalibrated target, accepts a calibrated source binding, rejects off-task
+targets, and keeps core `csg/` unchanged.
+
+| Sub | Deliverable | Done when |
+| --- | --- | --- |
+| **2F-1** | RLBench OpenDrawer value-only result | ✅ 9/9 fresh demos PASS the calibrated value-only target; the original gold target FAILs 9/9 leakage-clean; artifacts and docs preserve both results. |
+| **2F-2** | RLBench mutation/negative suite | ✅ `tests/test_rlbench_mutations.py` (39 tests, no RLBench): real traces PASS 9/9, gold FAILs 9/9 leakage-clean, off-task confusion clean 9/9, kinematically-wrong (leakage-clean) traces FAIL `goal_satisfaction`, a mis-calibrated `0.18 m` target FAILs all 9, and leaky traces are rejected before matcher success — `csg/` frozen. Answers "is value-only too permissive?" — no. |
+| **2F-3** | RLBench articulation-event target | ⬜ Add only evidence RLBench can honestly support: low initial articulation, high terminal articulation, and an `ARTICULATION_CHANGE` event. Do **not** add handle contact or strict contact-before-motion order until independently evidenced. |
+| **2F-4** | External object-inside-container task | ⬜ Add RLBench/ManiSkill container-task evidence for the flagship task card. External successes PASS; corruptions/failures FAIL; leakage stays clean. |
+| **2F-5** | External confusion + leakage report | ⬜ A compact report shows positives, negatives, off-task confusion, leak rejection, `physicalValidity: null`, and unchanged `csg/`. |
+
+### Phase 3A — Real-camera episode ingestion
+
+Build video as an **evidence source** before trying to compile video into target
+CSGs. The first camera pipeline should judge recorded episodes, not author new
+task descriptions.
 
 Constrained capture, not general video understanding:
 
@@ -381,63 +503,156 @@ phone camera · tripod · fixed table · colored cube · colored tray
 fiducial markers (AprilTag/ArUco) if needed · known workspace · good lighting
 ```
 
-First compiler is deliberately simple: color segmentation, marker poses,
-object centroids, relation thresholds **imported from `csg/predicates.py`**
-(one grammar for target and rollout words — schema audit note #3), event
-boundary heuristics, contact likelihood from hand-object proximity. Output:
-`target_csg.json` + `ucv_hypotheses.json` (hidden-physics estimates —
-mass/friction/grasp-stability — stay out of the CSG; see
-`Causal_Skill_Graph_V0.md`). Do **not** start with Sapiens2 or general video
-models. If the compiler cannot produce a correct CSG for "put cube in tray,"
-do not move on.
-
-### Phase 4 — DK1 data campaign
-
-The DK1 is the real-arm backend, not the project. The 24 hours of access is a
-**data-acquisition and grounding campaign**, not a live autonomy build. The
-proof sought:
+Build the first real-camera adapter under `pilots/real_camera/`:
 
 ```text
-DK1 teleop success episode  → extractor → robot CSG → hard probes PASS
-DK1 teleop failure episode  → extractor → robot CSG → the RIGHT probe FAILS
+calibrate_table.py
+marker_tracker.py
+video_to_tracks.py
+tracks_to_rollout.py
+verify_episode.py
+README.md
+```
+
+Dataset shape:
+
+```text
+datasets/sony_object_inside_container_v0/
+  raw_videos/
+  calibration/
+  tracks/
+  rollouts/
+  reports/
+  manifest.json
+```
+
+Start marker-based. Record a small success/failure set for
+`object_inside_container`: successes, near-not-inside, rim placement, dropped
+outside, missed grasp, wrong object if practical, and occlusion/uncertain
+evidence. The output is `csg.rollout.v0`, not `target_csg.json`.
+
+Done when:
+
+```text
+Sony/tripod success episodes PASS
+Sony/tripod failure episodes FAIL with useful classes
+uncertain tracking is surfaced as uncertainty, not hidden
+leakage remains clean
+```
+
+### Phase 3B — Human-demo compiler
+
+Only after 3A works, build `video → target CSG`. The compiler can reuse the
+marker/track pipeline, relation thresholds **imported from `csg/predicates.py`**
+(one grammar for target and rollout words — schema audit note #3), event
+boundary heuristics, and contact likelihood from hand-object proximity. Output:
+`target_csg.json` + `ucv_hypotheses.json` (hidden-physics estimates —
+mass/friction/grasp-stability — stay out of the CSG; see
+`Causal_Skill_Graph_V0.md`). Do **not** start with Sapiens2, marker-free
+perception, or general internet video. Target generation comes after episode
+verification.
+
+### Phase 4 — Cross-source flagship task
+
+Use two task tracks, not all five V0 tasks:
+
+```text
+Track A: open_drawer
+  purpose: articulation task
+  sources: MuJoCo, RLBench, later real drawer / DK1 if available
+
+Track B: object_inside_container
+  purpose: flagship real-world relation task
+  sources: MuJoCo put_cube_in_tray, RLBench/ManiSkill container task,
+           Sony/tripod video, later DK1/robot recordings
+```
+
+`object_inside_container` should be the flagship "One Task, Four Worlds" task:
+it is easy to film, easy to understand, meaningful in the real world, has clear
+visible failures, and can eventually be executed or replayed on robot hardware.
+
+Done when:
+
+```text
+one object_inside_container task card has source bindings for:
+  MuJoCo
+  external simulator (RLBench or ManiSkill)
+  Sony/tripod video
+and every source produces PASS successes, FAIL failures, clean leakage, and
+interpretable failure classes through the unchanged verifier
+```
+
+### Phase 5 — DK1 / real robot recorded evidence
+
+The DK1 is a recorded-evidence source first, not an autonomy milestone. The 24
+hours of access is a **data-acquisition and grounding campaign**. The proof
+sought:
+
+```text
+DK1 / robot success episode  → csg.rollout.v0 → extractor → robot CSG → PASS
+DK1 / robot failure episode  → csg.rollout.v0 → extractor → robot CSG → FAIL
 both leakage-clean; physical validity honestly reported from available traces
 ```
 
-Hour-by-hour plan, prerequisites checklist, and the failure modes to
-intentionally collect are in §7.
-
-### Phase 5 — DK1 control adapter (legacy name: "Phase 8C/8D")
+Build under `pilots/dk1_recorded/` before any autonomy:
 
 ```text
-CSG subgoal → skill route → end-effector waypoints → IK / controller
-→ joint-position actions → recorded rollout → extractor → verifier
+episode_schema.md
+logs_to_rollout.py
+camera_tracks_to_rollout.py
+fuse_robot_and_camera.py
+verify_dk1_episode.py
 ```
 
-Backend package `csg/backends/dk1/` — see §7 for the module layout. Only the
-CSG-binding level is CSG-specific; everything below is DK1-specific.
+Collect `object_inside_container` success and failure episodes: near not
+inside, rim placement, dropped object, missed grasp, wrong object, and
+occlusion/uncertain evidence. Hour-by-hour checklist and failure modes remain
+in §7, updated to treat DK1 as recorded evidence first.
 
-Skill routing by CSG structure (implemented for the symbolic backend in
-`csg/skills.py`; reuse for DK1):
+### Phase 6 — One Task, Four Worlds report
+
+Create one report command:
+
+```bash
+python3 -m pilots.cross_source.verify_task \
+  --task tasks/object_inside_container/task_card.md \
+  --sources mujoco,external_sim,sony,dk1 \
+  --out reports/object_inside_container_cross_source/
+```
+
+Output:
 
 ```text
-relation NEAR → INSIDE                      pick_place / insert
-relation NEAR → ON_TOP_OF                   place_on
-planar pose delta / CONTACT_MODE_CONSTRAINT
-  with TOUCHING_LIKELY / SLIDING_LIKELY     push
-articulation value changes                  open / close
-ALIGNED_WITH + INSIDE                       insert
+cross_source_report.md
+cross_source_report.json
+summary.csv
+failure_classification.json
+source_manifest.json
+leakage_report.json
 ```
 
-If learned policies ever enter here: dense solver rewards (pose distance,
-relation achievement, contact timing, collision penalty) for training; the
-matcher **only** as terminal verifier / curriculum / benchmark. Never
-`reward = -matcher_distance`.
+Done when the project can honestly say:
 
-### Phase 6 — Optional autonomy
+```text
+For a simple object-inside-container task, the same semantic task card can be
+bound to multiple sources and judged by the unchanged verifier across internal
+simulation, external traces, real camera video, and real robot recordings.
+```
 
-One scripted DK1 pick-place with known object pose and fixed camera, hard
-probes PASS, no leakage. Only after this should learning-based execution be
-considered. Autonomy is the last layer, not the first proof.
+### Phase 7 — Verifier-as-a-service / dataset audit tool
+
+After the cross-source proof, package the verifier as a practical QA layer:
+
+```text
+upload rollout/video/logs
+choose task card
+get PASS / FAIL / failure diagnosis / leakage report / evidence status
+```
+
+This is the real product direction: robot/dataset QA for manipulation tasks,
+teleoperation datasets, learned-policy rollouts, warehouse pick/place episodes,
+and home-robot attempts. The question is always: did the episode actually
+complete the task, or did it only look successful?
 
 ### Legacy phase labels
 
@@ -448,9 +663,9 @@ Mapping:
 | --- | --- |
 | 6A gold tests, 6B symbolic harness, 6D leakage tests | Phase 2A / 2B (all done) |
 | **6C MuJoCo harness** | **Phase 2C** |
-| Phase 7 / 7A perception compiler, 7B UCV hypotheses | Phase 3 |
-| Phase 8 control (8A/8B sim solver; 8C/8D DK1 executor) | sim solver shipped in Phase 2; DK1 adapter is Phase 5 |
-| Phase 9 real world (9A calibration, 9B primitives, 9C eval) | Phase 4 (data) + Phase 5/6 (control) |
+| Phase 7 / 7A perception compiler, 7B UCV hypotheses | Phase 3A (camera episode ingestion) + Phase 3B (human-demo compiler) |
+| Phase 8 control (8A/8B sim solver; 8C/8D DK1 executor) | sim solver shipped in Phase 2; DK1 control/autonomy deferred behind recorded evidence |
+| Phase 9 real world (9A calibration, 9B primitives, 9C eval) | Phase 5 recorded robot evidence + Phase 6 cross-source report |
 
 ---
 
@@ -472,9 +687,24 @@ GPU-scale or photorealism is ever justified.
 
 ---
 
-## 7. DK1 playbook (Phases 4–5)
+## 7. DK1 playbook (Phase 5 first; control later)
 
-### Adapter package layout
+The first DK1 proof is recorded evidence, not autonomous execution. Put the
+recorded-evidence adapter under `pilots/dk1_recorded/`; only add a robot-control
+backend after the evidence path is passing.
+
+### Recorded-evidence package layout
+
+```text
+pilots/dk1_recorded/
+  episode_schema.md
+  logs_to_rollout.py
+  camera_tracks_to_rollout.py
+  fuse_robot_and_camera.py
+  verify_dk1_episode.py
+```
+
+Later control/backend package layout, if needed:
 
 ```text
 csg/backends/dk1/
@@ -508,7 +738,7 @@ L2 calibration         camera, base, table, workspace, gripper, object frames
 L3 primitive motion    move_to_joint / move_to_ee_pose / open / close /
                        move_linear / lift / lower / retreat
 L4 skills              pick, place, push, insert, open_drawer
-L5 CSG binding         the §5-Phase-5 routing table
+L5 CSG binding         the Phase 5 recorded-evidence/task-binding route
 ```
 
 ### Before the 24 h window (all of this is desk work — do it first)
@@ -580,6 +810,25 @@ These are derived from the per-probe agreement vector + leakage + validity
 reports, and benchmark runs write an explicit `failure_classification.json`.
 Reports must include failures, never hide them.
 
+## 8A. Success metrics
+
+The project should report the following metrics across every source binding:
+
+```text
+success recall:        true successes that PASS
+failure rejection:     true failures that FAIL
+failure-class accuracy: failures assigned to the right reason
+leakage rejection:     target-copy / planner contamination rejected
+off-task confusion:    wrong task target does not pass
+source robustness:     same task card works across source bindings
+core stability:        verifier unchanged across sources
+evidence honesty:      physicalValidity true / false / null is reported honestly
+```
+
+A strong result is not simply "20/20 passed." A strong result is: successes
+pass, failures fail, wrong tasks do not pass, leakage is rejected, uncertainty
+is surfaced, and the verifier remains unchanged.
+
 ## 9. What NOT to build
 
 ```text
@@ -588,6 +837,12 @@ pipeline · Unreal synthetic-human factory · internet-video parser ·
 world-model rollout predictor · RL from matcher distance · multi-robot
 generalization beyond sim · natural-language-only planner
 ```
+
+Also do **not** do more identical RLBench OpenDrawer demos, chase all five V0
+tasks across every source, make RLBench pass by changing the matcher, claim real
+physical validity for RLBench when it remains `null`, start marker-free
+perception before marker-based evidence works, or make DK1 autonomy the next
+goal.
 
 These are tempting and premature. The project dies competing with foundation
 -model labs; it survives as the clean compiler/verifier layer those models
@@ -632,11 +887,13 @@ now committed both ways: the 2026-06-14 live run is leakage-clean and unmapped
 against the gold `open_drawer` target (Result A), while a value-only diagnostic
 target that asserts only the terminal extension PASSes the same traces
 non-vacuously (Result B), both reproducible from committed fixtures without
-Runpod. The next concrete research item is the follow-on articulation-event
-target — add a minimal `ARTICULATION_CHANGE` event without claiming contact or
-strict order until the adapter has an honest evidence source for them. Broader
-ablated/noisy baselines remain optional later extensions, not blockers for the
-current Phase 2E minimum.
+Runpod. The RLBench negative/mutation suite is now complete, so the next
+concrete research item is **not** more identical RLBench recording; it is the
+minimal RLBench articulation-event target. After that, pivot immediately to
+`object_inside_container` as the cross-source flagship task: MuJoCo + external
+sim + Sony/tripod first, then DK1/robot recorded evidence. Broader ablated/noisy
+baselines remain optional later extensions, not blockers for the current Phase
+2E/2F minimum.
 
 ```text
 python3 -m pytest tests/ -q                          # core suite; mujoco tests skip without extra
