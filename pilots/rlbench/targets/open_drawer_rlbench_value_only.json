@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "rlbench_open_drawer_value_only",
+  "taskCaption": "drawer reaches RLBench-calibrated extension (value-only diagnostic)",
+  "objects": [
+    {"objectId": "h_drawer", "categoryLabel": "drawer", "categoryConfidence": 0.9, "physicalKind": "ARTICULATED_OBJECT", "geometry": {"source": "FROM_MULTIVIEW_RECONSTRUCTION", "orientedBox": {"sizeM": {"x": 0.40, "y": 0.30, "z": 0.15}}}, "parts": [{"partId": "p1", "kind": "HANDLE"}]}
+  ],
+  "agentParts": [{"agentPartId": "right_hand", "partKind": "RIGHT_HAND"}],
+  "plannerView": {
+    "bodies": [{"objectId": "h_drawer", "mobility": "ARTICULATED"}],
+    "stages": [{"stageId": "s1", "goalConstraints": [{"constraintId": "g1", "kind": "ARTICULATION_GOAL", "hard": true, "confidence": 0.9, "articulation": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "targetJointValue": 0.234, "valueKind": "EXTENSION_M"}}], "confidence": 0.9}]
+  },
+  "pilotMetadata": {
+    "diagnostic": "value-only",
+    "tests": "terminal drawer extension ONLY (hard ARTICULATION_GOAL via goal_satisfaction). No contact, articulation-change event, temporal order, or initial object-state semantics.",
+    "deferred": ["contacts", "events", "temporalEdges", "objectStates"],
+    "source": "RLBench OpenDrawer (bottom/middle/top), live Runpod capture 2026-06-14; observed terminal extension 0.2337/0.2338/0.2348 m. See pilots/rlbench/fixtures/live_runpod_20260614/.",
+    "articulationToleranceM": 0.03,
+    "toleranceNote": "Intended/documentary only and NOT read by the verifier. The FROZEN matcher enforces a single global MatcherConfig.articulation_tol (0.05 m), not this per-target field; honoring a per-target tolerance would require verifier/config changes (out of scope for this step). All three live demos PASS under the enforced 0.05 m window and also fall inside this tighter intended 0.03 m. This block is metadata: csg.canon ignores unknown top-level keys, so it never enters any probe.",
+    "notAGoldTask": "This target is a pilot diagnostic, deliberately NOT added to gold_tests/. It asserts only that a drawer-shaped articulated body reaches the target extension; it does not assert the agent caused it. Use it to read terminal-value mappability, not as a full open_drawer acceptance test."
+  }
+}

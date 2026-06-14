@@ -88,6 +88,14 @@ def _neutral_body_size(frame_obj: Any) -> List[float]:
     return [abs(x1 - x0), abs(y1 - y0), abs(z1 - z0)]
 
 
+def _task_low_dim_state(obs: Any) -> List[Any]:
+    """Observation low-dim state as a list; RLBench supplies this as a NumPy array."""
+    state = getattr(obs, "task_low_dim_state", None)
+    if state is None:
+        return []
+    return list(state)
+
+
 def _resolve_joint_index(joint_obj: Any, demo: Sequence[Any]) -> int:
     """Index of this variation's drawer joint inside ``Observation.task_low_dim_state``.
 
@@ -109,7 +117,7 @@ def _resolve_joint_index(joint_obj: Any, demo: Sequence[Any]) -> int:
     """
     if not demo:
         raise RuntimeError("empty demo: cannot resolve the drawer joint slot")
-    state = list(getattr(demo[-1], "task_low_dim_state", []) or [])
+    state = _task_low_dim_state(demo[-1])
     if not state:
         raise RuntimeError(
             "Observation.task_low_dim_state is empty; cannot recover the drawer joint "
@@ -138,7 +146,7 @@ def _demo_to_measurements(demo: Sequence[Any], *, frame_obj: Any, joint_obj: Any
     joint_index = _resolve_joint_index(joint_obj, demo)
     measurements: List[Dict[str, Any]] = []
     for i, obs in enumerate(demo):
-        state = list(getattr(obs, "task_low_dim_state", []) or [])
+        state = _task_low_dim_state(obs)
         articulation = float(state[joint_index]) if joint_index < len(state) else 0.0
         measurements.append({
             "frameIndex": i,

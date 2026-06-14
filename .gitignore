@@ -4,6 +4,12 @@
 venv/
 env/
 
+# Local secrets / environment files — never commit (e.g. RUNPOD_API_KEY in .env).
+# Note: `env/` above only matches a directory; a bare `.env` file needs its own rule.
+.env
+.env.*
+!.env.example
+
 # Python caches and test output
 __pycache__/
 *.py[cod]

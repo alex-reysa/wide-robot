@@ -42,6 +42,15 @@ _FIXTURE = _REPO / "pilots" / "rlbench" / "fixtures" / "synthetic_open_drawer.ro
 _TARGET = _REPO / "gold_tests" / "open_drawer" / "target.json"
 _GOLD_DIR = _REPO / "gold_tests"
 
+# Committed live evidence (Runpod, 2026-06-14) + the value-only diagnostic target.
+_VALUE_ONLY_TARGET = _REPO / "pilots" / "rlbench" / "targets" / "open_drawer_rlbench_value_only.json"
+_LIVE_FIXTURE_DIR = _REPO / "pilots" / "rlbench" / "fixtures" / "live_runpod_20260614"
+_LIVE_VARIATIONS = ("bottom", "middle", "top")
+
+
+def _live_rollout(variation):
+    return load_json(_LIVE_FIXTURE_DIR / f"open_drawer_{variation}_demo00.rollout.json")
+
 
 # ---------------------------------------------------------------------------
 # The seam: an external-shaped rollout flows through the frozen verifier
@@ -546,6 +555,23 @@ def test_recorder_measurements_are_neutral_and_resolve_the_ramping_joint():
     assert measurements[0]["bodyPose"]["positionM"] == {"x": 0.22, "y": -0.12, "z": 0.03}
 
 
+def test_recorder_accepts_numpy_low_dim_state_from_live_rlbench():
+    import numpy as np
+    import pilots.rlbench.record_open_drawer as rec
+
+    demo = _fake_open_drawer_demo(open_ext=0.18, n=6)
+    for obs in demo:
+        obs.task_low_dim_state = np.asarray(obs.task_low_dim_state, dtype=float)
+    frame = _FakeShape(pose=[0.22, -0.12, 0.03, 0, 0, 0, 1],
+                       bbox=[-0.20, 0.20, -0.15, 0.15, -0.075, 0.075])
+    joint = _FakeJoint(0.18)
+
+    measurements = rec._demo_to_measurements(demo, frame_obj=frame, joint_obj=joint)
+
+    assert measurements[0]["articulationValue"] == pytest.approx(0.0)
+    assert measurements[-1]["articulationValue"] == pytest.approx(0.18)
+
+
 def test_recorder_raises_on_ambiguous_joint_slot():
     import pilots.rlbench.record_open_drawer as rec
 
@@ -555,6 +581,161 @@ def test_recorder_raises_on_ambiguous_joint_slot():
     joint = _FakeJoint(0.18)
     with pytest.raises(RuntimeError, match="uniquely resolve"):
         rec._demo_to_measurements(demo, frame_obj=frame, joint_obj=joint)
+
+
+# ---------------------------------------------------------------------------
+# Committed live RLBench evidence (Runpod 2026-06-14): the negative gold result
+# (A) and the value-only diagnostic positive (B), reproducible with NO RLBench.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("variation", _LIVE_VARIATIONS)
+def test_live_rlbench_fixture_is_committed_and_leakage_clean(variation):
+    # The promoted live rollouts are the real evidence both results rest on. They must
+    # be present (a clean clone can reproduce A/B without Runpod), be leakage-clean, and
+    # honestly report physicalValidity null (external kinematic trace: physics-unverified).
+    rollout = _live_rollout(variation)  # raises if the fixture was not promoted
+    assert rollout["schemaVersion"] == "csg.rollout.v0"
+    assert rollout["backend"] == "rlbench_external"
+    assert rollout["objectIdMap"] == {}
+    assert_rollout_leakage_clean(rollout)
+    assert rollout["diagnostics"]["physicalValidity"] is None
+
+
+@pytest.mark.parametrize("variation", _LIVE_VARIATIONS)
+def test_gold_open_drawer_target_fails_live_rlbench_negative_result(variation):
+    # Result A — the committed NEGATIVE result. Real RLBench OpenDrawer demos are
+    # leakage-clean, but the current gold target does NOT accept them: the drawer opens
+    # past the gold goal+tolerance (goal_satisfaction) and the gold's human-style
+    # CONTACT_BEGIN→ARTICULATION_CHANGE order is absent (event_order). This staying FAIL
+    # is load-bearing — an accidental PASS would mean the seam silently drifted.
+    target = load_json(_TARGET)
+    rollout = _live_rollout(variation)
+    case = verify_external_rollout(target, rollout, case_name="open_drawer")
+    assert case["passed"] is False
+    assert case["leakageClean"] is True
+    assert case["physicalValidity"] is None
+    assert set(case["hardMismatches"]) == {"event_order", "goal_satisfaction"}
+
+
+@pytest.mark.parametrize("variation", _LIVE_VARIATIONS)
+def test_value_only_target_passes_live_rlbench(variation):
+    # Result B — the value-only diagnostic PASSES the same real traces: a leakage-clean
+    # RLBench OpenDrawer demo is accepted once the target asks only "did the drawer reach
+    # the RLBench-calibrated extension?". Same frozen verifier, same rollout; only the
+    # target's asserted semantics shrank to terminal articulation value.
+    target = load_json(_VALUE_ONLY_TARGET)
+    rollout = _live_rollout(variation)
+    case = verify_external_rollout(target, rollout, case_name="open_drawer_rlbench_value_only")
+    assert case["passed"] is True, (variation, case["hardMismatches"])
+    assert case["leakageClean"] is True
+    assert case["physicalValidity"] is None
+    assert case["hardMismatches"] == []
+
+
+@pytest.mark.parametrize("variation", _LIVE_VARIATIONS)
+def test_value_only_pass_rests_on_terminal_value_not_vacuity(variation):
+    # The value-only PASS must be a real terminal-value match, not a vacuous accept-all.
+    # goal_satisfaction carries genuine target support and agrees; the deliberately
+    # deferred probes (contact/event presence + order) carry ZERO support, so the PASS
+    # asserts nothing about — and cannot be propped up by — contact or ordering.
+    target = load_json(_VALUE_ONLY_TARGET)
+    robot = extract_robot_csg(_live_rollout(variation))
+    res = match(target, robot, MatcherConfig())
+    assert res.passed is True
+    assert res.vacuous is False
+    assert res.probe_agreement["goal_satisfaction"] is True
+    assert res.probe_support["goal_satisfaction"] == 1          # the single HARD articulation goal
+    assert res.object_mapping == {"h_drawer": "body_000"}       # drawer stayed relevant and mapped
+    for deferred in ("event_presence", "event_order", "articulation_transitions"):
+        assert res.probe_support[deferred] == 0, deferred
+
+
+def test_value_only_target_is_rlbench_calibrated_not_a_tautology():
+    # The value-only goal (0.234 m) is RLBench-calibrated, not "any extension": it must
+    # REJECT the 0.18 m synthetic fixture (which the gold 0.18 target accepts). This
+    # guards against the target being loosened into something every drawer trace passes.
+    vo = load_json(_VALUE_ONLY_TARGET)
+    gold = load_json(_TARGET)
+    synthetic = load_json(_FIXTURE)  # opens to 0.18, not 0.234
+    assert synthetic["frames"][-1]["articulation"]["body_000"] == 0.18  # the value the margin rests on
+    robot = extract_robot_csg(synthetic)
+    assert match(vo, robot, MatcherConfig()).passed is False
+    assert match(gold, robot, MatcherConfig()).passed is True
+    # The rejection margin (|0.234 - 0.18| = 0.054 m) only just clears the enforced
+    # window; pin the tolerance so a future widening to >= 0.055 m fails THIS guard at its
+    # own site (where it would otherwise silently turn vacuous: accept-all), not only the
+    # separate metadata test.
+    assert MatcherConfig().articulation_tol == 0.05
+
+
+def test_value_only_target_omits_event_and_contact_sections():
+    # Structural guarantee of the diagnostic: the deferred sections are absent from the
+    # file, and the only thing it asserts is one HARD articulation goal at the RLBench
+    # value. If a later edit reintroduces events/contacts, this is the tripwire.
+    vo = load_json(_VALUE_ONLY_TARGET)
+    for deferred in ("events", "contacts", "temporalEdges", "objectStates"):
+        assert deferred not in vo, deferred
+    goals = vo["plannerView"]["stages"][0]["goalConstraints"]
+    assert [g["kind"] for g in goals] == ["ARTICULATION_GOAL"]
+    assert goals[0]["hard"] is True
+    assert goals[0]["articulation"]["targetJointValue"] == 0.234
+
+
+def test_value_only_tolerance_metadata_is_documentary_not_enforced():
+    # pilotMetadata.articulationToleranceM documents INTENT only; the frozen matcher
+    # ignores per-target metadata and uses the global MatcherConfig.articulation_tol.
+    # Prove it executably: tightening the metadata to an absurd 0.0001 m does NOT change
+    # the verdict (still PASS), because the field is never read. If a future change
+    # started honoring per-target tolerance, this test flips and forces a doc update.
+    vo = load_json(_VALUE_ONLY_TARGET)
+    assert vo["pilotMetadata"]["articulationToleranceM"] == 0.03
+    tightened = copy.deepcopy(vo)
+    tightened["pilotMetadata"]["articulationToleranceM"] = 0.0001
+    robot = extract_robot_csg(_live_rollout("bottom"))
+    assert match(tightened, robot, MatcherConfig()).passed is True
+    assert MatcherConfig().articulation_tol == 0.05  # the tolerance that is actually enforced
+
+
+@pytest.mark.parametrize("variation", _LIVE_VARIATIONS)
+def test_committed_runpod_summary_reproduces_locally(variation):
+    # The committed Runpod summary sidecar is provenance; re-running the frozen verifier
+    # on the committed rollout must reproduce its recorded verdict — otherwise the
+    # promoted evidence and its sidecar have drifted apart.
+    rollout = _live_rollout(variation)
+    summary = load_json(_LIVE_FIXTURE_DIR / f"open_drawer_{variation}_demo00.summary.json")
+    recorded = summary["verification"]
+    case = verify_external_rollout(load_json(_TARGET), rollout, case_name="open_drawer")
+    assert case["passed"] == recorded["passed"]
+    assert case["matcherPassed"] == recorded["matcherPassed"]
+    assert case["leakageClean"] == recorded["leakageClean"]
+    assert case["physicalValidity"] == recorded["physicalValidity"]
+    assert set(case["hardMismatches"]) == set(recorded["hardMismatches"])
+
+
+@pytest.mark.parametrize("variation", _LIVE_VARIATIONS)
+def test_confusion_on_live_rlbench_is_off_task_clean_and_reproduces_sidecar(variation):
+    # The pilot's single biggest risk is a too-easy OFF-TASK pass, so the committed LIVE
+    # evidence must be checked for it directly — not only via the synthetic stand-in. The
+    # real RLBench drawer trace must PASS no gold target at all, so it cannot accidentally
+    # match a different task: pinning unexpectedOffTaskPasses == [] makes a future gold
+    # change that lets the live trace match another task fail the suite. We also reproduce
+    # the committed sidecar's confusion block exactly.
+    rollout = _live_rollout(variation)
+    recorded = load_json(
+        _LIVE_FIXTURE_DIR / f"open_drawer_{variation}_demo00.summary.json"
+    )["verification"]["confusion"]
+    conf = external_confusion_report(rollout, load_gold_targets(_GOLD_DIR), expected_case="open_drawer")
+    # Load-bearing invariant — must hold regardless of any future gold-target drift.
+    assert conf["unexpectedOffTaskPasses"] == []
+    # Reproduce the recorded provenance block. NB: confusionClean is False here BY DESIGN
+    # — the negative Result A misses its own gold diagonal (missedExpected open_drawer);
+    # we assert the RECORDED value, never a blanket True.
+    assert conf["results"] == recorded["results"]
+    assert conf["passes"] == recorded["passes"]
+    assert conf["confusionClean"] == recorded["confusionClean"]
+    assert conf["missedExpected"] == recorded["missedExpected"]
+    assert conf["unexpectedOffTaskPasses"] == recorded["unexpectedOffTaskPasses"]
 
 
 # ---------------------------------------------------------------------------

@@ -281,14 +281,20 @@ exits 1 (not a full verification); cutting a release through
 `.github/workflows/release.yml` and adding the tag to `ATTESTED_TAGS` closes that.
 
 Post-2E external-trace pilot status: the narrow **RLBench `open_drawer` pilot**
-(see `docs/rlbench_external_trace_pilot.md`) has its offline ingest boundary
-implemented. `pilots/rlbench/` lives outside `csg/` and consumes the frozen
-verifier like a third party; the converter, live recorder scaffold, hardened
-external leakage checks, and 1×N confusion report are implemented and tested with
-fakes. Live evidence capture remains pending: real CoppeliaSim/PyRep/RLBench demos
-must show that each `open_drawer` rollout PASSes its own target, FAILs
-non-equivalent targets, remains leakage-clean, and reports
-`physicalValidity: null`.
+(see `docs/rlbench_external_trace_pilot.md`) has its offline ingest boundary, one
+live Runpod capture, and a value-only diagnostic target complete. `pilots/rlbench/`
+lives outside `csg/` and consumes the frozen verifier like a third party; the
+converter, live recorder, hardened external leakage checks, and 1×N confusion report
+are implemented and tested with fakes. The 2026-06-14 live CoppeliaSim/PyRep/RLBench
+run recorded bottom/middle/top demos and emitted leakage-clean rollouts with
+`physicalValidity: null`, now promoted to committed fixtures
+(`pilots/rlbench/fixtures/live_runpod_20260614/`). Two committed results stand on
+those traces: **(A)** the gold `open_drawer` target does **not** accept them
+(`event_order`, `goal_satisfaction`); **(B)** a value-only diagnostic target
+(`pilots/rlbench/targets/open_drawer_rlbench_value_only.json`), asserting only the
+terminal drawer extension, **PASSes** them leakage-clean and non-vacuously. Contact/
+event/temporal semantics are deferred; next is a follow-on articulation-event target.
+`csg/` stays byte-frozen.
 
 Acceptance bar for calling Phase 2E done:
 
@@ -617,12 +623,16 @@ for all five V0 gold tasks, each with `physicalValidity: true`; a sabotaged
 rollout (`early_release`) is correctly rejected.
 
 Known open items: articulation magnitude is only checked via
-`goal_satisfaction` (a dedicated probe is a candidate). The next concrete
-research item is the live RLBench external-trace run: install CoppeliaSim +
-PyRep + RLBench, record bottom/middle/top `OpenDrawer` demos, run the external
-verifier + confusion check, and write up whether the result is clean success,
-leak-to-PASS, or structurally unmappable. Broader ablated/noisy baselines remain
-optional later extensions, not blockers for the current Phase 2E minimum.
+`goal_satisfaction` (a dedicated probe is a candidate). The RLBench evidence is
+now committed both ways: the 2026-06-14 live run is leakage-clean and unmapped
+against the gold `open_drawer` target (Result A), while a value-only diagnostic
+target that asserts only the terminal extension PASSes the same traces
+non-vacuously (Result B), both reproducible from committed fixtures without
+Runpod. The next concrete research item is the follow-on articulation-event
+target — add a minimal `ARTICULATION_CHANGE` event without claiming contact or
+strict order until the adapter has an honest evidence source for them. Broader
+ablated/noisy baselines remain optional later extensions, not blockers for the
+current Phase 2E minimum.
 
 ```text
 python3 -m pytest tests/ -q                          # core suite; mujoco tests skip without extra
