@@ -25,6 +25,13 @@ dist/
 phase2e_release/
 phase2e_release_out/
 
+# RLBench external-trace pilot: live demos + generated rollouts/sidecars.
+# The small synthetic fixture (pilots/rlbench/fixtures/*.rollout.json) stays committed;
+# only the live recorder's outputs are ignored (pilots/rlbench/_out already matches
+# *_out/ above; listed explicitly here alongside the recorded-demo directory).
+pilots/rlbench/_out/
+pilots/rlbench/_demos/
+
 # MuJoCo / local logs
 MUJOCO_LOG.TXT
 *.log

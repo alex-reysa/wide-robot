@@ -716,14 +716,12 @@
       "timeS": 4.0
     }
   ],
-  "objectIdMap": {
-    "h_drawer": "body_000"
-  },
+  "objectIdMap": {},
   "robotEffectorId": "robot_gripper",
   "sceneBodies": [
     {
       "articulation": {
-        "articulatedObjectId": "h_drawer",
+        "articulatedObjectId": "body_000",
         "confidence": 0.9,
         "jointKind": "PRISMATIC",
         "jointValue": 0.02,

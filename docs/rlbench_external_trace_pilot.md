@@ -1,8 +1,12 @@
 # RLBench External-Trace Pilot
 
-**Status:** scaffolded, not yet run. The verifier seam and leakage discipline are
-in place and tested (`pilots/rlbench/`, `tests/test_rlbench_pilot.py`); live RLBench
-ingest is a documented stub pending RLBench/PyRep + recorded demos.
+**Status:** converter implemented and tested; live record pending hardware. The
+verifier seam, the hardened leakage gate, the `open_drawer` ingest converter, and the
+cross-task confusion report are all in place and unit-tested with fake observations
+(`pilots/rlbench/`, `tests/test_rlbench_pilot.py`, green with **no** RLBench installed).
+The only thing still gated on out-of-band hardware is the *live recording* itself —
+`pilots/rlbench/record_open_drawer.py` needs CoppeliaSim + PyRep + RLBench to capture
+real demos; its converter/verifier path is already exercised end-to-end by fakes.
 
 **Scope: deliberately very narrow.** One RLBench task (`open_drawer`), a handful of
 its demonstrations, fed through the **frozen** csg verifier. This is a feasibility
@@ -62,19 +66,41 @@ is the point — it forecloses "you adapted the verifier to fit RLBench".
 | Path | Role | State |
 |---|---|---|
 | `pilots/rlbench/adapter.py` · `assemble_rollout` | build a leakage-clean `csg.rollout.v0` from neutral bodies + frames | **real, tested** |
-| `pilots/rlbench/adapter.py` · `assert_rollout_leakage_clean` | reject forbidden keys / non-whitelisted body fields / non-neutral ids at the rollout door | **real, tested** |
-| `pilots/rlbench/adapter.py` · `rlbench_demo_to_rollout` | parse an RLBench `Demo` → neutral bodies + frames | **stub** (raises `NotImplementedError`; mapping in `RLBENCH_FIELD_MAPPING`) |
+| `pilots/rlbench/adapter.py` · `assert_rollout_leakage_clean` | reject forbidden keys / non-whitelisted body fields / non-neutral ids — incl. `objectIdMap`, nested `articulation.articulatedObjectId`, and per-frame `objectPoses`/`articulation` keys | **real, tested** |
+| `pilots/rlbench/adapter.py` · `rlbench_demo_to_rollout` | convert a recorded `open_drawer` `Demo` + neutral measurements → `csg.rollout.v0` (XYZW→WXYZ, `gripper_open<0.5`→closed) | **real** (open_drawer only), **tested with fakes** |
+| `pilots/rlbench/record_open_drawer.py` | record live RLBench `OpenDrawer` demos (3 variations), quarantine handle names, emit rollout + sidecar | **real** (lazy imports); **live record needs CoppeliaSim/PyRep/RLBench** |
 | `pilots/rlbench/run_external.py` · `verify_external_rollout` | run a rollout through the frozen verifier; same PASS criterion as `run_one` | **real, tested** |
-| `pilots/rlbench/fixtures/synthetic_open_drawer.rollout.json` | committed external-shaped stand-in trace | **real** (PASSes the verifier today) |
-| `tests/test_rlbench_pilot.py` | seam + leakage-discipline tests, no RLBench needed | **green** |
+| `pilots/rlbench/run_external.py` · `external_confusion_report` | 1×N cross-task confusion: one external rollout vs every gold target | **real, tested** |
+| `pilots/rlbench/fixtures/synthetic_open_drawer.rollout.json` | committed external-shaped stand-in trace (leakage-clean: empty `objectIdMap`, neutral ids) | **real** (PASSes the verifier today) |
+| `tests/test_rlbench_pilot.py` | seam + hardened-leakage + converter + confusion tests, no RLBench needed | **green** (44 passed, 3 live-only skipped) |
 
-Run the seam today, with no RLBench installed:
+Run the seam **and** the confusion today, with no RLBench installed:
 
 ```bash
-python -m pilots.rlbench.run_external \
+python3 -m pilots.rlbench.run_external \
   --target gold_tests/open_drawer/target.json \
-  --rollout pilots/rlbench/fixtures/synthetic_open_drawer.rollout.json --json
-python -m pytest tests/test_rlbench_pilot.py -q
+  --rollout pilots/rlbench/fixtures/synthetic_open_drawer.rollout.json \
+  --confusion --json
+python3 -m pytest tests/test_rlbench_pilot.py -q
+```
+
+## Current verification
+
+Locally reproducible verification for the offline pilot boundary:
+
+```bash
+python3 -m pytest tests/test_rlbench_pilot.py -q
+# 44 passed, 3 skipped
+
+python3 -m pilots.rlbench.run_external \
+  --target gold_tests/open_drawer/target.json \
+  --rollout pilots/rlbench/fixtures/synthetic_open_drawer.rollout.json \
+  --confusion
+# external-verify status=PASS matcher=True leakageClean=True physicalValidity=None traceSource=rlbench_external
+#   confusion[open_drawer] CLEAN: passes=['open_drawer']
+
+git diff --name-only -- csg
+# no output: csg/ is byte-frozen for this pilot
 ```
 
 ## Leakage contract for external traces (the heart of the pilot)
@@ -88,10 +114,22 @@ at the verifier door:
 
 - **No forbidden keys** — `targetCsg`, `plannerView`, `solverMetadata`, target
   observation graphs (the same set `csg.benchmark.leakage_report` fails on).
-- **Neutral body ids only** — `body_000`, `body_001`, … assigned in a fixed scan
-  order; **never** RLBench object names (`drawer_frame`, `drawer_top`).
+- **Neutral ids only, everywhere a reader can reach** — `body_000`, `body_001`, …;
+  **never** RLBench names (`drawer_frame`, `drawer_joint_top`). The gate now checks
+  body ids **and** `objectIdMap` keys/values (emit it empty for an external trace),
+  the nested `sceneBodies[].articulation.articulatedObjectId`, and every frame's
+  `objectPoses` / `articulation` keys — the extractor ignores some of these, but the
+  contract refuses to let target identity ride along in any of them. Every field is
+  read through the **same** `get_any` / `as_list` accessors the frozen extractor uses,
+  so a snake_case spelling the extractor would accept (`scene_bodies`, `object_poses`)
+  cannot slip past the gate, and a present-but-malformed carrier (a list/string where
+  an object is required) is rejected, not skipped — the gate is strictly fail-closed.
 - **Whitelisted body fields only** — `csg.to_sim.ROLLOUT_BODY_FIELDS`. RLBench
   category labels, part labels, and source ids are authoring and are dropped.
+- **Neutral measurements only** — the recorder hands the converter measurements with
+  keys restricted to `frameIndex / timeS / bodyPose / articulationValue / bodySizeM /
+  sizeApproximate` (no object id, no label, no handle name); the converter rejects any
+  extra key, so a leak names the recorder as its source.
 - **No `physicalValidity: true`** — an external kinematic trace cannot earn it.
 
 RLBench specifics to **drop** during ingest (these are authoring, not observation):
@@ -129,21 +167,34 @@ line in `roadmap.md`. The failure modes are as informative as the success.
 
 ## Step-by-step plan to actually run it
 
-1. **Author the `open_drawer` external target** (or reuse `gold_tests/open_drawer/target.json`
-   if its objects/relations already describe the RLBench drawer at the needed
-   abstraction). Keep it observable-CSG-only.
-2. **Install RLBench out-of-band** (`pip install -e ".[rlbench]"` covers numpy; install
-   PyRep + CoppeliaSim per the RLBench README) and **record a few demos** of
-   `open_drawer` headless, saved to `pilots/rlbench/fixtures/` (gitignored if large).
-3. **Implement `rlbench_demo_to_rollout`** against `RLBENCH_FIELD_MAPPING`: parse each
-   `Observation` → neutral bodies + frames, then call `assemble_rollout`. The leakage
-   guards will reject any authoring you accidentally carry through.
-4. **Run** `verify_external_rollout` per demo; record PASS/FAIL, `leakageClean`, and
-   hard-probe agreement.
-5. **Confusion check** — match the `open_drawer` demos against the other gold targets;
-   expect FAILs (no off-diagonal PASS except documented quotient equivalences).
-6. **Write up** the result (success / leak / unmappable) and decide whether to widen
+1. ✅ **Target** — reuse `gold_tests/open_drawer/target.json` (articulated single-DoF
+   drawer at the needed abstraction; observable-CSG-only).
+2. ✅ **Converter** — `rlbench_demo_to_rollout(demo, task="open_drawer", measurements=…)`
+   is implemented and unit-tested with fakes (XYZW→WXYZ, `gripper_open<0.5`→closed, one
+   neutral `body_000` articulated body whose joint value ramps). The double leakage
+   guard rejects any authoring carried through.
+3. ✅ **Recorder + confusion** — `record_open_drawer.py` records the three `OpenDrawer`
+   variations and writes rollout + sidecar; `external_confusion_report` matches one
+   rollout against every gold target. Both are tested label-free with fakes.
+4. ⏳ **Install RLBench out-of-band** (`pip install -e ".[rlbench]"` covers numpy; install
+   PyRep + CoppeliaSim v4.1.0 per the RLBench README) and **record real demos**:
+   `python3 -m pilots.rlbench.record_open_drawer --variations bottom,middle,top --verify`
+   writes to `pilots/rlbench/_out/` (gitignored). Enable the live tests with
+   `RLBENCH_PILOT_LIVE=1` or simply having RLBench importable.
+5. ⏳ **Run + confusion on real demos** — `--verify` runs `verify_external_rollout` +
+   `external_confusion_report` into each sidecar; expect PASS on `open_drawer` and FAIL
+   on every non-equivalent target.
+6. ⏳ **Write up** the result (success / leak / unmappable) and decide whether to widen
    to a second task.
+
+## What remains
+
+The offline ingest/verifier path is implemented. The remaining pilot work is live
+evidence collection: install the RLBench stack out of band, record real
+bottom/middle/top `OpenDrawer` demos with `record_open_drawer.py`, run `--verify`
+to attach verifier + confusion results to each sidecar, then write up which of the
+three possible outcomes occurred: clean success, leak-to-PASS, or structurally
+unmappable.
 
 ## Out of scope (explicitly)
 

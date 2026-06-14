@@ -279,10 +279,16 @@ tagged source by `csg.verify_release`. One item remains before the endpoint is
 the laptop-cut tags, so `verify_release` reports `evidence.complete=false` and
 exits 1 (not a full verification); cutting a release through
 `.github/workflows/release.yml` and adding the tag to `ATTESTED_TAGS` closes that.
-The immediate next research step is a very narrow **RLBench external-trace pilot**
-(see `docs/rlbench_external_trace_pilot.md`): feed external demonstration traces
-through the *frozen* verifier to test whether the leakage-clean discipline holds
-on traces csg's own solver did not produce.
+
+Post-2E external-trace pilot status: the narrow **RLBench `open_drawer` pilot**
+(see `docs/rlbench_external_trace_pilot.md`) has its offline ingest boundary
+implemented. `pilots/rlbench/` lives outside `csg/` and consumes the frozen
+verifier like a third party; the converter, live recorder scaffold, hardened
+external leakage checks, and 1×N confusion report are implemented and tested with
+fakes. Live evidence capture remains pending: real CoppeliaSim/PyRep/RLBench demos
+must show that each `open_drawer` rollout PASSes its own target, FAILs
+non-equivalent targets, remains leakage-clean, and reports
+`physicalValidity: null`.
 
 Acceptance bar for calling Phase 2E done:
 
@@ -611,12 +617,12 @@ for all five V0 gold tasks, each with `physicalValidity: true`; a sabotaged
 rollout (`early_release`) is correctly rejected.
 
 Known open items: articulation magnitude is only checked via
-`goal_satisfaction` (a dedicated probe is a candidate). Public Phase 2E release
-now depends on final metadata and provenance gates: restore or initialize Git,
-regenerate reports with Git-backed `sourceProvenance`, keep the MIT `LICENSE`
-and `pyproject.toml` metadata aligned, and finalize the release artifacts from
-a clean checkout. Broader ablated/noisy baselines are optional later
-extensions, not blockers for the current Phase 2E minimum.
+`goal_satisfaction` (a dedicated probe is a candidate). The next concrete
+research item is the live RLBench external-trace run: install CoppeliaSim +
+PyRep + RLBench, record bottom/middle/top `OpenDrawer` demos, run the external
+verifier + confusion check, and write up whether the result is clean success,
+leak-to-PASS, or structurally unmappable. Broader ablated/noisy baselines remain
+optional later extensions, not blockers for the current Phase 2E minimum.
 
 ```text
 python3 -m pytest tests/ -q                          # core suite; mujoco tests skip without extra
