@@ -82,8 +82,8 @@ still runs (and stays green) without it.
 | Symbolic solver backend (Level 0) | ✅ done — proves the loop, reports `physicalValidity: None` honestly |
 | Gold tasks | ✅ 5/5: put_cube_in_tray, place_on_top, push_object, open_drawer, insert_object — each with failure variants |
 | Cross-task confusion matrix | ✅ clean diagonal; one documented quotient equivalence (insert_object ~ put_cube_in_tray) |
-| MuJoCo physics backend (Level 2) | ✅ **all five V0 gold tasks pass gated MuJoCo tests/benchmark with real `physicalValidity: true`** (`csg/backends/mujoco/`); seeded 30-rollout/task benchmark samples every V0 task, including x-shifted push starts; now covered by an optional manual CI workflow (`.github/workflows/mujoco.yml`). Scope: verification discipline on a fixed-base arm, not general robot capability. |
-| Sim-only benchmark readiness | ✅ seeded randomized reports, failure taxonomy, symbolic/no-op/MuJoCo baseline comparison, a nine-fixture invalid suite, source provenance, release audit, release rehearsal, Git hygiene, and MIT package metadata are in place; release artifacts are regenerated from the committed clean checkout (Git-backed `sourceProvenance`, `dirty=false`) and verified by `python -m csg.verify_release`, which binds every report's source snapshot and each wheel/sdist's `csg/` source to `git archive <pinned tag commit>` and reconciles `RELEASE_SHA256SUMS` + `release_manifest.json` against those anchors |
+| MuJoCo physics backend (Level 2) | ✅ **all five V0 gold tasks pass gated MuJoCo tests/benchmark with real `physicalValidity: true`** (`csg/backends/mujoco/`); seeded 30-rollout/task benchmark samples every V0 task, including x-shifted push starts; covered by an optional manual CI workflow (`.github/workflows/mujoco.yml`). **Release-evidence caveat:** the MuJoCo numbers are machine-dependent floats that `verify_release` cannot re-derive cross-machine, so for any tag **not** in `ATTESTED_TAGS` (currently none — releases were cut on a laptop, not in CI) the published physics evidence is **self-attested**: taken on the publisher's word, not independently verified. `verify_release` reports `mujocoCoverage: self-attested`, sets `evidence.complete=false`, and **exits 1** (not 0) for such a release; `release_audit` likewise *asserts* the MuJoCo summaries against expected constants rather than verifying the physics. Binding them requires cutting a release in `.github/workflows/release.yml` and listing the tag in `ATTESTED_TAGS`. Scope: verification discipline on a fixed-base arm, not general robot capability. |
+| Sim-only benchmark readiness | ✅ seeded randomized reports, failure taxonomy, symbolic/no-op/MuJoCo baseline comparison, a nine-fixture invalid suite, source provenance, release audit, release rehearsal, Git hygiene, and MIT package metadata are in place; release artifacts are regenerated from the committed clean checkout (Git-backed `sourceProvenance`, `dirty=false`) and verified by `python -m csg.verify_release`, which re-derives the deterministic (symbolic/no-op/invalid) numbers from `git archive <pinned tag commit>`, binds every report's source snapshot, binds the wheel's `csg/` source and the sdist's + full source-tarball's **entire file tree** to that archive (a backdoor outside `csg/` cannot ride along unbound), and reconciles `RELEASE_SHA256SUMS` + `release_manifest.json` against those anchors. The MuJoCo physics floats are the one layer it cannot re-derive — see the caveat above; a fully-bound (`evidence.complete`, exit 0) verdict requires a CI-attested tag |
 | Perception compiler (video → target CSG) | ⬜ Phase 3 |
 | DK1 real-arm data campaign + adapter | ⬜ Phases 4–5 (playbook in `roadmap.md` §7) |
 
@@ -113,8 +113,12 @@ What that actually proves — the trust model is documented at the top of
   expected commit comes from an in-source pin (`KNOWN_TAG_COMMITS`), not from the
   release, and `origin` is never trusted to choose which repo to verify. `git
   archive <commit>` reconstructs the committed source, and the verifier requires
-  (a) the `csg/` Python source inside every wheel/sdist to be byte-identical to it
-  (defeats a trojan wheel) and (b) every report's `sourceProvenance.snapshot` to
+  (a) every distribution to be byte-bound to it — the `csg/` Python source in every
+  wheel/sdist (defeats a trojan wheel), and the *whole* file tree of the sdist, the
+  source tarball, **and the wheel** (every member outside the `.dist-info` metadata dir
+  must match the archive, so a native `*.so`, a `*.data` install payload that pip would
+  drop onto `PATH`/into site-packages, or a `[console_scripts]` entry point pointing
+  outside `csg` cannot ride along unbound) — and (b) every report's `sourceProvenance.snapshot` to
   equal the snapshot recomputed from that tree. Note (b) binds *which commit* a
   report claims, **not** its numbers — the snapshot is computable from the public
   source, so a report citing the real commit with fabricated results would pass (b)
@@ -133,9 +137,11 @@ What that actually proves — the trust model is documented at the top of
 - **Checksum-pinned for tamper-evidence only.** `RELEASE_SHA256SUMS` and the
   manifest are publisher-supplied, so they are *reconciled* against the anchored
   facts and the recomputed asset bytes — never trusted on their own. A wheel's
-  *compiled metadata / non-source bytes* are pinned for transit integrity but are
-  **not** re-derived from source; byte-for-byte rebuild reproducibility of the
-  wheel itself is out of scope.
+  `.dist-info` *compiled metadata* (`METADATA`, `WHEEL`, `RECORD`, …) is the one
+  layer not reconstructable from the archive, so it is pinned for transit integrity
+  rather than re-derived — except `entry_points.txt`, whose `[console_scripts]`/
+  `[gui_scripts]` targets are checked to stay inside the byte-bound `csg` package;
+  byte-for-byte rebuild reproducibility of the wheel itself is out of scope.
 
 Reproducibility scope (be precise about what "reproducible" means here):
 

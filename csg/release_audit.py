@@ -217,6 +217,18 @@ def audit_release_artifacts(
     _audit_benchmark_dir(checks, "randomized", Path(randomized_dir), total=5 * seeds, passed=5 * seeds,
                          physical={"valid": 5 * seeds}, randomized=True, seeds=seeds,
                          require_git_provenance=require_final_metadata)
+    # Honest scope: the MuJoCo gold + randomized + comparison-baseline checks above
+    # ASSERT the published summaries equal the expected all-green constants. They do
+    # NOT — and cannot, from these reports alone — independently verify the physics:
+    # the per-case distances are machine-dependent floats that are never re-run here,
+    # so a report that keeps an all-green summary while gutting/forging its per-case
+    # physics evidence still satisfies this audit. Binding the MuJoCo numbers requires
+    # the CI build-provenance attestation (csg.verify_release: ATTESTED_TAGS); this
+    # audit is a consistency assertion against expected constants, not that proof.
+    _check(checks, "mujoco:assertion_scope", True,
+           "MuJoCo gold/randomized/comparison evidence is ASSERTED against expected all-green "
+           "constants here, NOT independently verified (per-case physics floats are not re-run); "
+           "binding the physics numbers requires the CI attestation in csg.verify_release")
     _audit_comparison_dir(checks, Path(comparison_dir), require_git_provenance=require_final_metadata)
     _audit_invalid_dir(checks, Path(invalid_fixtures_dir), require_git_provenance=require_final_metadata)
     if require_final_metadata:
