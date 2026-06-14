@@ -14,8 +14,11 @@ the terminal drawer extension, **PASSes** them leakage-clean with `physicalValid
 null`. A deliberate **reproducibility rerun** (3 fresh demos × bottom/middle/top = 9)
 makes Result B a **9/9 strong result** (value-only PASS 9/9, gold FAIL-leakage-clean 9/9,
 off-task-clean 9/9), committed under `fixtures/live_runpod_20260614_rerun/` and
-reproducible without RLBench. Contact/event/temporal semantics are deliberately deferred
-to a later target.
+reproducible without RLBench. **Result C** then answers the reviewer's natural follow-up
+— *is the value-only target too permissive?* — with a mutation/negative suite
+(`tests/test_rlbench_mutations.py`): mutated-kinematics traces, mis-calibrated targets,
+and leaky traces all FAIL or are rejected, while the real traces still PASS.
+Contact/event/temporal semantics are deliberately deferred to a later target.
 
 **Scope: deliberately very narrow.** One RLBench task (`open_drawer`), a handful of
 its demonstrations, fed through the **frozen** csg verifier. This is a feasibility
@@ -86,6 +89,7 @@ is the point — it forecloses "you adapted the verifier to fit RLBench".
 | `pilots/rlbench/fixtures/live_runpod_20260614_rerun/*.rollout.json` | the **nine** committed fresh demos (3× bottom/middle/top) backing the reproducibility result | **real** (9/9 value-only PASS, gold FAIL-leakage-clean, off-task-clean) |
 | `pilots/rlbench/targets/open_drawer_rlbench_value_only.json` | value-only diagnostic target: keeps the drawer + hard `ARTICULATION_GOAL` (`targetJointValue 0.234`), drops contacts/events/temporal/object-states | **real** (PASSes the live demos; not a gold task) |
 | `tests/test_rlbench_pilot.py` | seam + hardened-leakage + converter + confusion + live-evidence (A/B) + 9/9 rerun tests, no RLBench needed | **green** (73 passed, 3 live-only skipped) |
+| `tests/test_rlbench_mutations.py` | Result C: value-only negative/mutation suite over the 9 rerun demos — positive 9/9, preserved gold-FAIL 9/9, off-task-clean 9/9, kinematic mutations FAIL, leakage mutations rejected, target-calibration negative | **green** (39 passed, no RLBench needed) |
 
 Run the seam **and** the confusion today, with no RLBench installed:
 
@@ -104,6 +108,9 @@ Locally reproducible verification for the offline pilot boundary:
 ```bash
 python3 -m pytest tests/test_rlbench_pilot.py -q
 # 73 passed, 3 skipped
+
+python3 -m pytest tests/test_rlbench_mutations.py -q
+# 39 passed  (Result C — value-only negative/mutation suite)
 
 python3 -m pilots.rlbench.run_external \
   --target gold_tests/open_drawer/target.json \
@@ -245,6 +252,35 @@ independently-planned RLBench demos the calibrated terminal value holds to ~1.6 
 the gold target stays a leakage-clean FAIL. The stricter articulation-event target is
 the deferred next step.
 
+### Result C — mutation / negative suite (is value-only too permissive?)
+
+A 9/9 PASS invites the obvious challenge: *maybe the value-only target accepts
+everything.* Result C answers it executably. `tests/test_rlbench_mutations.py` runs the
+**same frozen verifier** over the committed 9-demo rerun and mutates the inputs to prove
+the calibration is load-bearing — every mutation lives in `pilots/` inputs + test memory,
+`csg/` is untouched, and the whole suite runs with **no** RLBench installed:
+
+| # | Claim | What the suite proves |
+|---|---|---|
+| **A** | gold target rejects RLBench traces | **9/9** leakage-clean FAIL (`event_order`, `goal_satisfaction`) — per fresh demo, not just the rerun rollup |
+| **B** | value-only target accepts real traces | **9/9** PASS, leakage-clean, `physicalValidity: null`, `goal_satisfaction` support 1, deferred probes support 0 (non-vacuous) |
+| **C** | mutated bad traces / targets FAIL | a leakage-clean trace whose terminal articulation is moved below the window (`0.18`), above it (`0.30`), flat-never-opens (`0.0`), or opened-then-closed (peak `0.235`, terminal `0`) FAILs `goal_satisfaction`; a value-only target retargeted to `0.18 m` FAILs all 9 |
+| **D** | leaky traces are rejected before matcher success | `targetCsg` / `plannerView` / non-neutral `objectIdMap` / non-neutral per-frame `articulation` key / non-whitelisted body field each raise `ExternalTraceLeakage` at the rollout gate **and** through `verify_external_rollout` / `external_confusion_report`, before the matcher can return PASS |
+| **E** | `csg/` remains frozen | `git diff --name-only -- csg` → no output |
+
+The kinematic mutations rewrite **only** float articulation values (so the mutated trace
+stays leakage-clean and the FAIL is a genuine matcher verdict, not a gate rejection), and
+the boundary mutations (`0.18`, `0.30`) are calibrated to the enforced window
+`0.234 ± 0.05 m` — pinned in the suite so a future `MatcherConfig` widening that turned
+them into false PASSes fails at the constant it depends on. Together: real traces PASS,
+*wrong* traces FAIL, *leaky* traces are refused, and a *mis-calibrated* target FAILs — the
+value-only acceptance is the RLBench calibration, not permissiveness.
+
+```bash
+python3 -m pytest tests/test_rlbench_mutations.py -q
+# 39 passed
+```
+
 ## Leakage contract for external traces (the heart of the pilot)
 
 `csg/rollout_schema.md` defines the information-flow contract: the rollout is the
@@ -328,7 +364,12 @@ line in `roadmap.md`. The failure modes are as informative as the success.
    the three live rollouts are promoted to `pilots/rlbench/fixtures/live_runpod_20260614/`
    and `pilots/rlbench/targets/open_drawer_rlbench_value_only.json` PASSes them, all
    without changing `csg/`.
-7. ⏳ **Follow-on: articulation-event target** — author
+7. ✅ **Mutation / negative suite (Result C)** — `tests/test_rlbench_mutations.py` proves
+   the value-only calibration is not too permissive: real traces PASS 9/9, the gold target
+   FAILs 9/9 leakage-clean, kinematically-wrong (leakage-clean) traces FAIL
+   `goal_satisfaction`, a mis-calibrated target FAILs, and leaky traces are rejected before
+   the matcher can PASS — all with `csg/` frozen.
+8. ⏳ **Follow-on: articulation-event target** — author
    `open_drawer_rlbench_articulation_event.json` adding a minimal `ARTICULATION_CHANGE`
    event (closed/near-zero → ≈`0.234 m`), still **without** `CONTACT_BEGIN`, overlap/
    handle-contact claims, or strict event order until the adapter has an honest RLBench
