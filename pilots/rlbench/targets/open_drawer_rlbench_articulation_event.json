@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "rlbench_open_drawer_articulation_event",
+  "taskCaption": "drawer goes from near-closed to RLBench-calibrated open (articulation-event diagnostic)",
+  "objects": [
+    {"objectId": "h_drawer", "categoryLabel": "drawer", "categoryConfidence": 0.9, "physicalKind": "ARTICULATED_OBJECT", "geometry": {"source": "FROM_MULTIVIEW_RECONSTRUCTION", "orientedBox": {"sizeM": {"x": 0.40, "y": 0.30, "z": 0.15}}}, "parts": [{"partId": "p1", "kind": "HANDLE"}]}
+  ],
+  "agentParts": [{"agentPartId": "right_hand", "partKind": "RIGHT_HAND"}],
+  "objectStates": [
+    {"stateId": "d0", "objectId": "h_drawer", "timeNs": "0", "articulation": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "jointValue": 0.0, "valueKind": "EXTENSION_M", "confidence": 0.9}, "confidence": 0.9},
+    {"stateId": "d1", "objectId": "h_drawer", "timeNs": "3000000000", "articulation": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "jointValue": 0.234, "valueKind": "EXTENSION_M", "confidence": 0.9}, "confidence": 0.9}
+  ],
+  "events": [
+    {"eventId": "e1", "eventKind": "ARTICULATION_CHANGE", "timeSpan": {"startTimeNs": "500000000", "endTimeNs": "3000000000"}, "involvedObjectIds": ["h_drawer"], "observedDeltas": [{"objectId": "h_drawer", "confidence": 0.9, "articulationTransition": {"articulatedObjectId": "h_drawer", "fromState": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "jointValue": 0.0, "valueKind": "EXTENSION_M"}, "toState": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "jointValue": 0.234, "valueKind": "EXTENSION_M"}}}], "confidence": 0.9}
+  ],
+  "plannerView": {
+    "bodies": [{"objectId": "h_drawer", "mobility": "ARTICULATED"}],
+    "stages": [{"stageId": "s1", "goalConstraints": [{"constraintId": "g1", "kind": "ARTICULATION_GOAL", "hard": true, "confidence": 0.9, "articulation": {"articulatedObjectId": "h_drawer", "jointKind": "PRISMATIC", "targetJointValue": 0.234, "valueKind": "EXTENSION_M"}}], "confidence": 0.9}]
+  },
+  "pilotMetadata": {
+    "diagnostic": "articulation-event",
+    "tests": "drawer articulation goes from near-zero (0.0) to the RLBench-calibrated extension (0.234 m): one hard ARTICULATION_GOAL (goal_satisfaction), one ARTICULATION_CHANGE event (event_presence), and the 0.0->0.234 articulation transition (articulation_transitions). One step beyond the value-only target: it asserts the drawer STARTED closed and CHANGED, not only its terminal value.",
+    "addedOverValueOnly": ["objectStates(initial 0.0 + terminal 0.234)", "ARTICULATION_CHANGE event", "articulationTransition 0.0->0.234"],
+    "deferred": ["contacts", "CONTACT_BEGIN", "handle contact", "temporalEdges", "contact-before-motion order", "path constraints"],
+    "deferredNote": "Deliberately NO contact, handle-contact, CONTACT_BEGIN event, temporal edge, or strict contact-before-motion order. The single ARTICULATION_CHANGE event carries event_presence + articulation_transitions support but ZERO event-order pair support (there is no second event to order against), so event_order stays vacuous. The adapter has no honest RLBench evidence for who/what caused the motion; asserting contact or order would be unevidenced. Those remain a later target (2F-3+).",
+    "source": "RLBench OpenDrawer (bottom/middle/top), live Runpod rerun 2026-06-14; terminal extension min 0.2347 / mean 0.2356 / max 0.2362 m across 9 fresh demos. See pilots/rlbench/fixtures/live_runpod_20260614_rerun/.",
+    "articulationToleranceM": 0.03,
+    "toleranceNote": "Intended/documentary only and NOT read by the verifier. The FROZEN matcher enforces a single global MatcherConfig.articulation_tol (0.05 m), not this per-target field; the initial 0.0 and terminal 0.234 are both well clear of the 0.05 m window so the transition registers and the goal is met. csg.canon ignores unknown top-level keys, so this block never enters any probe.",
+    "notAGoldTask": "Pilot diagnostic, deliberately NOT added to gold_tests/. It asserts the drawer started near-closed, underwent an articulation change, and reached the calibrated extension; it does NOT assert the agent contacted or caused the motion. Read it for articulation-event mappability, not as a full open_drawer acceptance test."
+  }
+}

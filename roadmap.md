@@ -287,7 +287,7 @@ quotient equivalence (`KNOWN_EQUIVALENT_TASKS`, `tests/test_confusion.py`).
 | --- | --- | --- |
 | **1** | Lock the problem | ✅ **DONE** |
 | **2** | No-hardware proof | 🟡 **2A/2B/2D done; 2C covers all five V0 gold tasks in MuJoCo with real validity verdicts; 2E shipped as the public v0.3.x sim-only benchmark release (randomized reports, invalid fixtures, failure taxonomy, baseline comparison, release hygiene, hardened `csg.verify_release`). One item open: MuJoCo physics is self-attested on the laptop-cut tags (`evidence.complete=false`/exit 1) until a CI-attested release lands.** |
-| **2F** | External trace verification | 🟡 **RLBench OpenDrawer value-only target is a 9/9 positive result; gold target rejects the same traces 9/9 leakage-clean; a mutation/negative suite proves the calibration is not too permissive. Next: articulation-event target, then external object-inside-container.** |
+| **2F** | External trace verification | 🟡 **RLBench OpenDrawer value-only target is a 9/9 positive result; gold target rejects the same traces 9/9 leakage-clean; a mutation/negative suite proves the calibration is not too permissive; an articulation-event target adds the started-closed-and-changed semantics (9/9, strictly stronger than value-only). Next: external object-inside-container.** |
 | **3A** | Real-camera episode ingestion (video → rollout evidence) | ⬜ pending |
 | **3B** | Human-demo compiler (video → target CSG) | ⬜ pending, after 3A |
 | **4** | Cross-source flagship task | ⬜ pending: object_inside_container across MuJoCo + external sim + Sony/tripod |
@@ -486,7 +486,7 @@ targets, and keeps core `csg/` unchanged.
 | --- | --- | --- |
 | **2F-1** | RLBench OpenDrawer value-only result | ✅ 9/9 fresh demos PASS the calibrated value-only target; the original gold target FAILs 9/9 leakage-clean; artifacts and docs preserve both results. |
 | **2F-2** | RLBench mutation/negative suite | ✅ `tests/test_rlbench_mutations.py` (39 tests, no RLBench): real traces PASS 9/9, gold FAILs 9/9 leakage-clean, off-task confusion clean 9/9, kinematically-wrong (leakage-clean) traces FAIL `goal_satisfaction`, a mis-calibrated `0.18 m` target FAILs all 9, and leaky traces are rejected before matcher success — `csg/` frozen. Answers "is value-only too permissive?" — no. |
-| **2F-3** | RLBench articulation-event target | ⬜ Add only evidence RLBench can honestly support: low initial articulation, high terminal articulation, and an `ARTICULATION_CHANGE` event. Do **not** add handle contact or strict contact-before-motion order until independently evidenced. |
+| **2F-3** | RLBench articulation-event target | ✅ `open_drawer_rlbench_articulation_event.json` + `tests/test_rlbench_articulation_event.py` (23 tests): adds low initial articulation (`0.0`), high terminal (`0.234`), and one `ARTICULATION_CHANGE` event — `goal_satisfaction`/`articulation_transitions`/`event_presence` support 1, `event_order` support 0. PASSes 9/9 non-vacuously, strictly stronger than value-only (a "born-open" drawer FAILs it); no handle contact or contact-before-motion order. `csg/` frozen. |
 | **2F-4** | External object-inside-container task | ⬜ Add RLBench/ManiSkill container-task evidence for the flagship task card. External successes PASS; corruptions/failures FAIL; leakage stays clean. |
 | **2F-5** | External confusion + leakage report | ⬜ A compact report shows positives, negatives, off-task confusion, leak rejection, `physicalValidity: null`, and unchanged `csg/`. |
 
