@@ -33,6 +33,14 @@ classifiers = [
 sim = ["mujoco>=3.9,<3.10"]
 # Test/dev tooling. Opt-in only — the runtime package stays dependency-free.
 dev = ["pytest"]
+# RLBench external-trace pilot (pilots/rlbench/, OUTSIDE the csg package). RLBench
+# and PyRep are not on PyPI and need a CoppeliaSim install, so they are documented
+# here as the pilot's external requirements rather than pinned wheels — install per
+# https://github.com/stepjam/RLBench (PyRep first, then RLBench). numpy is the only
+# PyPI piece the adapter's array handling needs; it must never be imported by csg/.
+# The rollout-assembly + verifier seam (pilots/rlbench/, tests/test_rlbench_pilot.py)
+# runs with NONE of these installed — only live RLBench demo ingest requires them.
+rlbench = ["numpy>=1.24"]
 
 [project.scripts]
 csg-benchmark = "csg.benchmark:main"

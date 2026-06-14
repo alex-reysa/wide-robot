@@ -1,0 +1,31 @@
+{
+  "demosPerVariation": 1,
+  "outputs": [
+    {
+      "demoIndex": 0,
+      "rollout": "pilots/rlbench/_out/live_runpod_20260614/open_drawer_bottom_demo00.rollout.json",
+      "summary": "pilots/rlbench/_out/live_runpod_20260614/open_drawer_bottom_demo00.summary.json",
+      "variation": "bottom"
+    },
+    {
+      "demoIndex": 0,
+      "rollout": "pilots/rlbench/_out/live_runpod_20260614/open_drawer_middle_demo00.rollout.json",
+      "summary": "pilots/rlbench/_out/live_runpod_20260614/open_drawer_middle_demo00.summary.json",
+      "variation": "middle"
+    },
+    {
+      "demoIndex": 0,
+      "rollout": "pilots/rlbench/_out/live_runpod_20260614/open_drawer_top_demo00.rollout.json",
+      "summary": "pilots/rlbench/_out/live_runpod_20260614/open_drawer_top_demo00.summary.json",
+      "variation": "top"
+    }
+  ],
+  "schemaVersion": "csg.rlbench_pilot_run.v0",
+  "task": "open_drawer",
+  "variations": [
+    "bottom",
+    "middle",
+    "top"
+  ],
+  "verified": true
+}

@@ -4,6 +4,12 @@
 venv/
 env/
 
+# Local secrets / environment files — never commit (e.g. RUNPOD_API_KEY in .env).
+# Note: `env/` above only matches a directory; a bare `.env` file needs its own rule.
+.env
+.env.*
+!.env.example
+
 # Python caches and test output
 __pycache__/
 *.py[cod]
@@ -24,6 +30,13 @@ dist/
 *.egg-info/
 phase2e_release/
 phase2e_release_out/
+
+# RLBench external-trace pilot: live demos + generated rollouts/sidecars.
+# The small synthetic fixture (pilots/rlbench/fixtures/*.rollout.json) stays committed;
+# only the live recorder's outputs are ignored (pilots/rlbench/_out already matches
+# *_out/ above; listed explicitly here alongside the recorded-demo directory).
+pilots/rlbench/_out/
+pilots/rlbench/_demos/
 
 # MuJoCo / local logs
 MUJOCO_LOG.TXT

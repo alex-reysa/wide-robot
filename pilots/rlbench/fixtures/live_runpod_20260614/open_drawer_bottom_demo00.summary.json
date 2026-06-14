@@ -1,0 +1,48 @@
+{
+  "controlRateHz": 20.0,
+  "demoIndex": 0,
+  "note": "RLBench/CoppeliaSim identities (handles, variation, task) are recorded here for provenance and are deliberately absent from the rollout.",
+  "numFrames": 100,
+  "quarantinedHandles": {
+    "anchor": "waypoint_anchor_bottom",
+    "frame": "drawer_frame",
+    "joint": "drawer_joint_bottom"
+  },
+  "schemaVersion": "csg.rlbench_pilot_summary.v0",
+  "task": "open_drawer",
+  "variation": "bottom",
+  "verification": {
+    "confusion": {
+      "confusionClean": false,
+      "expectedCase": "open_drawer",
+      "expectedCasePresent": true,
+      "expectedPass": [
+        "open_drawer"
+      ],
+      "knownEquivalentTasks": [
+        [
+          "insert_object",
+          "put_cube_in_tray"
+        ]
+      ],
+      "missedExpected": "open_drawer",
+      "passes": [],
+      "results": {
+        "insert_object": false,
+        "open_drawer": false,
+        "place_on_top": false,
+        "push_object": false,
+        "put_cube_in_tray": false
+      },
+      "unexpectedOffTaskPasses": []
+    },
+    "hardMismatches": [
+      "event_order",
+      "goal_satisfaction"
+    ],
+    "leakageClean": true,
+    "matcherPassed": false,
+    "passed": false,
+    "physicalValidity": null
+  }
+}
