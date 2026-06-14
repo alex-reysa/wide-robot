@@ -209,7 +209,7 @@ quotient equivalence (`KNOWN_EQUIVALENT_TASKS`, `tests/test_confusion.py`).
 | Phase | Title | Status |
 | --- | --- | --- |
 | **1** | Lock the problem | ✅ **DONE** |
-| **2** | No-hardware proof | 🟡 **2A/2B/2D done; 2C covers all five V0 gold tasks in MuJoCo with real validity verdicts; 2E has randomized reports, invalid fixtures, failure taxonomy, and baseline comparison; release hygiene remains** |
+| **2** | No-hardware proof | 🟡 **2A/2B/2D done; 2C covers all five V0 gold tasks in MuJoCo with real validity verdicts; 2E shipped as the public v0.3.x sim-only benchmark release (randomized reports, invalid fixtures, failure taxonomy, baseline comparison, release hygiene, hardened `csg.verify_release`). One item open: MuJoCo physics is self-attested on the laptop-cut tags (`evidence.complete=false`/exit 1) until a CI-attested release lands.** |
 | **3** | Cheap perception (video → target CSG) | ⬜ pending |
 | **4** | DK1 data campaign | ⬜ pending (hardware-gated, 24 h access) |
 | **5** | DK1 control adapter | ⬜ pending |
@@ -233,7 +233,7 @@ photorealism.
 | **2B** | Symbolic harness (Level-0 backend: plumbing proof, physics-unverified by contract) | ✅ **DONE** |
 | **2C** | **MuJoCo arm backend** — MJCF scene from `to_sim`, arm + parallel-jaw gripper, scripted controller per skill, real `physicalValidity` verdict per `csg/validity.md` | 🟡 **all five V0 gold tasks covered** (`csg/backends/mujoco/`): hand-written 6-DoF arm + parallel-jaw gripper, scripted controllers, `csg.rollout.v0` frames, matcher PASS, leakage clean, `physicalValidity: true` in gated tests/benchmark. Seeded 30-rollout/task benchmark command now passes with sampled layouts for every V0 task, including x-shifted push starts. |
 | **2D** | Task fixtures with failure variants (success / wrong relation / wrong order / missing contact / extra step / leakage attempt) | ✅ symbolic set done for all 5 tasks; ✅ frozen MuJoCo invalid fixtures cover all six physical-validity checks plus semantic verifier failures for push contact missing, wrong relation, and wrong event order |
-| **2E** | **Credible sim-only benchmark package** — randomized MuJoCo trials, invalid-physics fixtures, failure taxonomy reports, baseline solver comparisons, reproducible release hygiene | 🟡 **minimal public release in progress**: randomized reports, invalid fixtures, failure taxonomy, source provenance, release audit/rehearsal, MIT metadata, and symbolic/no-op/MuJoCo comparison exist; final artifact regeneration and tagging complete the release |
+| **2E** | **Credible sim-only benchmark package** — randomized MuJoCo trials, invalid-physics fixtures, failure taxonomy reports, baseline solver comparisons, reproducible release hygiene | ✅ **shipped** as the public sim-only benchmark release (`v0.3.0` → `v0.3.2`): randomized reports, invalid fixtures, failure taxonomy, source provenance, release audit/rehearsal, MIT metadata, and symbolic/no-op/MuJoCo comparison are regenerated from a clean Git checkout, tagged, published, and validated by a hardened `csg.verify_release` (whole-tree distribution binding + deterministic-evidence re-derivation; see workstreams 2E-1…2E-8 below). **Caveat:** the MuJoCo physics floats are machine-dependent and *self-attested* on these laptop-cut tags — `verify_release` reports `evidence.complete=false` and exits 1 (a verified-but-not-fully-bound result, not a full verification) until a tag is cut via `.github/workflows/release.yml` and added to `ATTESTED_TAGS`. |
 
 2C deliverable, concretely:
 
@@ -270,10 +270,19 @@ hard-probe verification, leakage checks, physical-validity checks, randomized
 coverage, invalid-fixture diagnostics, failure taxonomy, and baseline
 comparison artifacts are packaged as a reproducible benchmark.
 
-Current status: the benchmark machinery, no-op expected-failure baseline, MIT
-license metadata, and release rehearsal are implemented. Phase 2E public
-release requires regenerating the report artifacts from the committed checkout
-and tagging the resulting minimal release.
+Current status: **shipped**. The benchmark machinery, no-op expected-failure
+baseline, MIT license metadata, and release rehearsal are implemented, and the
+report artifacts have been regenerated from a committed clean checkout and
+published as the tagged `v0.3.x` release (latest `v0.3.2`), validated against the
+tagged source by `csg.verify_release`. One item remains before the endpoint is
+*fully bound*: the machine-dependent MuJoCo physics floats are self-attested on
+the laptop-cut tags, so `verify_release` reports `evidence.complete=false` and
+exits 1 (not a full verification); cutting a release through
+`.github/workflows/release.yml` and adding the tag to `ATTESTED_TAGS` closes that.
+The immediate next research step is a very narrow **RLBench external-trace pilot**
+(see `docs/rlbench_external_trace_pilot.md`): feed external demonstration traces
+through the *frozen* verifier to test whether the leakage-clean discipline holds
+on traces csg's own solver did not produce.
 
 Acceptance bar for calling Phase 2E done:
 

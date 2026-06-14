@@ -1,8 +1,12 @@
 # Phase 2E Sim-Only Benchmark Report Draft
 
-Status: release report for the minimal public Phase 2E benchmark. Final
-release artifacts are regenerated from a committed Git checkout so JSON
-reports carry commit-backed provenance.
+Status: **published** as the `v0.3.x` public sim-only benchmark release (latest
+`v0.3.2`). Release artifacts are regenerated from a committed Git checkout so the
+JSON reports carry commit-backed provenance, and the published release is
+validated against the tagged source by `csg.verify_release`. The MuJoCo physics
+floats are machine-dependent and self-attested on the laptop-cut tags, so the
+verifier reports `evidence.complete=false` and exits 1 (verified-but-not-fully-bound)
+until a CI-attested release is cut.
 
 ## Claim Boundary
 

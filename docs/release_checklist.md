@@ -1,7 +1,10 @@
 # Sim-Only Benchmark Release Checklist
 
-This project is not ready for a public Phase 2E release until every item below
-has current evidence from a clean checkout.
+Status: the public Phase 2E release is **shipped** (latest `v0.3.2`); every item
+below has current evidence from a clean checkout. This checklist is now the
+maintenance gate — re-run it before cutting any future tag. (A release is not
+considered *fully bound* until its MuJoCo physics is CI-attested: a laptop-cut tag
+verifies as `evidence.complete=false`/exit 1 until added to `ATTESTED_TAGS`.)
 
 ## Required Metadata
 
