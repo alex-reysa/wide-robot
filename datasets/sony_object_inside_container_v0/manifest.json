@@ -1,0 +1,41 @@
+{
+  "datasetId": "sony_object_inside_container_v0",
+  "schemaVersion": "real_camera.dataset.v0",
+  "task": "object_inside_container",
+  "note": "Phase 3A real-camera evidence. Raw Sony/tripod video is NOT committed (gitignored); only derived JSON (calibration, tracks, rollouts) + this manifest are. These initial episodes are SYNTHETIC (hand-authored marker tracks, no real video) to exercise the tracks->rollout->verifier pipeline; real captures append entries with a real videoSha256. Targets: pilots/real_camera/targets/{object_inside_container_terminal_only,object_inside_container_relation_event}.json.",
+  "calibrations": [
+    "calibration/sony_table_v0.calibration.json"
+  ],
+  "episodes": [
+    {
+      "episodeId": "ep_success_01",
+      "kind": "success",
+      "rawVideo": {
+        "sha256": null,
+        "path": "raw_videos/ep_success_01.MP4 (NOT committed; gitignored)"
+      },
+      "calibration": "calibration/sony_table_v0.calibration.json",
+      "tracks": "tracks/ep_success_01.tracks.json",
+      "rollout": "rollouts/ep_success_01.rollout.json",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      }
+    },
+    {
+      "episodeId": "ep_near_not_inside_01",
+      "kind": "near_not_inside",
+      "rawVideo": {
+        "sha256": null,
+        "path": "raw_videos/ep_near_not_inside_01.MP4 (NOT committed; gitignored)"
+      },
+      "calibration": "calibration/sony_table_v0.calibration.json",
+      "tracks": "tracks/ep_near_not_inside_01.tracks.json",
+      "rollout": "rollouts/ep_near_not_inside_01.rollout.json",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      }
+    }
+  ]
+}

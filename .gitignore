@@ -38,6 +38,16 @@ phase2e_release_out/
 pilots/rlbench/_out/
 pilots/rlbench/_demos/
 
+# Real-camera pilot (Phase 3A): raw Sony/tripod footage is NEVER committed — only small
+# derived JSON (calibration, tracks, rollouts, reports) + manifest.json with the raw
+# video's sha256 + path. Raw video lives under any raw_videos/ dir and matches by extension.
+datasets/**/raw_videos/
+*.MP4
+*.MOV
+*.mp4
+*.mov
+pilots/real_camera/_out/
+
 # MuJoCo / local logs
 MUJOCO_LOG.TXT
 *.log

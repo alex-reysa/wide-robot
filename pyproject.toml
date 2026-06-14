@@ -41,6 +41,15 @@ dev = ["pytest"]
 # The rollout-assembly + verifier seam (pilots/rlbench/, tests/test_rlbench_pilot.py)
 # runs with NONE of these installed — only live RLBench demo ingest requires them.
 rlbench = ["numpy>=1.24"]
+# Real-camera external-trace pilot (pilots/real_camera/, roadmap Phase 3A, OUTSIDE the
+# csg package). OpenCV (ArUco marker detection + solvePnP) and numpy are needed ONLY to
+# extract tracks from real video; neither may be imported by csg/. The headless wheel is
+# chosen so CI has no GUI/libGL dependency. Bounded (like the mujoco pin) so an ArUco API
+# shift cannot silently change marker geometry under recorded evidence. The
+# tracks->rollout->verifier seam (tracks_to_rollout, verify_episode, the synthetic
+# fixtures, tests/test_real_camera_*) runs with NEITHER installed — only live video ingest
+# (marker_tracker.ArucoDetector, video_to_tracks PnP path) requires them.
+camera = ["numpy>=1.24", "opencv-contrib-python-headless>=4.9,<5"]
 
 [project.scripts]
 csg-benchmark = "csg.benchmark:main"

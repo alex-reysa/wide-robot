@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "real_camera_object_inside_container_terminal_only",
+  "taskCaption": "cube ends up inside the tray (terminal-relation-only diagnostic)",
+  "objects": [
+    {"objectId": "h_cube", "categoryLabel": "cube", "categoryConfidence": 0.9, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_FIDUCIAL_AND_CAD", "orientedBox": {"sizeM": {"x": 0.04, "y": 0.04, "z": 0.04}}}},
+    {"objectId": "h_tray", "categoryLabel": "tray", "categoryConfidence": 0.9, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_FIDUCIAL_AND_PLANE", "orientedBox": {"sizeM": {"x": 0.24, "y": 0.18, "z": 0.03}}}}
+  ],
+  "agentParts": [],
+  "plannerView": {
+    "bodies": [{"objectId": "h_cube", "mobility": "MOVABLE"}, {"objectId": "h_tray", "mobility": "STATIC"}],
+    "stages": [{"stageId": "s1", "confidence": 0.9, "goalConstraints": [{"constraintId": "g1", "kind": "OBJECT_RELATION_GOAL", "hard": true, "confidence": 0.9, "relation": {"subjectObjectId": "h_cube", "objectObjectId": "h_tray", "desiredRelation": "INSIDE"}}]}]
+  },
+  "pilotMetadata": {
+    "diagnostic": "object-inside-container-terminal-only",
+    "tests": "Asserts, via the FROZEN matcher, ONLY that the cube's TERMINAL relation to the tray is INSIDE (one hard OBJECT_RELATION_GOAL -> goal_satisfaction). It does NOT require an initial NEAR state, a NEAR->INSIDE transition, a CONTAINMENT_CHANGE event, contact, hand, or temporal order. The camera analogue of the RLBench value-only target: it answers 'did the cube end inside?' and nothing more.",
+    "enforcedVsAuthoring": "ENFORCED: terminal INSIDE(cube,tray) only (goal_satisfaction reads the robot's terminal relation in csg.matcher._goal_satisfaction_distance). AUTHORING ONLY (not verifier-enforced): geometry source/category, confidences. A 'born-inside' episode (cube inside the whole time, but it MOVES so the extractor reports a terminal INSIDE) PASSes this target -- which is exactly why the strictly-stronger object_inside_container_relation_event target exists.",
+    "deferred": ["initial NEAR state", "NEAR->INSIDE transition", "CONTAINMENT_CHANGE event", "contacts", "CONTACT_BEGIN", "HAND_OBJECT_CO_MOTION", "RELEASE_INFERRED", "temporalEdges", "contact-before-motion order"],
+    "deferredNote": "Marker-only 3A has no honest evidence for who/what moved the cube; this target deliberately asserts the weakest honest claim (terminal containment) so the relation-event target can be shown strictly stronger.",
+    "source": "Sony/tripod object_inside_container_v0 capture; see datasets/sony_object_inside_container_v0/manifest.json",
+    "notAGoldTask": "Pilot diagnostic, deliberately NOT added to gold_tests/. Read it for terminal-containment mappability, not as a full object_inside_container acceptance test."
+  }
+}

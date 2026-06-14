@@ -1,0 +1,175 @@
+{
+  "schemaVersion": "real_camera.tracks.v0",
+  "episodeId": "ep_near_not_inside_01",
+  "videoSha256": null,
+  "calibrationHash": "246cfa06afbcadd0ab56f73796fec74db9287f4288b5488194491e9524add1e5",
+  "fps": 30.0,
+  "frameSize": [
+    1920,
+    1080
+  ],
+  "objects": [
+    {
+      "sourceRole": "cube",
+      "physicalKind": "RIGID_OBJECT",
+      "mobility": "MOVABLE",
+      "isContainer": false,
+      "sizeM": [
+        0.04,
+        0.04,
+        0.04
+      ],
+      "markerIds": [
+        7
+      ]
+    },
+    {
+      "sourceRole": "tray",
+      "physicalKind": "RIGID_OBJECT",
+      "mobility": "STATIC",
+      "isContainer": true,
+      "sizeM": [
+        0.24,
+        0.18,
+        0.03
+      ],
+      "markerIds": [
+        10
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "frameIndex": 0,
+      "timeS": 0.0,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.45999999999999996,
+            "y": 0.0,
+            "z": 0.05
+          },
+          "confidence": 0.95
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 1,
+      "timeS": 0.0333,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.45999999999999996,
+            "y": 0.0,
+            "z": 0.05
+          },
+          "confidence": 0.95
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 2,
+      "timeS": 0.0667,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.44499999999999995,
+            "y": 0.0,
+            "z": 0.05
+          },
+          "confidence": 0.95
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 3,
+      "timeS": 0.1,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.43,
+            "y": 0.0,
+            "z": 0.05
+          },
+          "confidence": 0.95
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 4,
+      "timeS": 0.1333,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.43,
+            "y": 0.0,
+            "z": 0.05
+          },
+          "confidence": 0.95
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 5,
+      "timeS": 0.1667,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.43,
+            "y": 0.0,
+            "z": 0.05
+          },
+          "confidence": 0.95
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    }
+  ]
+}
