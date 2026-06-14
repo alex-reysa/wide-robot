@@ -34,14 +34,17 @@ jobs:
           pip install ".[dev]"
       - name: Run non-MuJoCo test suite
         run: python -m pytest tests/ -q
-      - name: Exercise the release verifier end-to-end (real git archive / tar / snapshot + gh shim)
+      - name: Exercise the release verifier end-to-end (real git archive / tar / snapshot + gh shim + re-derivation)
         # F9: the flagship tool is driven over a release built from the live git
         # history — its git/tar/snapshot path and the gh download shim run on
-        # every push, not just offline hand-built fixtures.
+        # every push, not just offline hand-built fixtures. The re-derivation test
+        # actually re-runs the symbolic benchmarks from a git archive and proves a
+        # fabricated number diverges (Issue #1 regression).
         run: >-
           python -m pytest -q
           "tests/test_verify_release.py::test_end_to_end_against_a_real_git_repo"
           "tests/test_verify_release.py::test_download_release_assets_uses_fake_gh"
           "tests/test_verify_release.py::test_resolve_remote_tag_commit_with_fake_gh"
+          "tests/test_verify_release.py::test_rederive_evidence_matches_genuine_and_detects_tamper"
       - name: Symbolic gold benchmark (fails on any leakage / unexpected pass)
         run: python -m csg.benchmark gold_tests --confusion --require-pass

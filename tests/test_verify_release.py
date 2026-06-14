@@ -10,6 +10,7 @@ import io
 import json
 import os
 import subprocess
+import sys
 import tarfile
 import zipfile
 from pathlib import Path
@@ -204,6 +205,9 @@ def release(tmp_path):
 
 
 def _verify(release, **kw):
+    # The synthetic SRC_FILES tree has no gold_tests/, so evidence re-derivation
+    # (default-on) is exercised separately against the real repo; off by default here.
+    kw.setdefault("rederive", False)
     return vr.verify_release(
         "v9.9.9", asset_dir=str(release["assets"]), expected_commit=COMMIT,
         source_tree=str(release["source_tree"]), seeds=30, **kw,
@@ -365,7 +369,7 @@ def test_verify_release_detects_tampered_asset(release):
 def test_verify_release_detects_commit_mismatch(release):
     report = vr.verify_release(
         "v9.9.9", asset_dir=str(release["assets"]), expected_commit="b" * 40,
-        source_tree=str(release["source_tree"]), seeds=30,
+        source_tree=str(release["source_tree"]), seeds=30, rederive=False,
     )
     assert report["ok"] is False
     failed = {c["name"] for c in report["checks"] if not c["ok"]}
@@ -460,6 +464,9 @@ def _inject_source_tree(monkeypatch, source_tree):
         return Path(dest)
     monkeypatch.setattr(vr, "resolve_source_tree", fake)
     monkeypatch.setattr(vr, "resolve_tag_commit", lambda tag, **kw: COMMIT)
+    # The synthetic tree has no gold_tests/; re-derivation is covered by the real-repo
+    # integration test, so stub it to a no-op for these main()-driven CLI tests.
+    monkeypatch.setattr(vr, "rederive_evidence", lambda *a, **k: [])
 
 
 def test_main_returns_0_on_good_release(release, monkeypatch):
@@ -510,6 +517,33 @@ def test_main_returns_3_when_tag_unresolved(release, monkeypatch):
     def boom(tag, **kw):
         raise vr.VerifyReleaseError("could not resolve commit for tag")
     monkeypatch.setattr(vr, "resolve_tag_commit", boom)
+    rc = vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download"])
+    assert rc == 3
+
+
+def test_setup_permission_error_is_exit_3(release, monkeypatch):
+    # Issue #2: an unwritable working directory is an *environment* failure (exit 3),
+    # NOT "the release is bad/forged" (exit 2). The FS setup is wrapped so the OSError
+    # becomes a VerifyReleaseError.
+    _inject_source_tree(monkeypatch, release["source_tree"])
+
+    def boom(*a, **k):
+        raise PermissionError("read-only filesystem")
+
+    monkeypatch.setattr(vr.tempfile, "TemporaryDirectory", boom)
+    rc = vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download"])
+    assert rc == 3
+
+
+def test_main_oserror_backstop_is_3_not_2(release, monkeypatch):
+    # Defense in depth: any OSError that escapes verify_release through an *unwrapped*
+    # path must still classify as environment (3), never content (2).
+    _inject_source_tree(monkeypatch, release["source_tree"])
+
+    def boom(*a, **k):
+        raise OSError("device error")
+
+    monkeypatch.setattr(vr, "find_report_tarballs", boom)
     rc = vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download"])
     assert rc == 3
 
@@ -589,14 +623,14 @@ def test_end_to_end_against_a_real_git_repo(tmp_path, monkeypatch):
                 rm.build_manifest(tag="vtest", commit=commit, asset_dir=assets,
                                   reports_root=reports, version="9.9.9", seeds=30))
 
-    report = vr.verify_release("vtest", asset_dir=str(assets), download=False, seeds=30, cwd=str(repo))
+    report = vr.verify_release("vtest", asset_dir=str(assets), download=False, seeds=30, cwd=str(repo), rederive=False)
     assert report["ok"] is True, [c for c in report["checks"] if not c["ok"]]
     assert report["expectedCommit"] == commit
 
     # Drive the actual CLI entrypoint (main) against the real release: this is
     # the flagship tool, exercised end to end (no git-layer monkeypatching).
     monkeypatch.chdir(repo)
-    rc = vr.main(["--tag", "vtest", "--asset-dir", str(assets), "--no-download"])
+    rc = vr.main(["--tag", "vtest", "--asset-dir", str(assets), "--no-download", "--no-rederive"])
     assert rc == 0
 
     # A trojan in the committed-vs-distributed source is caught end to end.
@@ -606,7 +640,7 @@ def test_end_to_end_against_a_real_git_repo(tmp_path, monkeypatch):
     _write_json(assets / "release_manifest.json",
                 rm.build_manifest(tag="vtest", commit=commit, asset_dir=assets,
                                   reports_root=reports, version="9.9.9", seeds=30))
-    report = vr.verify_release("vtest", asset_dir=str(assets), download=False, seeds=30, cwd=str(repo))
+    report = vr.verify_release("vtest", asset_dir=str(assets), download=False, seeds=30, cwd=str(repo), rederive=False)
     assert report["ok"] is False
 
 
@@ -747,6 +781,208 @@ def test_known_tag_commit_pin_catches_forged_tag(release, monkeypatch):
     )
     assert report["expectedCommit"] == COMMIT  # uses the pin, not the forged tag
     assert any(c["name"] == "identity:tag_commit" and not c["ok"] for c in report["checks"])
+
+
+# ---------------------------------------------------------------------------
+# Evidence re-derivation (Issue #1: bind the published *numbers*, not just source)
+# ---------------------------------------------------------------------------
+
+
+def _symbolic_report(*, passed=5, total=5, case_status="PASS", distance=0.1, outdir="/abs/x"):
+    """A minimal symbolic report.json varying only the fields the projection should
+    ignore (distance/outDir/target) or catch (passed/status)."""
+    return {
+        "schemaVersion": "csg.benchmark_report.v2",
+        "summary": {"total": total, "passed": passed, "failed": total - passed,
+                    "failureClassification": {"passed": passed},
+                    "physicalValidity": {"unverified": total},
+                    "leakage": {"clean": total, "dirty": 0}},
+        "confusion": {"knownEquivalentTasks": [], "matrix": {}, "missedDiagonal": [],
+                      "offDiagonalPasses": [], "unexpectedOffDiagonalPasses": []},
+        "randomized": {"enabled": False, "seeds": []},
+        "cases": [{"case": "insert_object", "baseCase": "insert_object", "seed": None,
+                   "status": case_status, "passed": case_status == "PASS",
+                   "leakageClean": True, "matcherPassed": True, "physicalValidity": None,
+                   "objectOrbitAmbiguous": False, "vacuous": False,
+                   "failureClassification": {"category": "passed"},
+                   "distance": distance, "outDir": outdir, "target": outdir + "/t.json"}],
+    }
+
+
+def test_evidence_projection_ignores_paths_and_floats(tmp_path):
+    (tmp_path / "a" / "symbolic").mkdir(parents=True)
+    (tmp_path / "b" / "symbolic").mkdir(parents=True)
+    (tmp_path / "a" / "symbolic" / "report.json").write_text(json.dumps(_symbolic_report(distance=0.1, outdir="/tmp/aaa")))
+    (tmp_path / "b" / "symbolic" / "report.json").write_text(json.dumps(_symbolic_report(distance=0.9, outdir="/var/bbb")))
+    assert vr._evidence_projection(tmp_path / "a")["symbolic"] == vr._evidence_projection(tmp_path / "b")["symbolic"]
+
+
+def test_evidence_projection_catches_status_flip(tmp_path):
+    (tmp_path / "a" / "symbolic").mkdir(parents=True)
+    (tmp_path / "b" / "symbolic").mkdir(parents=True)
+    (tmp_path / "a" / "symbolic" / "report.json").write_text(json.dumps(_symbolic_report(passed=5, case_status="PASS")))
+    (tmp_path / "b" / "symbolic" / "report.json").write_text(json.dumps(_symbolic_report(passed=4, case_status="FAIL")))
+    assert vr._evidence_projection(tmp_path / "a")["symbolic"] != vr._evidence_projection(tmp_path / "b")["symbolic"]
+
+
+def test_rederive_evidence_subprocess_failure_is_operational(tmp_path):
+    # No re-derivable benchmark can run from an empty tree → operational (exit 3),
+    # never a "release is bad" verdict.
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    with pytest.raises(vr.VerifyReleaseError):
+        vr.rederive_evidence(empty, tmp_path / "pub", tmp_path / "work", {"digest": "x"})
+
+
+def _have_real_repo():
+    root = Path(__file__).resolve().parents[1]
+    return all((root / p).is_dir() for p in (".git", "gold_tests", "gold_invalid"))
+
+
+@pytest.mark.skipif(not _have_real_repo(), reason="needs a git checkout with gold_tests/gold_invalid")
+def test_rederive_evidence_matches_genuine_and_detects_tamper(tmp_path):
+    # Issue #1 regression: genuine numbers (produced by actually running the tagged
+    # source) match re-derivation; a fabricated number diverges; and a wrong
+    # expected-snapshot (proof the right code ran) is an operational error.
+    repo_root = Path(__file__).resolve().parents[1]
+    commit = vr.resolve_tag_commit("HEAD", cwd=repo_root)
+    src = vr.resolve_source_tree(commit, tmp_path / "src", cwd=repo_root)
+    snap = vr.compute_source_snapshot(src)
+
+    published = tmp_path / "published"
+    vr._run_rederive_stages(sys.executable, src, published)  # a GENUINE run of the tagged source
+
+    ok_checks = vr.rederive_evidence(src, published, tmp_path / "work_ok", snap)
+    assert ok_checks and all(c["ok"] for c in ok_checks), [c for c in ok_checks if not c["ok"]]
+    assert {c["name"] for c in ok_checks} == {"rederive:symbolic", "rederive:comparison", "rederive:invalid_fixtures"}
+
+    # Fabricate a published symbolic number → divergence on that dir.
+    rep = published / "symbolic" / "report.json"
+    data = json.loads(rep.read_text())
+    data["summary"]["passed"] = 999
+    rep.write_text(json.dumps(data))
+    bad_checks = vr.rederive_evidence(src, published, tmp_path / "work_bad", snap)
+    assert any(c["name"] == "rederive:symbolic" and not c["ok"] for c in bad_checks)
+
+    # A wrong expected snapshot means the re-derivation could not be bound to the
+    # archive → operational error (exit 3), not a release verdict.
+    with pytest.raises(vr.VerifyReleaseError):
+        vr.rederive_evidence(src, published, tmp_path / "work_snap", {"digest": "deadbeef" * 8})
+
+
+# ---------------------------------------------------------------------------
+# CI attestation (Workstream C) — fail-closed semantics via a fake gh on PATH
+# ---------------------------------------------------------------------------
+
+
+def _fake_gh(bindir, *, exit_code=0, message="verified"):
+    bindir.mkdir(parents=True, exist_ok=True)
+    fake = bindir / "gh"
+    fake.write_text("#!/usr/bin/env bash\n" f"echo '{message}' >&2\n" f"exit {exit_code}\n")
+    fake.chmod(0o755)
+    return bindir
+
+
+def test_attestation_skipped_for_unflagged_tag(tmp_path):
+    # A tag not in ATTESTED_TAGS yields one loud 'skipped' note and makes no gh call.
+    checks = vr.verify_attestation(tmp_path, "v0.3.1", frozenset({"a.whl"}), repo=vr.CANONICAL_REPO)
+    assert len(checks) == 1
+    assert checks[0]["name"] == "attestation:skipped" and checks[0]["ok"] is True
+
+
+def test_attestation_passes_when_gh_verifies(tmp_path, monkeypatch):
+    (tmp_path / "csg-1.0.whl").write_bytes(b"x")
+    (tmp_path / "RELEASE_SHA256SUMS").write_bytes(b"y")
+    bindir = _fake_gh(tmp_path / "bin", exit_code=0)
+    monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
+    monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
+    present = frozenset({"csg-1.0.whl", "RELEASE_SHA256SUMS"})
+    checks = vr.verify_attestation(tmp_path, "v9.9.9", present, repo=vr.CANONICAL_REPO)
+    assert all(c["ok"] for c in checks)
+    assert {c["name"] for c in checks} == {"attestation:csg-1.0.whl", "attestation:RELEASE_SHA256SUMS"}
+
+
+def test_attestation_fails_closed_when_gh_rejects(tmp_path, monkeypatch):
+    (tmp_path / "csg-1.0.whl").write_bytes(b"x")
+    bindir = _fake_gh(tmp_path / "bin", exit_code=1, message="no attestation found")
+    monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
+    monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
+    checks = vr.verify_attestation(tmp_path, "v9.9.9", frozenset({"csg-1.0.whl"}), repo=vr.CANONICAL_REPO)
+    assert any(c["name"] == "attestation:csg-1.0.whl" and not c["ok"] for c in checks)
+
+
+def test_attestation_missing_gh_is_operational(tmp_path, monkeypatch):
+    (tmp_path / "csg-1.0.whl").write_bytes(b"x")
+    monkeypatch.setenv("PATH", str(tmp_path / "empty-nonexistent-bin"))
+    monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
+    with pytest.raises(vr.VerifyReleaseError, match="gh executable not found"):
+        vr.verify_attestation(tmp_path, "v9.9.9", frozenset({"csg-1.0.whl"}), repo=vr.CANONICAL_REPO)
+
+
+def test_verify_release_orchestration_enforces_attestation(release, monkeypatch):
+    # Wired end to end: an ATTESTED tag with a valid attestation passes; a rejected
+    # attestation fails the release (exit 2, fail-closed).
+    _inject_source_tree(monkeypatch, release["source_tree"])
+    monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
+    bindir = _fake_gh(release["tmp"] / "ghbin", exit_code=0)
+    monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
+    assert vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download"]) == 0
+
+    # gh cryptographically rejects → release-bad (exit 2, fail-closed).
+    _fake_gh(release["tmp"] / "ghbin", exit_code=1, message="verification failed")
+    assert vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download"]) == 2
+
+
+def test_attestation_offline_is_operational_exit_3(tmp_path, monkeypatch):
+    # An offline / transport failure (no refutation marker) must NOT brand a genuine
+    # release "bad" (exit 2); it is operational (exit 3). Regression guard for the
+    # exit-2/3 contract under attestation.
+    (tmp_path / "csg-1.0.whl").write_bytes(b"x")
+    bindir = _fake_gh(tmp_path / "bin", exit_code=1, message="failed to fetch attestations: connection refused")
+    monkeypatch.setenv("PATH", f"{bindir}{os.pathsep}{os.environ['PATH']}")
+    monkeypatch.setattr(vr, "ATTESTED_TAGS", frozenset({"v9.9.9"}))
+    with pytest.raises(vr.VerifyReleaseError, match="operational"):
+        vr.verify_attestation(tmp_path, "v9.9.9", frozenset({"csg-1.0.whl"}), repo=vr.CANONICAL_REPO)
+
+
+def test_evidence_coverage_surfaced_and_strict_fails_self_attested(release, monkeypatch):
+    # Issue #1 residual: a self-attested release must surface incomplete coverage, and
+    # --strict must turn it into a hard failure (exit 2) rather than a silent green pass.
+    _inject_source_tree(monkeypatch, release["source_tree"])
+    # Non-strict: passes, but evidence.complete is False and mujoco is self-attested.
+    report = vr.verify_release(
+        "v9.9.9", asset_dir=str(release["assets"]), expected_commit=COMMIT,
+        source_tree=str(release["source_tree"]), seeds=30, rederive=False,
+    )
+    assert report["ok"] is True
+    assert report["evidence"]["complete"] is False
+    assert report["evidence"]["mujocoCoverage"] == "self-attested"
+    # Strict: the same release fails because evidence is not fully bound.
+    strict = vr.verify_release(
+        "v9.9.9", asset_dir=str(release["assets"]), expected_commit=COMMIT,
+        source_tree=str(release["source_tree"]), seeds=30, rederive=False, strict=True,
+    )
+    assert strict["ok"] is False
+    assert any(c["name"] == "evidence:complete" and not c["ok"] for c in strict["checks"])
+    # CLI --strict → exit 2.
+    assert vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]), "--no-download", "--strict"]) == 2
+
+
+def test_no_attestation_and_no_rederive_flags(release, monkeypatch):
+    # Both opt-out flags are honoured and reflected in coverage (skipped layers are
+    # not silently treated as bound).
+    _inject_source_tree(monkeypatch, release["source_tree"])
+    rc = vr.main(["--tag", "v9.9.9", "--asset-dir", str(release["assets"]),
+                  "--no-download", "--no-attestation", "--no-rederive"])
+    assert rc == 0
+    report = vr.verify_release(
+        "v9.9.9", asset_dir=str(release["assets"]), expected_commit=COMMIT,
+        source_tree=str(release["source_tree"]), seeds=30, rederive=False, verify_attestations=False,
+    )
+    assert report["evidence"]["deterministicReDerived"] is False
+    assert report["evidence"]["complete"] is False
+    # --no-attestation means no attestation:skipped check is emitted at all.
+    assert not any(c["name"].startswith("attestation:") for c in report["checks"])
 
 
 # ---------------------------------------------------------------------------
