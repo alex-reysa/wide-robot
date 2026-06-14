@@ -292,8 +292,12 @@ run recorded bottom/middle/top demos and emitted leakage-clean rollouts with
 those traces: **(A)** the gold `open_drawer` target does **not** accept them
 (`event_order`, `goal_satisfaction`); **(B)** a value-only diagnostic target
 (`pilots/rlbench/targets/open_drawer_rlbench_value_only.json`), asserting only the
-terminal drawer extension, **PASSes** them leakage-clean and non-vacuously. Contact/
-event/temporal semantics are deferred; next is a follow-on articulation-event target.
+terminal drawer extension, **PASSes** them leakage-clean and non-vacuously. A deliberate
+reproducibility rerun (3 fresh demos × bottom/middle/top = 9, committed under
+`fixtures/live_runpod_20260614_rerun/` and aggregated by `summarize_reruns`) makes (B) a
+**9/9 strong result**: value-only PASS 9/9, gold FAIL-leakage-clean 9/9, off-task-clean
+9/9. Contact/event/temporal semantics are deferred; next is a follow-on
+articulation-event target.
 `csg/` stays byte-frozen.
 
 Acceptance bar for calling Phase 2E done:

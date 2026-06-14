@@ -45,6 +45,8 @@ _GOLD_DIR = _REPO / "gold_tests"
 # Committed live evidence (Runpod, 2026-06-14) + the value-only diagnostic target.
 _VALUE_ONLY_TARGET = _REPO / "pilots" / "rlbench" / "targets" / "open_drawer_rlbench_value_only.json"
 _LIVE_FIXTURE_DIR = _REPO / "pilots" / "rlbench" / "fixtures" / "live_runpod_20260614"
+# The deliberate reproducibility rerun: 3 fresh demos x bottom/middle/top = 9 traces.
+_RERUN_FIXTURE_DIR = _REPO / "pilots" / "rlbench" / "fixtures" / "live_runpod_20260614_rerun"
 _LIVE_VARIATIONS = ("bottom", "middle", "top")
 
 
@@ -736,6 +738,110 @@ def test_confusion_on_live_rlbench_is_off_task_clean_and_reproduces_sidecar(vari
     assert conf["confusionClean"] == recorded["confusionClean"]
     assert conf["missedExpected"] == recorded["missedExpected"]
     assert conf["unexpectedOffTaskPasses"] == recorded["unexpectedOffTaskPasses"]
+
+
+# ---------------------------------------------------------------------------
+# Multi-demo rerun rollup: reproducibility rates across a directory of rollouts
+# ---------------------------------------------------------------------------
+
+
+def test_summarize_reruns_on_committed_live_fixtures():
+    # The N-rollout rollup of the seam: across the committed live demos, value-only must
+    # PASS all, gold must FAIL-leakage-clean all, and none may match an off-task target.
+    # (On the 9-demo Runpod rerun this is the 9/9 strong-result check, run identically.)
+    from pilots.rlbench.summarize_reruns import discover_rollouts, summarize_reruns
+
+    paths = discover_rollouts(_LIVE_FIXTURE_DIR)
+    assert len(paths) == 3
+    summary = summarize_reruns(
+        paths,
+        gold_target=load_json(_TARGET), value_only_target=load_json(_VALUE_ONLY_TARGET),
+        gold_targets=load_gold_targets(_GOLD_DIR), expected_case="open_drawer",
+    )
+    assert summary["nRollouts"] == 3
+    assert summary["rates"]["valueOnlyPass"] == [3, 3]
+    assert summary["rates"]["goldFailLeakageClean"] == [3, 3]
+    assert summary["rates"]["offTaskClean"] == [3, 3]
+    assert summary["rates"]["leakageClean"] == [3, 3]
+    assert summary["strongResult"] is True
+
+
+def test_summarize_reruns_flags_a_leaky_rollout(tmp_path):
+    # Robustness: one poisoned demo (forbidden target-authoring key) must be recorded as
+    # leaky and drop the strong-result verdict, NOT crash the whole rollup. Two of three
+    # stay clean, so the denominators are still 3.
+    import json
+
+    from pilots.rlbench.summarize_reruns import discover_rollouts, summarize_reruns
+
+    for v in _LIVE_VARIATIONS:
+        roll = _live_rollout(v)
+        if v == "bottom":
+            roll["targetCsg"] = {"leaked": True}  # forbidden key → leakage gate trips
+        (tmp_path / f"open_drawer_{v}_demo00.rollout.json").write_text(json.dumps(roll))
+
+    summary = summarize_reruns(
+        discover_rollouts(tmp_path),
+        gold_target=load_json(_TARGET), value_only_target=load_json(_VALUE_ONLY_TARGET),
+        gold_targets=load_gold_targets(_GOLD_DIR), expected_case="open_drawer",
+    )
+    assert summary["strongResult"] is False
+    assert summary["rates"]["leakageClean"] == [2, 3]
+    assert summary["rates"]["valueOnlyPass"] == [2, 3]
+    leaky = next(r for r in summary["perRollout"] if "bottom" in r["rollout"])
+    assert leaky["leakageClean"] is False
+    assert leaky["error"] and "leakage" in leaky["error"]
+
+
+def test_summarize_reruns_not_strong_when_value_only_fails():
+    # The rollup cannot be fooled green by a mis-specified value-only slot: feeding the
+    # gold 0.18 target as the "value-only" target (which the 0.234 live demos do not
+    # satisfy) drops value-only PASS to 0/3 and the strong result to False.
+    from pilots.rlbench.summarize_reruns import discover_rollouts, summarize_reruns
+
+    summary = summarize_reruns(
+        discover_rollouts(_LIVE_FIXTURE_DIR),
+        gold_target=load_json(_TARGET), value_only_target=load_json(_TARGET),  # gold as "value-only"
+        gold_targets=load_gold_targets(_GOLD_DIR), expected_case="open_drawer",
+    )
+    assert summary["rates"]["valueOnlyPass"] == [0, 3]
+    assert summary["strongResult"] is False
+
+
+def test_committed_rerun_fixtures_are_a_9_of_9_strong_result():
+    # The headline reproducibility evidence: the deliberate 2026-06-14 rerun (3 fresh
+    # demos x bottom/middle/top, recorded live on Runpod) is committed so a clean clone
+    # reproduces it with NO RLBench. Across all 9 fresh, independently-planned demos the
+    # value-only target PASSes, the gold target FAILs leakage-clean, and none matches an
+    # off-task target — the strong result is reproducible, not one lucky trace.
+    from pilots.rlbench.summarize_reruns import discover_rollouts, summarize_reruns
+
+    paths = discover_rollouts(_RERUN_FIXTURE_DIR)
+    assert len(paths) == 9, [p.name for p in paths]
+    summary = summarize_reruns(
+        paths,
+        gold_target=load_json(_TARGET), value_only_target=load_json(_VALUE_ONLY_TARGET),
+        gold_targets=load_gold_targets(_GOLD_DIR), expected_case="open_drawer",
+    )
+    assert summary["rates"]["valueOnlyPass"] == [9, 9]
+    assert summary["rates"]["goldFailLeakageClean"] == [9, 9]
+    assert summary["rates"]["offTaskClean"] == [9, 9]
+    assert summary["rates"]["leakageClean"] == [9, 9]
+    assert summary["strongResult"] is True
+
+
+@pytest.mark.parametrize("variation", _LIVE_VARIATIONS)
+def test_committed_rerun_fixtures_are_leakage_clean_and_in_calibration(variation):
+    # Each fresh demo is leakage-clean, physics-unverified, and opens to within the
+    # value-only window (0.234 +/- 0.05 m) — the calibration the headline rests on.
+    for path in sorted(_RERUN_FIXTURE_DIR.glob(f"open_drawer_{variation}_demo*.rollout.json")):
+        rollout = load_json(path)
+        assert rollout["backend"] == "rlbench_external"
+        assert rollout["objectIdMap"] == {}
+        assert_rollout_leakage_clean(rollout)
+        assert rollout["diagnostics"]["physicalValidity"] is None
+        terminal = rollout["frames"][-1]["articulation"]["body_000"]
+        assert 0.184 <= terminal <= 0.284, (path.name, terminal)
 
 
 # ---------------------------------------------------------------------------

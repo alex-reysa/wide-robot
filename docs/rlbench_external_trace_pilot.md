@@ -11,7 +11,11 @@ rollouts. Two committed results now stand on those same traces (see "Live eviden
 (`event_order`, `goal_satisfaction`); **Result B** — a deliberately narrow *value-only*
 target (`pilots/rlbench/targets/open_drawer_rlbench_value_only.json`), which asserts only
 the terminal drawer extension, **PASSes** them leakage-clean with `physicalValidity:
-null`. Contact/event/temporal semantics are deliberately deferred to a later target.
+null`. A deliberate **reproducibility rerun** (3 fresh demos × bottom/middle/top = 9)
+makes Result B a **9/9 strong result** (value-only PASS 9/9, gold FAIL-leakage-clean 9/9,
+off-task-clean 9/9), committed under `fixtures/live_runpod_20260614_rerun/` and
+reproducible without RLBench. Contact/event/temporal semantics are deliberately deferred
+to a later target.
 
 **Scope: deliberately very narrow.** One RLBench task (`open_drawer`), a handful of
 its demonstrations, fed through the **frozen** csg verifier. This is a feasibility
@@ -76,10 +80,12 @@ is the point — it forecloses "you adapted the verifier to fit RLBench".
 | `pilots/rlbench/record_open_drawer.py` | record live RLBench `OpenDrawer` demos (3 variations), quarantine handle names, emit rollout + sidecar | **real** (lazy imports); **live record needs CoppeliaSim/PyRep/RLBench** |
 | `pilots/rlbench/run_external.py` · `verify_external_rollout` | run a rollout through the frozen verifier; same PASS criterion as `run_one` | **real, tested** |
 | `pilots/rlbench/run_external.py` · `external_confusion_report` | 1×N cross-task confusion: one external rollout vs every gold target | **real, tested** |
+| `pilots/rlbench/summarize_reruns.py` | N-rollout rollup: value-only PASS / gold FAIL-leakage-clean / off-task-clean rates + `strongResult` over a directory of rollouts | **real, tested** |
 | `pilots/rlbench/fixtures/synthetic_open_drawer.rollout.json` | committed external-shaped stand-in trace (leakage-clean: empty `objectIdMap`, neutral ids) | **real** (PASSes the verifier today) |
 | `pilots/rlbench/fixtures/live_runpod_20260614/*.rollout.json` | the three committed **real** RLBench `OpenDrawer` demos (bottom/middle/top) + provenance sidecars — so Results A/B reproduce without Runpod | **real** (leakage-clean; FAIL gold, PASS value-only) |
+| `pilots/rlbench/fixtures/live_runpod_20260614_rerun/*.rollout.json` | the **nine** committed fresh demos (3× bottom/middle/top) backing the reproducibility result | **real** (9/9 value-only PASS, gold FAIL-leakage-clean, off-task-clean) |
 | `pilots/rlbench/targets/open_drawer_rlbench_value_only.json` | value-only diagnostic target: keeps the drawer + hard `ARTICULATION_GOAL` (`targetJointValue 0.234`), drops contacts/events/temporal/object-states | **real** (PASSes the live demos; not a gold task) |
-| `tests/test_rlbench_pilot.py` | seam + hardened-leakage + converter + confusion + live-evidence (A/B) tests, no RLBench needed | **green** (66 passed, 3 live-only skipped) |
+| `tests/test_rlbench_pilot.py` | seam + hardened-leakage + converter + confusion + live-evidence (A/B) + 9/9 rerun tests, no RLBench needed | **green** (73 passed, 3 live-only skipped) |
 
 Run the seam **and** the confusion today, with no RLBench installed:
 
@@ -97,7 +103,7 @@ Locally reproducible verification for the offline pilot boundary:
 
 ```bash
 python3 -m pytest tests/test_rlbench_pilot.py -q
-# 66 passed, 3 skipped
+# 73 passed, 3 skipped
 
 python3 -m pilots.rlbench.run_external \
   --target gold_tests/open_drawer/target.json \
@@ -197,6 +203,47 @@ a pilot **diagnostic**, intentionally *not* added to `gold_tests/`.
 work and is out of scope. `csg.canon` ignores unknown top-level keys, so the metadata never
 enters any probe. All three demos PASS under the enforced `0.05 m` and also fall inside the
 tighter intended `0.03 m`.
+
+### Reproducibility rerun — 9/9 strong result (Runpod, 2026-06-14)
+
+One trace is an existence proof, not reproducibility. The deliberate rerun records
+**3 fresh demos per variation (9 total)** on a second Runpod pod (same RTX 4000 Ada /
+CoppeliaSim 4.1 / PyRep / RLBench 1.2 stack) and checks the rates hold across
+independently-planned demos. The recorder's `--verify` sidecar covers the gold verdict
+**and** the 1×N confusion; the value-only target is checked in the rollup:
+
+```bash
+python3 -m pilots.rlbench.record_open_drawer \
+  --variations bottom,middle,top --demos-per-variation 3 \
+  --out-dir pilots/rlbench/_out/live_runpod_20260614_rerun --verify
+```
+
+`summarize_reruns` aggregates every `*.rollout.json` in a directory three ways —
+value-only target (expect PASS), gold target (expect FAIL, leakage-clean), 1×N
+confusion (expect no off-task pass) — and reports `strongResult` only when **all** demos
+clear **all three**. A leaky demo is recorded as a failure, never a crash. The 9 fresh
+demos are committed under `pilots/rlbench/fixtures/live_runpod_20260614_rerun/`, so the
+result reproduces from a clean clone with **no** RLBench:
+
+```bash
+python3 -m pilots.rlbench.summarize_reruns \
+  --rollouts-dir pilots/rlbench/fixtures/live_runpod_20260614_rerun
+# rates: value-only PASS 9/9 | gold FAIL-leakage-clean 9/9 | off-task-clean 9/9 | leakage-clean 9/9
+# STRONG RESULT: YES
+```
+
+| Metric | Result across 9 fresh demos |
+|---|---|
+| value-only target → PASS | **9/9** |
+| gold target → FAIL (`event_order`, `goal_satisfaction`), leakage-clean | **9/9** |
+| off-task confusion → clean (no off-task match) | **9/9** |
+| leakage-clean, `physicalValidity: null` | **9/9** |
+| terminal drawer extension | min `0.2347` · mean `0.2356` · max `0.2362` m (all inside `0.234 ± 0.05`, and the tighter intended `0.03`) |
+
+So the value-only result is **reproducible**, not one lucky trace: across nine
+independently-planned RLBench demos the calibrated terminal value holds to ~1.6 mm and
+the gold target stays a leakage-clean FAIL. The stricter articulation-event target is
+the deferred next step.
 
 ## Leakage contract for external traces (the heart of the pilot)
 
