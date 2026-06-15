@@ -48,6 +48,16 @@ datasets/**/raw_videos/
 *.mov
 pilots/real_camera/_out/
 
+# RH20T external-source pilot (Phase 3A.5): raw media and extraction scratch are too
+# large/sensitive for git. Commit ONLY derived JSON (annotations, tracks, rollouts,
+# reports) + provenance hashes; raw archives, extracted trees, and frame dumps stay on
+# RunPod. (*.mp4/*.MP4 are already globally ignored above.)
+datasets/rh20t_object_inside_container_v0/raw/
+datasets/rh20t_object_inside_container_v0/frame_dumps/
+datasets/rh20t_object_inside_container_v0/extracted/
+datasets/rh20t_object_inside_container_v0/**/*.tar.gz
+datasets/rh20t_object_inside_container_v0/**/*.npy
+
 # MuJoCo / local logs
 MUJOCO_LOG.TXT
 *.log

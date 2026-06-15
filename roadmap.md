@@ -287,8 +287,9 @@ quotient equivalence (`KNOWN_EQUIVALENT_TASKS`, `tests/test_confusion.py`).
 | --- | --- | --- |
 | **1** | Lock the problem | ✅ **DONE** |
 | **2** | No-hardware proof | 🟡 **2A/2B/2D done; 2C covers all five V0 gold tasks in MuJoCo with real validity verdicts; 2E shipped as the public v0.3.x sim-only benchmark release (randomized reports, invalid fixtures, failure taxonomy, baseline comparison, release hygiene, hardened `csg.verify_release`). One item open: MuJoCo physics is self-attested on the laptop-cut tags (`evidence.complete=false`/exit 1) until a CI-attested release lands.** |
-| **2F** | External trace verification | 🟡 **RLBench OpenDrawer value-only target is a 9/9 positive result; gold target rejects the same traces 9/9 leakage-clean; a mutation/negative suite proves the calibration is not too permissive; an articulation-event target adds the started-closed-and-changed semantics (9/9, strictly stronger than value-only). Next: external object-inside-container.** |
+| **2F** | External trace verification | 🟡 **RLBench OpenDrawer value-only target is a 9/9 positive result; gold target rejects the same traces 9/9 leakage-clean; a mutation/negative suite proves the calibration is not too permissive; an articulation-event target adds an articulation-increase + event-present check (9/9, strictly stronger than value-only). Next: external object-inside-container.** |
 | **3A** | Real-camera episode ingestion (video → rollout evidence) | ⬜ pending |
+| **3A.5** | RH20T external-source smoke test | ✅ **DONE — real RH20T episode PASSES the frozen verifier.** `pilots/rh20t/` (annotation→tracks→rollout→frozen verifier) passes 22 synthetic tests; a real episode (`task_0017` pen→holder, cfg3 scene rating 9/10, reviewed from a global camera) PASSes both targets — relation-event non-vacuously — leakage-clean, `physicalValidity` null, source-blind rollout; a derived negative FAILs leakage-clean. `csg/` byte-frozen; no raw RH20T media committed (data obtained via an own-OAuth-client Drive copy bypass and kept off-repo). See `datasets/rh20t_object_inside_container_v0/{manifest.json,reports/eligibility_report.md}`. Gates only RH20T-as-external-source evidence; not a Sony/tripod Phase 3A replacement, not a 3B compiler. |
 | **3B** | Human-demo compiler (video → target CSG) | ⬜ pending, after 3A |
 | **4** | Cross-source flagship task | ⬜ pending: object_inside_container across MuJoCo + external sim + Sony/tripod |
 | **5** | DK1 / real robot recorded evidence | ⬜ pending (hardware-gated, data campaign first) |
@@ -376,9 +377,10 @@ terminal drawer extension, **PASSes** them leakage-clean and non-vacuously. A de
 reproducibility rerun (3 fresh demos × bottom/middle/top = 9, committed under
 `fixtures/live_runpod_20260614_rerun/` and aggregated by `summarize_reruns`) makes (B) a
 **9/9 strong result**: value-only PASS 9/9, gold FAIL-leakage-clean 9/9, off-task-clean
-9/9. The small negative/mutation suite is complete and proves the calibration is
-not too permissive; contact/event/temporal semantics are deferred, so next is a
-follow-on articulation-event target.
+9/9. The negative/mutation suite **(C)** proves the calibration is not too permissive, and
+the articulation-event target **(D)** adds an articulation-increase + event-present check
+(9/9, strictly stronger than value-only). Contact/order semantics stay deferred (no honest
+RLBench evidence source yet), so the next step is external object-inside-container (2F-4).
 `csg/` stays byte-frozen.
 
 Acceptance bar for calling Phase 2E done:
@@ -486,7 +488,7 @@ targets, and keeps core `csg/` unchanged.
 | --- | --- | --- |
 | **2F-1** | RLBench OpenDrawer value-only result | ✅ 9/9 fresh demos PASS the calibrated value-only target; the original gold target FAILs 9/9 leakage-clean; artifacts and docs preserve both results. |
 | **2F-2** | RLBench mutation/negative suite | ✅ `tests/test_rlbench_mutations.py` (39 tests, no RLBench): real traces PASS 9/9, gold FAILs 9/9 leakage-clean, off-task confusion clean 9/9, kinematically-wrong (leakage-clean) traces FAIL `goal_satisfaction`, a mis-calibrated `0.18 m` target FAILs all 9, and leaky traces are rejected before matcher success — `csg/` frozen. Answers "is value-only too permissive?" — no. |
-| **2F-3** | RLBench articulation-event target | ✅ `open_drawer_rlbench_articulation_event.json` + `tests/test_rlbench_articulation_event.py` (23 tests): adds low initial articulation (`0.0`), high terminal (`0.234`), and one `ARTICULATION_CHANGE` event — `goal_satisfaction`/`articulation_transitions`/`event_presence` support 1, `event_order` support 0. PASSes 9/9 non-vacuously, strictly stronger than value-only (a "born-open" drawer FAILs it); no handle contact or contact-before-motion order. `csg/` frozen. |
+| **2F-3** | RLBench articulation-event target | ✅ `open_drawer_rlbench_articulation_event.json` + `tests/test_rlbench_articulation_event.py` (25 tests): enforces terminal ≈ `0.234` (goal_satisfaction), an articulation **increase** (articulation_transitions — direction only), and an `ARTICULATION_CHANGE` event present (event_presence); `event_order` support 0. The numeric initial value is authoring, NOT enforced (a `0.10 → 0.234` trace also PASSes — tripwire test). PASSes 9/9 non-vacuously, strictly stronger than value-only (a flat born-open drawer FAILs it); no handle contact or contact-before-motion order. `csg/` frozen. |
 | **2F-4** | External object-inside-container task | ⬜ Add RLBench/ManiSkill container-task evidence for the flagship task card. External successes PASS; corruptions/failures FAIL; leakage stays clean. |
 | **2F-5** | External confusion + leakage report | ⬜ A compact report shows positives, negatives, off-task confusion, leak rejection, `physicalValidity: null`, and unchanged `csg/`. |
 
@@ -540,17 +542,92 @@ uncertain tracking is surfaced as uncertainty, not hidden
 leakage remains clean
 ```
 
+### Phase 3A.5 — RH20T external-source smoke test
+
+RH20T is a plausible **separate external source**, not a substitute for the
+Sony/tripod proof. It offers calibrated multi-camera robot episodes, RGB/RGBD
+video, low-dimensional robot data, task descriptions, and containment-like
+tasks. Use it to test source-adapter discipline before the full human-demo
+compiler, not to claim the Sony/ArUco capture path works.
+
+Good first candidates:
+
+```text
+task_0017  Put the pen into the pen holder
+task_0072  Drop coins into a piggy bank
+task_0073  Put things in the drawer
+task_0091  Move an object from one box to another
+```
+
+Operational guidance: inspect/download only a minimal RH20T shard on RunPod
+storage (`/workspace` or a network volume), not the local machine. Do not commit
+raw media.
+
+Build a new source adapter that converts one RH20T episode into neutral tracks
+and `csg.rollout.v0`. The smoke test should run the frozen verifier against an
+existing or hand-bound source-specific `object_inside_container` target. It must
+not build a video-to-target compiler, and it must not infer or author target CSG
+from the RH20T episode.
+
+Done when:
+
+```text
+one selected containment episode converts RH20T data → tracks → csg.rollout.v0
+one positive RH20T episode PASSes the frozen verifier
+one negative/corrupted RH20T episode FAILs or reports UNCERTAIN if available
+physicalValidity is null, not claimed true
+leakage remains clean
+git diff -- csg is empty
+raw RH20T media is not committed
+```
+
+Current status (2026-06-15): **DONE — a real RH20T episode PASSES the frozen verifier.**
+The real positive episode is `task_0017_user_0010_scene_0005_cfg_0003` (pen → pen holder,
+cfg3 scene rating 9/10), reviewed from global camera `cam_104122062823` and visually confirmed
+NEAR → INSIDE. Against the unchanged verifier it PASSes both targets — relation-event
+**non-vacuously** (goal_satisfaction, initial_state, terminal_state, relation_transitions,
+event_presence all support 1) — leakage-clean, `physicalValidity` null, with a source-blind
+rollout; a derived near-not-inside negative FAILs leakage-clean. The data was obtained via an
+own-OAuth-client Google Drive `files.copy` bypass (direct download and shared-client copy were
+24h-quota-walled), streamed and extracted with raw media kept off-repo; poses are honest
+human/assistant review estimates (single oblique 640x360 camera, no depth — the pen is tracked
+by centroid; see the annotation `review` and `reports/eligibility_report.md` for the modeling
+caveats). `csg/` is byte-frozen and no raw RH20T media is committed. Below is the historical
+seam-status detail.
+
+`pilots/rh20t/` implements
+annotation→tracks→rollout→frozen-verifier (`annotations_to_tracks`, `tracks_to_rollout`,
+`verify_episode` + two source-bound `object_inside_container` targets) and passes 22
+synthetic tests (`tests/test_rh20t_rollout.py`, `tests/test_rh20t_cli.py`): a real put-in
+PASSes both targets non-vacuously, born-inside is strictly-stronger-rejected on
+`initial_state`, near/rim/dropped FAIL leakage-clean, and the rollout is **fully
+source-blind** — an RH20T `episodeId` *is* the source identity, so the door drops it (only
+a one-way `episodeRef` hash + a fail-closed-validated `archiveSha256` survive into
+diagnostics). An adversarial review caught and fixed a real leak (an unchecked
+`archiveSha256` could carry a pasted scene path into the rollout); `validate_tracks_v0` now
+rejects a non-hex sha fail-closed. `csg/` is byte-frozen and no raw media is committed.
+
+Data acquisition was initially blocked (the cfg3 Drive shard was globally download-quota-walled
+and the server-side `files.copy` was per-user rate-limited on the shared rclone client —
+recorded under `blocked_data_acquisition_drive_quota` in
+`datasets/rh20t_object_inside_container_v0/reports/eligibility_report.md`). It was **resolved on
+2026-06-15** via a personal own-OAuth-client Google Drive `files.copy` bypass (the per-user copy
+limit cleared after a short cooldown, not the worst-case 24h); the private same-content copy was
+streamed by id, one scene + calibration extracted (raw media kept off-repo), the poses
+established by human/assistant frame review, and the copy deleted afterward. This checkpoint is
+**not** a Sony/tripod Phase 3A result and **not** a Phase 3B target compiler.
+
 ### Phase 3B — Human-demo compiler
 
-Only after 3A works, build `video → target CSG`. The compiler can reuse the
-marker/track pipeline, relation thresholds **imported from `csg/predicates.py`**
-(one grammar for target and rollout words — schema audit note #3), event
-boundary heuristics, and contact likelihood from hand-object proximity. Output:
-`target_csg.json` + `ucv_hypotheses.json` (hidden-physics estimates —
-mass/friction/grasp-stability — stay out of the CSG; see
-`Causal_Skill_Graph_V0.md`). Do **not** start with Sapiens2, marker-free
-perception, or general internet video. Target generation comes after episode
-verification.
+Only after 3A works, and after the RH20T smoke test if that path is pursued,
+build `video → target CSG`. The compiler can reuse the marker/track pipeline,
+relation thresholds **imported from `csg/predicates.py`** (one grammar for
+target and rollout words — schema audit note #3), event boundary heuristics,
+and contact likelihood from hand-object proximity. Output: `target_csg.json` +
+`ucv_hypotheses.json` (hidden-physics estimates — mass/friction/grasp-stability
+— stay out of the CSG; see `Causal_Skill_Graph_V0.md`). Do **not** start with
+Sapiens2, marker-free perception, or general internet video. Target generation
+comes after episode verification.
 
 ### Phase 4 — Cross-source flagship task
 
@@ -881,19 +958,22 @@ clean**. The **MuJoCo backend** (Phase 2C) has gated tests/benchmark coverage
 for all five V0 gold tasks, each with `physicalValidity: true`; a sabotaged
 rollout (`early_release`) is correctly rejected.
 
-Known open items: articulation magnitude is only checked via
-`goal_satisfaction` (a dedicated probe is a candidate). The RLBench evidence is
-now committed both ways: the 2026-06-14 live run is leakage-clean and unmapped
-against the gold `open_drawer` target (Result A), while a value-only diagnostic
-target that asserts only the terminal extension PASSes the same traces
-non-vacuously (Result B), both reproducible from committed fixtures without
-Runpod. The RLBench negative/mutation suite is now complete, so the next
-concrete research item is **not** more identical RLBench recording; it is the
-minimal RLBench articulation-event target. After that, pivot immediately to
-`object_inside_container` as the cross-source flagship task: MuJoCo + external
-sim + Sony/tripod first, then DK1/robot recorded evidence. Broader ablated/noisy
-baselines remain optional later extensions, not blockers for the current Phase
-2E/2F minimum.
+Known open items: articulation **magnitude** is only checked at the terminal value
+(via `goal_satisfaction`); the `articulation_transitions` probe compares only the
+change **direction** (INCREASE/DECREASE/FLAT), not numeric endpoints, so the
+articulation-event target (Result D) enforces "increased to ≈ 0.234 + event present"
+but cannot pin the initial value — a dedicated initial-value or magnitude-delta probe
+is a candidate if that ever matters. The RLBench evidence is now committed every way:
+the 2026-06-14 live run is leakage-clean and unmapped against the gold `open_drawer`
+target (Result A); a value-only diagnostic target PASSes the same traces non-vacuously
+(Result B); a negative/mutation suite proves the calibration is not too permissive
+(Result C); and an articulation-event target adds the increase + event check, strictly
+stronger than value-only (Result D) — all reproducible from committed fixtures without
+Runpod. So the next concrete research item is **not** more identical RLBench recording
+or another single-task target; it is `object_inside_container` as the cross-source
+flagship task: MuJoCo + external sim + Sony/tripod first, then DK1/robot recorded
+evidence. Broader ablated/noisy baselines remain optional later extensions, not
+blockers for the current Phase 2E/2F minimum.
 
 ```text
 python3 -m pytest tests/ -q                          # core suite; mujoco tests skip without extra

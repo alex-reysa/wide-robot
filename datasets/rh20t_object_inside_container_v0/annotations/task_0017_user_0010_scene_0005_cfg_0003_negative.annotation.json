@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "rh20t.annotation.v0",
+  "episodeId": "task_0017_user_0010_scene_0005_cfg_0003_negative",
+  "source": {
+    "dataset": "RH20T",
+    "taskId": "task_0017",
+    "taskDescription": "Put the pen into the pen holder",
+    "scenePath": "RH20T_cfg3/task_0017_user_0010_scene_0005_cfg_0003",
+    "archiveSha256": "b49b297043f3ccf8386b620e11e9ccebc634ba5704e372ae7243480f6e38b6d3"
+  },
+  "fps": 10.0,
+  "objects": [
+    {"sourceRole": "mover", "physicalKind": "RIGID_OBJECT", "mobility": "MOVABLE", "isContainer": false, "sizeM": [0.025, 0.025, 0.025], "sizeApproximate": true},
+    {"sourceRole": "container", "physicalKind": "RIGID_OBJECT", "mobility": "STATIC", "isContainer": true, "sizeM": [0.085, 0.085, 0.09], "sizeApproximate": true}
+  ],
+  "frames": [
+    {"frameIndex": 0, "timeS": 0.0, "poses": {
+      "mover": {"positionM": {"x": 0.17, "y": 0.0, "z": 0.02}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 1, "timeS": 0.1, "poses": {
+      "mover": {"positionM": {"x": 0.17, "y": 0.0, "z": 0.02}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 2, "timeS": 0.2, "poses": {
+      "mover": {"positionM": {"x": 0.33, "y": 0.0, "z": 0.07}, "confidence": 0.85},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 3, "timeS": 0.3, "poses": {
+      "mover": {"positionM": {"x": 0.43, "y": 0.0, "z": 0.05}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 4, "timeS": 0.4, "poses": {
+      "mover": {"positionM": {"x": 0.43, "y": 0.0, "z": 0.05}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 5, "timeS": 0.5, "poses": {
+      "mover": {"positionM": {"x": 0.43, "y": 0.0, "z": 0.05}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}}
+  ],
+  "review": {
+    "annotator": "human + assistant review of the RH20T global camera",
+    "date": "2026-06-15",
+    "cameraSerial": "cam_104122062823",
+    "method": "Derived negative from the reviewed RH20T geometry of task_0017_user_0010_scene_0005_cfg_0003: ONLY the terminal mover pose was moved to a near-but-not-inside position (~13 cm past the holder, still NEAR but outside the holder footprint). The holder and the initial mover poses are the reviewed real values. This is a controlled negative comparison (a put-down beside the holder rather than into it), not a separate real episode.",
+    "uncertaintyNotes": "Controlled negative; the terminal relation is NEAR / not-inside by construction so the goal (INSIDE) is not satisfied."
+  }
+}

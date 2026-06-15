@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "rh20t_object_inside_container_relation_event",
+  "taskCaption": "object starts near the container and is placed inside it (relation-event diagnostic)",
+  "objects": [
+    {"objectId": "h_cube", "categoryLabel": "cube", "categoryConfidence": 0.9, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_FIDUCIAL_AND_CAD", "orientedBox": {"sizeM": {"x": 0.04, "y": 0.04, "z": 0.04}}}},
+    {"objectId": "h_tray", "categoryLabel": "tray", "categoryConfidence": 0.9, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_FIDUCIAL_AND_PLANE", "orientedBox": {"sizeM": {"x": 0.24, "y": 0.18, "z": 0.03}}}}
+  ],
+  "agentParts": [],
+  "relations": [
+    {"relationId": "r0", "timeNs": "0", "subjectObjectId": "h_cube", "objectObjectId": "h_tray", "relation": "NEAR", "confidence": 0.9},
+    {"relationId": "r1", "timeNs": "3000000000", "subjectObjectId": "h_cube", "objectObjectId": "h_tray", "relation": "INSIDE", "confidence": 0.9}
+  ],
+  "events": [
+    {"eventId": "e_containment", "eventKind": "CONTAINMENT_CHANGE", "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "1200000000"}, "involvedObjectIds": ["h_cube", "h_tray"], "observedDeltas": [{"objectId": "h_cube", "confidence": 0.9, "relationTransition": {"subjectObjectId": "h_cube", "objectObjectId": "h_tray", "fromRelation": "NEAR", "toRelation": "INSIDE"}}], "confidence": 0.9}
+  ],
+  "plannerView": {
+    "bodies": [{"objectId": "h_cube", "mobility": "MOVABLE"}, {"objectId": "h_tray", "mobility": "STATIC"}],
+    "stages": [{"stageId": "s1", "confidence": 0.9, "goalConstraints": [{"constraintId": "g1", "kind": "OBJECT_RELATION_GOAL", "hard": true, "confidence": 0.9, "relation": {"subjectObjectId": "h_cube", "objectObjectId": "h_tray", "desiredRelation": "INSIDE"}}]}]
+  },
+  "pilotMetadata": {
+    "diagnostic": "rh20t-object-inside-container-relation-event",
+    "tests": "Asserts, via the FROZEN matcher: the mover's TERMINAL relation to the container is INSIDE (hard OBJECT_RELATION_GOAL -> goal_satisfaction); the mover STARTED NEAR, not already inside (initial_state, from the authored r0 NEAR endpoint); it ENDED INSIDE (terminal_state + relation_transitions); and one CONTAINMENT_CHANGE event is present (event_presence). One structural step beyond terminal-only: it requires the object to have STARTED near and ACHIEVED INSIDE, not merely to be inside at the end. No contact, hand, co-motion, release, or temporal order.",
+    "addedOverTerminalOnly": ["relations(authored NEAR r0 + INSIDE r1) -> contributes initial_state(NEAR) + terminal_state(INSIDE)", "CONTAINMENT_CHANGE event -> event_presence + relation_transitions(NEAR->INSIDE)"],
+    "enforcedVsAuthoring": "CRITICAL: a 'born-inside' episode is rejected by initial_state, NOT by relation_transitions/event_presence. csg/rollout_extract.py seeds prev_rel='NEAR' UNCONDITIONALLY, so an object that ends INSIDE -- even one inside the whole time -- ALWAYS emits a NEAR->INSIDE CONTAINMENT_CHANGE delta. The only thing distinguishing a real put-in from born-inside is the robot's FIRST relation fact (NEAR for a real put-in, INSIDE for born-inside), caught by initial_state. ENFORCED: terminal INSIDE, INSIDE achieved (relation_transitions), initial NEAR endpoint (initial_state), CONTAINMENT_CHANGE present (event_presence). event_order stays support 0 (one event, no pair to order against). AUTHORING ONLY (not verifier-enforced): timeSpan magnitudes, confidences, geometry source/category.",
+    "deferred": ["contacts", "CONTACT_BEGIN", "HAND_OBJECT_CO_MOTION", "RELEASE_INFERRED", "temporalEdges", "contact-before-motion order"],
+    "deferredNote": "The human-reviewed RH20T annotation has no honest evidence for who/what caused the motion; asserting contact or causal order would be unevidenced. Those remain a later contact/order target.",
+    "source": "RH20T selected containment episode; raw media stays on RunPod. See datasets/rh20t_object_inside_container_v0/manifest.json.",
+    "notAGoldTask": "Pilot diagnostic, deliberately NOT added to gold_tests/. It asserts the object started near and was placed inside the container; it does NOT assert the agent contacted or caused the motion. Read it for relation-event mappability from an external recorded source, not as a full object_inside_container acceptance test."
+  }
+}

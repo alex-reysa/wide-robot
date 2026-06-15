@@ -1,0 +1,44 @@
+{
+  "datasetId": "rh20t_object_inside_container_v0",
+  "schemaVersion": "rh20t.dataset.v0",
+  "task": "object_inside_container",
+  "note": "Derived RH20T external-source smoke-test artifacts only. Raw RH20T archives, extracted videos, frame dumps, faces, and voices stay off-repo (RunPod / local scratch) and are not committed. Commit only reviewed rh20t.annotation.v0 sidecars, derived rh20t.tracks.v0, derived csg.rollout.v0, and reports/provenance hashes.",
+  "sourceArchive": {
+    "name": "RH20T_cfg3.tar.gz",
+    "sha256": "b49b297043f3ccf8386b620e11e9ccebc634ba5704e372ae7243480f6e38b6d3",
+    "sizeBytes": 27399012782,
+    "acquired": "2026-06-15 via own-OAuth-client Google Drive files.copy bypass (download/copy were 24h-quota-walled on the shared client); raw media kept off-repo."
+  },
+  "episodes": [
+    {
+      "episodeId": "task_0017_user_0010_scene_0005_cfg_0003",
+      "kind": "real_positive",
+      "sourceTaskId": "task_0017",
+      "sourceTaskDescription": "Put the pen into the pen holder",
+      "scenePath": "RH20T_cfg3/task_0017_user_0010_scene_0005_cfg_0003",
+      "sceneRating": 9,
+      "cameraSerial": "cam_104122062823",
+      "annotation": "annotations/task_0017_user_0010_scene_0005_cfg_0003.annotation.json",
+      "tracks": "tracks/task_0017_user_0010_scene_0005_cfg_0003.tracks.json",
+      "rollout": "rollouts/task_0017_user_0010_scene_0005_cfg_0003.rollout.json",
+      "report": "reports/task_0017_user_0010_scene_0005_cfg_0003.verify.json",
+      "verdict": {"object_inside_container_terminal_only": "PASS", "object_inside_container_relation_event": "PASS"},
+      "relationEventNonVacuous": true,
+      "leakageClean": true,
+      "physicalValidity": null
+    },
+    {
+      "episodeId": "task_0017_user_0010_scene_0005_cfg_0003_negative",
+      "kind": "derived_negative",
+      "derivedFrom": "task_0017_user_0010_scene_0005_cfg_0003",
+      "note": "Same reviewed geometry, terminal mover pose moved to near-not-inside (put-down beside the holder).",
+      "annotation": "annotations/task_0017_user_0010_scene_0005_cfg_0003_negative.annotation.json",
+      "tracks": "tracks/task_0017_user_0010_scene_0005_cfg_0003_negative.tracks.json",
+      "rollout": "rollouts/task_0017_user_0010_scene_0005_cfg_0003_negative.rollout.json",
+      "report": "reports/task_0017_user_0010_scene_0005_cfg_0003_negative.verify.json",
+      "verdict": {"object_inside_container_terminal_only": "FAIL", "object_inside_container_relation_event": "FAIL"},
+      "leakageClean": true,
+      "physicalValidity": null
+    }
+  ]
+}

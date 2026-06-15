@@ -1,0 +1,179 @@
+{
+  "episodeId": "task_0017_user_0010_scene_0005_cfg_0003_negative",
+  "fps": 10.0,
+  "frames": [
+    {
+      "frameIndex": 0,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.17,
+            "y": 0.0,
+            "z": 0.02
+          }
+        }
+      },
+      "timeS": 0.0
+    },
+    {
+      "frameIndex": 1,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.17,
+            "y": 0.0,
+            "z": 0.02
+          }
+        }
+      },
+      "timeS": 0.1
+    },
+    {
+      "frameIndex": 2,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.85,
+          "positionM": {
+            "x": 0.33,
+            "y": 0.0,
+            "z": 0.07
+          }
+        }
+      },
+      "timeS": 0.2
+    },
+    {
+      "frameIndex": 3,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.43,
+            "y": 0.0,
+            "z": 0.05
+          }
+        }
+      },
+      "timeS": 0.3
+    },
+    {
+      "frameIndex": 4,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.43,
+            "y": 0.0,
+            "z": 0.05
+          }
+        }
+      },
+      "timeS": 0.4
+    },
+    {
+      "frameIndex": 5,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.43,
+            "y": 0.0,
+            "z": 0.05
+          }
+        }
+      },
+      "timeS": 0.5
+    }
+  ],
+  "objects": [
+    {
+      "isContainer": false,
+      "mobility": "MOVABLE",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeApproximate": true,
+      "sizeM": [
+        0.025,
+        0.025,
+        0.025
+      ],
+      "sourceRole": "mover"
+    },
+    {
+      "isContainer": true,
+      "mobility": "STATIC",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeApproximate": true,
+      "sizeM": [
+        0.085,
+        0.085,
+        0.09
+      ],
+      "sourceRole": "container"
+    }
+  ],
+  "review": {
+    "annotator": "human + assistant review of the RH20T global camera",
+    "cameraSerial": "cam_104122062823",
+    "date": "2026-06-15",
+    "method": "Derived negative from the reviewed RH20T geometry of task_0017_user_0010_scene_0005_cfg_0003: ONLY the terminal mover pose was moved to a near-but-not-inside position (~13 cm past the holder, still NEAR but outside the holder footprint). The holder and the initial mover poses are the reviewed real values. This is a controlled negative comparison (a put-down beside the holder rather than into it), not a separate real episode.",
+    "uncertaintyNotes": "Controlled negative; the terminal relation is NEAR / not-inside by construction so the goal (INSIDE) is not satisfied."
+  },
+  "schemaVersion": "rh20t.tracks.v0",
+  "source": {
+    "archiveSha256": "b49b297043f3ccf8386b620e11e9ccebc634ba5704e372ae7243480f6e38b6d3",
+    "dataset": "RH20T",
+    "scenePath": "RH20T_cfg3/task_0017_user_0010_scene_0005_cfg_0003",
+    "taskDescription": "Put the pen into the pen holder",
+    "taskId": "task_0017"
+  }
+}

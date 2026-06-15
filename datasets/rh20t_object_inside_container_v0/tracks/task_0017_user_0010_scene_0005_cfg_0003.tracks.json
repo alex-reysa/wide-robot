@@ -1,0 +1,182 @@
+{
+  "episodeId": "task_0017_user_0010_scene_0005_cfg_0003",
+  "fps": 10.0,
+  "frames": [
+    {
+      "frameIndex": 0,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.17,
+            "y": 0.0,
+            "z": 0.02
+          }
+        }
+      },
+      "timeS": 0.0
+    },
+    {
+      "frameIndex": 1,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.17,
+            "y": 0.0,
+            "z": 0.02
+          }
+        }
+      },
+      "timeS": 0.1
+    },
+    {
+      "frameIndex": 2,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.85,
+          "positionM": {
+            "x": 0.235,
+            "y": 0.0,
+            "z": 0.1
+          }
+        }
+      },
+      "timeS": 0.2
+    },
+    {
+      "frameIndex": 3,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.06
+          }
+        }
+      },
+      "timeS": 0.3
+    },
+    {
+      "frameIndex": 4,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.06
+          }
+        }
+      },
+      "timeS": 0.4
+    },
+    {
+      "frameIndex": 5,
+      "poses": {
+        "container": {
+          "confidence": 0.95,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.045
+          }
+        },
+        "mover": {
+          "confidence": 0.9,
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.06
+          }
+        }
+      },
+      "timeS": 0.5
+    }
+  ],
+  "objects": [
+    {
+      "isContainer": false,
+      "mobility": "MOVABLE",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeApproximate": true,
+      "sizeM": [
+        0.025,
+        0.025,
+        0.025
+      ],
+      "sourceRole": "mover"
+    },
+    {
+      "isContainer": true,
+      "mobility": "STATIC",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeApproximate": true,
+      "sizeM": [
+        0.085,
+        0.085,
+        0.09
+      ],
+      "sourceRole": "container"
+    }
+  ],
+  "review": {
+    "annotator": "human + assistant review of the RH20T global camera",
+    "cameraSerial": "cam_104122062823",
+    "date": "2026-06-15",
+    "method": "Object world positions estimated by visual review of the RH20T cfg3 global camera (640x360 RGB; depth archive not extracted). The pen (mover) is tracked by its CENTROID from lying on the table ~13 cm beside the mesh pen holder (NEAR) to standing inside it (INSIDE); the holder (container) is static across the episode. Metric values estimated using the holder's ~8.5 cm diameter as the scale reference, in an arbitrary table-plane frame (origin offset is immaterial; only the pen-vs-holder relative geometry, read from the video, matters). Positions are NOT derived from the target CSG.",
+    "modelingNotes": "The pen is modeled as a compact rigid object at its tracked centroid; its elongated shape and protrusion above the holder rim are NOT box-modeled, so the verdict is at the centroid-relation level (the pen's centroid moves from beside the holder into the holder volume, with the centroid below the rim). A strict full-bounding-box model of a 14 cm pen partially inserted in a ~9 cm holder would be a different, harder question; this smoke test asserts the centroid relation only.",
+    "provenance": "Derived from a private same-content copy of RH20T_cfg3.tar.gz (own-OAuth-client Drive copy bypass); raw video stays off-repo. Source archive sha256 b49b297043f3ccf8386b620e11e9ccebc634ba5704e372ae7243480f6e38b6d3.",
+    "sceneRating": 9,
+    "uncertaintyNotes": "Oblique single camera, no depth; metric positions are review estimates (approx +/- 2-3 cm). The qualitative relations (initial NEAR / not-inside, terminal INSIDE) are clearly and unambiguously observed in the video; the exact centimetre values are approximate."
+  },
+  "schemaVersion": "rh20t.tracks.v0",
+  "source": {
+    "archiveSha256": "b49b297043f3ccf8386b620e11e9ccebc634ba5704e372ae7243480f6e38b6d3",
+    "dataset": "RH20T",
+    "scenePath": "RH20T_cfg3/task_0017_user_0010_scene_0005_cfg_0003",
+    "taskDescription": "Put the pen into the pen holder",
+    "taskId": "task_0017"
+  }
+}

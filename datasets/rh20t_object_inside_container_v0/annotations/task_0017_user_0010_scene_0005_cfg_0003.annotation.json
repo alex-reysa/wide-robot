@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "rh20t.annotation.v0",
+  "episodeId": "task_0017_user_0010_scene_0005_cfg_0003",
+  "source": {
+    "dataset": "RH20T",
+    "taskId": "task_0017",
+    "taskDescription": "Put the pen into the pen holder",
+    "scenePath": "RH20T_cfg3/task_0017_user_0010_scene_0005_cfg_0003",
+    "archiveSha256": "b49b297043f3ccf8386b620e11e9ccebc634ba5704e372ae7243480f6e38b6d3"
+  },
+  "fps": 10.0,
+  "objects": [
+    {"sourceRole": "mover", "physicalKind": "RIGID_OBJECT", "mobility": "MOVABLE", "isContainer": false, "sizeM": [0.025, 0.025, 0.025], "sizeApproximate": true},
+    {"sourceRole": "container", "physicalKind": "RIGID_OBJECT", "mobility": "STATIC", "isContainer": true, "sizeM": [0.085, 0.085, 0.09], "sizeApproximate": true}
+  ],
+  "frames": [
+    {"frameIndex": 0, "timeS": 0.0, "poses": {
+      "mover": {"positionM": {"x": 0.17, "y": 0.0, "z": 0.02}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 1, "timeS": 0.1, "poses": {
+      "mover": {"positionM": {"x": 0.17, "y": 0.0, "z": 0.02}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 2, "timeS": 0.2, "poses": {
+      "mover": {"positionM": {"x": 0.235, "y": 0.0, "z": 0.10}, "confidence": 0.85},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 3, "timeS": 0.3, "poses": {
+      "mover": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.06}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 4, "timeS": 0.4, "poses": {
+      "mover": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.06}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}},
+    {"frameIndex": 5, "timeS": 0.5, "poses": {
+      "mover": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.06}, "confidence": 0.9},
+      "container": {"positionM": {"x": 0.30, "y": 0.0, "z": 0.045}, "confidence": 0.95}}}
+  ],
+  "review": {
+    "annotator": "human + assistant review of the RH20T global camera",
+    "date": "2026-06-15",
+    "cameraSerial": "cam_104122062823",
+    "sceneRating": 9,
+    "method": "Object world positions estimated by visual review of the RH20T cfg3 global camera (640x360 RGB; depth archive not extracted). The pen (mover) is tracked by its CENTROID from lying on the table ~13 cm beside the mesh pen holder (NEAR) to standing inside it (INSIDE); the holder (container) is static across the episode. Metric values estimated using the holder's ~8.5 cm diameter as the scale reference, in an arbitrary table-plane frame (origin offset is immaterial; only the pen-vs-holder relative geometry, read from the video, matters). Positions are NOT derived from the target CSG.",
+    "modelingNotes": "The pen is modeled as a compact rigid object at its tracked centroid; its elongated shape and protrusion above the holder rim are NOT box-modeled, so the verdict is at the centroid-relation level (the pen's centroid moves from beside the holder into the holder volume, with the centroid below the rim). A strict full-bounding-box model of a 14 cm pen partially inserted in a ~9 cm holder would be a different, harder question; this smoke test asserts the centroid relation only.",
+    "uncertaintyNotes": "Oblique single camera, no depth; metric positions are review estimates (approx +/- 2-3 cm). The qualitative relations (initial NEAR / not-inside, terminal INSIDE) are clearly and unambiguously observed in the video; the exact centimetre values are approximate.",
+    "provenance": "Derived from a private same-content copy of RH20T_cfg3.tar.gz (own-OAuth-client Drive copy bypass); raw video stays off-repo. Source archive sha256 b49b297043f3ccf8386b620e11e9ccebc634ba5704e372ae7243480f6e38b6d3."
+  }
+}

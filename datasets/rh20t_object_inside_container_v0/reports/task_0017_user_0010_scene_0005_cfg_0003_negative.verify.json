@@ -1,0 +1,162 @@
+{
+  "object_inside_container_relation_event": {
+    "baseCase": "object_inside_container_relation_event",
+    "case": "object_inside_container_relation_event",
+    "distance": 0.6296296296296297,
+    "failureClassification": {
+      "category": "event_order_wrong",
+      "evidence": {
+        "hardMismatches": [
+          "event_order",
+          "event_presence",
+          "goal_satisfaction",
+          "relation_transitions",
+          "terminal_state"
+        ],
+        "matcherPassed": false,
+        "probeAgreement": {
+          "articulation_transitions": true,
+          "contact_evidence": true,
+          "contact_word": true,
+          "event_order": false,
+          "event_presence": false,
+          "goal_satisfaction": false,
+          "initial_state": true,
+          "object_carrier": true,
+          "object_trajectory": false,
+          "relation_transitions": false,
+          "terminal_state": false
+        }
+      }
+    },
+    "hardMismatches": [
+      "terminal_state",
+      "relation_transitions",
+      "event_presence",
+      "event_order",
+      "goal_satisfaction"
+    ],
+    "leakage": {
+      "badEstimators": [],
+      "clean": true,
+      "forbiddenKeys": [],
+      "hasEvidence": true,
+      "readTargetCsg": false
+    },
+    "leakageClean": true,
+    "matcherPassed": false,
+    "objectMapping": {
+      "h_cube": "body_000",
+      "h_tray": "body_001"
+    },
+    "objectOrbitAmbiguous": true,
+    "passed": false,
+    "physicalValidity": null,
+    "physicalValidityReason": "external RH20T trace: csg cannot re-check physics from dataset/annotation tracks; physics-unverified by contract (csg/validity.md)",
+    "probeAgreement": {
+      "articulation_transitions": true,
+      "contact_evidence": true,
+      "contact_word": true,
+      "event_order": false,
+      "event_presence": false,
+      "goal_satisfaction": false,
+      "initial_state": true,
+      "object_carrier": true,
+      "object_trajectory": false,
+      "relation_transitions": false,
+      "terminal_state": false
+    },
+    "probeSupport": {
+      "articulation_transitions": 0,
+      "contact_evidence": 0,
+      "contact_word": 0,
+      "event_order": 0,
+      "event_presence": 1,
+      "goal_satisfaction": 1,
+      "initial_state": 1,
+      "object_carrier": 2,
+      "object_trajectory": 0,
+      "relation_transitions": 1,
+      "terminal_state": 1
+    },
+    "status": "FAIL",
+    "traceSource": "rh20t_external",
+    "vacuous": false
+  },
+  "object_inside_container_terminal_only": {
+    "baseCase": "object_inside_container_terminal_only",
+    "case": "object_inside_container_terminal_only",
+    "distance": 0.2037037037037037,
+    "failureClassification": {
+      "category": "relation_not_achieved",
+      "evidence": {
+        "hardMismatches": [
+          "goal_satisfaction"
+        ],
+        "matcherPassed": false,
+        "probeAgreement": {
+          "articulation_transitions": true,
+          "contact_evidence": true,
+          "contact_word": true,
+          "event_order": true,
+          "event_presence": true,
+          "goal_satisfaction": false,
+          "initial_state": true,
+          "object_carrier": true,
+          "object_trajectory": false,
+          "relation_transitions": true,
+          "terminal_state": true
+        }
+      }
+    },
+    "hardMismatches": [
+      "goal_satisfaction"
+    ],
+    "leakage": {
+      "badEstimators": [],
+      "clean": true,
+      "forbiddenKeys": [],
+      "hasEvidence": true,
+      "readTargetCsg": false
+    },
+    "leakageClean": true,
+    "matcherPassed": false,
+    "objectMapping": {
+      "h_cube": "body_000",
+      "h_tray": "body_001"
+    },
+    "objectOrbitAmbiguous": true,
+    "passed": false,
+    "physicalValidity": null,
+    "physicalValidityReason": "external RH20T trace: csg cannot re-check physics from dataset/annotation tracks; physics-unverified by contract (csg/validity.md)",
+    "probeAgreement": {
+      "articulation_transitions": true,
+      "contact_evidence": true,
+      "contact_word": true,
+      "event_order": true,
+      "event_presence": true,
+      "goal_satisfaction": false,
+      "initial_state": true,
+      "object_carrier": true,
+      "object_trajectory": false,
+      "relation_transitions": true,
+      "terminal_state": true
+    },
+    "probeSupport": {
+      "articulation_transitions": 0,
+      "contact_evidence": 0,
+      "contact_word": 0,
+      "event_order": 0,
+      "event_presence": 0,
+      "goal_satisfaction": 1,
+      "initial_state": 0,
+      "object_carrier": 2,
+      "object_trajectory": 0,
+      "relation_transitions": 0,
+      "terminal_state": 0
+    },
+    "status": "FAIL",
+    "traceSource": "rh20t_external",
+    "vacuous": false
+  }
+}
