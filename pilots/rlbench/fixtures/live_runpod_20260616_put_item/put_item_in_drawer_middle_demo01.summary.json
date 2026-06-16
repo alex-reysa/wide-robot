@@ -1,0 +1,54 @@
+{
+  "controlRateHz": 20.0,
+  "demoIndex": 1,
+  "note": "RLBench/CoppeliaSim identities (item/drawer/success-sensor handles, variation, task) are recorded here for provenance and are deliberately absent from the rollout. The success sensor's boolean is never emitted \u2014 only its pose + bounding box, as the container volume.",
+  "numFrames": 350,
+  "quarantinedHandles": {
+    "drawer_frame": "drawer_frame",
+    "item": "item",
+    "joint": "drawer_joint_middle",
+    "success_sensor": "success_middle"
+  },
+  "schemaVersion": "csg.rlbench_pilot_summary.v0",
+  "task": "put_item_in_drawer",
+  "variation": "middle",
+  "verification": {
+    "confusion": {
+      "confusionClean": false,
+      "expectedCase": "put_cube_in_tray",
+      "expectedCasePresent": true,
+      "expectedPass": [
+        "insert_object",
+        "put_cube_in_tray"
+      ],
+      "knownEquivalentTasks": [
+        [
+          "insert_object",
+          "put_cube_in_tray"
+        ]
+      ],
+      "missedExpected": "put_cube_in_tray",
+      "passes": [],
+      "results": {
+        "insert_object": false,
+        "open_drawer": false,
+        "place_on_top": false,
+        "push_object": false,
+        "put_cube_in_tray": false
+      },
+      "unexpectedOffTaskPasses": []
+    },
+    "leakageClean": true,
+    "physicalValidity": null,
+    "relationEvent": {
+      "hardMismatches": [
+        "initial_state"
+      ],
+      "passed": false
+    },
+    "terminalOnly": {
+      "hardMismatches": [],
+      "passed": true
+    }
+  }
+}

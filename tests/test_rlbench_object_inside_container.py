@@ -51,6 +51,7 @@ _GOLD_DIR = _REPO / "gold_tests"
 _TARGETS = _REPO / "pilots" / "rlbench" / "targets"
 _TERMINAL = _TARGETS / "object_inside_container_terminal_only.json"
 _REL_EVENT = _TARGETS / "object_inside_container_relation_event.json"
+_PLACED = _TARGETS / "object_inside_container_placed_from_outside.json"
 _FIXTURE = _REPO / "pilots" / "rlbench" / "fixtures" / "synthetic_put_item_in_drawer.rollout.json"
 
 # Same proven tabletop geometry as the RH20T/real-camera fixtures: container center
@@ -103,6 +104,16 @@ def _approach_then(end_xyz):
     """Item starts NEAR (outside the container) and moves to ``end_xyz`` over 6 frames so the
     terminal relation persists and item displacement >> MOTION_EPS_M."""
     sx, sy, sz = _START_NEAR
+    ex, ey, ez = end_xyz
+    return [(sx, sy, sz), (sx, sy, sz),
+            (0.5 * (sx + ex), 0.5 * (sy + ey), 0.5 * (sz + ez)),
+            (ex, ey, ez), (ex, ey, ez), (ex, ey, ez)]
+
+
+def _approach_from_far(end_xyz):
+    """Item starts FAR_FROM the container (carried in from across the table, like RLBench's
+    bottom/middle drawer episodes) and is placed at ``end_xyz``."""
+    sx, sy, sz = _FAR
     ex, ey, ez = end_xyz
     return [(sx, sy, sz), (sx, sy, sz),
             (0.5 * (sx + ex), 0.5 * (sy + ey), 0.5 * (sz + ez)),
@@ -212,6 +223,58 @@ def test_born_inside_passes_terminal_only_fails_relation_event_on_initial_state(
     assert "event_presence" not in rele["hardMismatches"]
     assert "relation_transitions" not in rele["hardMismatches"]
     assert "goal_satisfaction" not in rele["hardMismatches"]
+
+
+# ---------------------------------------------------------------------------
+# placed_from_outside (FAR start) vs relation_event (NEAR start) — the two strong
+# targets partition episodes by their observed initial relation (RLBench's
+# bottom/middle drawers start FAR, the top drawer starts NEAR). Each rejects
+# born-inside via initial_state.
+# ---------------------------------------------------------------------------
+
+
+def test_placed_from_outside_structure():
+    t = load_json(_PLACED)
+    assert t["plannerView"]["stages"][0]["goalConstraints"][0]["relation"]["desiredRelation"] == "INSIDE"
+    assert [r["relation"] for r in t["relations"]] == ["FAR_FROM", "INSIDE"]
+    assert [e["eventKind"] for e in t["events"]] == ["CONTAINMENT_CHANGE"]
+    assert "contacts" not in t and "temporalEdges" not in t
+    assert not (_GOLD_DIR / "object_inside_container_placed_from_outside").exists()
+    assert load_json(_PLACED)["pilotMetadata"]["diagnostic"] == "rlbench-object-inside-container-placed-from-outside"
+
+
+def test_far_start_success_passes_placed_from_outside_not_relation_event():
+    rollout = _rollout(_approach_from_far(_INSIDE))
+    placed = _verify(_PLACED, rollout)
+    assert placed["passed"] is True, placed["hardMismatches"]
+    res = match(load_json(_PLACED), extract_robot_csg(rollout), MatcherConfig())
+    assert res.vacuous is False
+    for probe in ("goal_satisfaction", "initial_state", "terminal_state", "relation_transitions", "event_presence"):
+        assert res.probe_support[probe] == 1 and res.probe_agreement[probe] is True, probe
+    # a FAR-start episode does NOT match the NEAR-start target (initial_state distinguishes them)
+    rele = _verify(_REL_EVENT, rollout)
+    assert rele["passed"] is False
+    assert rele["hardMismatches"] == ["initial_state"], rele["hardMismatches"]
+    # terminal_only is agnostic to the start, so it PASSes either way
+    assert _verify(_TERMINAL, rollout)["passed"] is True
+
+
+def test_near_start_success_passes_relation_event_not_placed_from_outside():
+    rollout = _rollout(_approach_then(_INSIDE))
+    assert _verify(_REL_EVENT, rollout)["passed"] is True
+    placed = _verify(_PLACED, rollout)
+    assert placed["passed"] is False
+    assert placed["hardMismatches"] == ["initial_state"], placed["hardMismatches"]
+
+
+def test_born_inside_fails_placed_from_outside_on_initial_state():
+    born = [(TX - 0.03, TY, 0.03), (TX - 0.01, TY, 0.03), (TX + 0.01, TY, 0.03),
+            (TX + 0.03, TY, 0.03), (TX + 0.01, TY, 0.03), (TX - 0.01, TY, 0.03)]
+    rollout = _rollout(born)
+    placed = _verify(_PLACED, rollout)
+    assert placed["passed"] is False
+    assert placed["hardMismatches"] == ["initial_state"], placed["hardMismatches"]
+    assert "event_presence" not in placed["hardMismatches"]
 
 
 # ---------------------------------------------------------------------------
@@ -347,6 +410,47 @@ def test_committed_synthetic_fixture_passes_both_targets():
     for path in (_TERMINAL, _REL_EVENT):
         case = _verify(path, rollout)
         assert case["passed"] is True, (path.name, case["hardMismatches"])
+
+
+# ---------------------------------------------------------------------------
+# Committed LIVE evidence — 9 real RLBench PutItemInDrawer demos (Runpod/CoppeliaSim,
+# 2026-06-16, 3 per variation). Reproducible from a clean clone with NO RLBench: the
+# frozen verifier re-judges the committed rollouts. This is the Phase 2F-4 headline result.
+# ---------------------------------------------------------------------------
+
+_LIVE_DIR = _REPO / "pilots" / "rlbench" / "fixtures" / "live_runpod_20260616_put_item"
+
+
+def test_committed_live_capture_9_of_9_terminal_inside():
+    paths = sorted(_LIVE_DIR.glob("*.rollout.json"))
+    assert len(paths) == 9, [p.name for p in paths]
+    far = near = 0
+    for p in paths:
+        r = load_json(p)
+        assert_rollout_leakage_clean(r)
+        assert r["backend"] == "rlbench_external", p.name
+        assert r["diagnostics"]["physicalValidity"] is None, p.name      # external = physics-unverified
+        robot = extract_robot_csg(r)
+        assert any(e["eventKind"] == "CONTAINMENT_CHANGE" for e in robot.get("events", [])), p.name
+        # every real demo ends INSIDE -> terminal_only PASSes 9/9, leakage-clean
+        term = _verify(_TERMINAL, r)
+        assert term["passed"] is True and term["leakageClean"] is True, (p.name, term["hardMismatches"])
+
+        # the strong target is chosen by the demo's OBSERVED initial relation: RLBench carries
+        # the item in from across the table for the bottom/middle drawers (FAR_FROM) and from
+        # nearby for the top drawer (NEAR). Each demo PASSes its matched target and FAILs the
+        # other on initial_state alone — the verifier reads the initial condition faithfully.
+        firsts = [rel["relation"] for rel in robot.get("relations", []) if rel["relationId"].endswith("_first")]
+        is_far = firsts == ["FAR_FROM"]
+        matched, other = (_PLACED, _REL_EVENT) if is_far else (_REL_EVENT, _PLACED)
+        assert _verify(matched, r)["passed"] is True, (p.name, firsts, "matched strong target should PASS")
+        oc = _verify(other, r)
+        assert oc["passed"] is False and oc["hardMismatches"] == ["initial_state"], (p.name, oc["hardMismatches"])
+        far += int(is_far)
+        near += int(not is_far)
+    # observed split across the committed capture: 6 placed-from-outside (bottom+middle) + 3 near (top)
+    assert (far, near) == (6, 3), (far, near)
+
 
 
 # ---------------------------------------------------------------------------

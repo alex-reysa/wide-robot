@@ -56,6 +56,14 @@ from .adapter_object_inside_container import (
 TASK_NAME = "put_item_in_drawer"  # RLBench task name; the gold containment task is put_cube_in_tray
 CONTROL_RATE_HZ = 20.0
 _POSE_MATCH_EPS = 1e-3  # tolerance for locating the item's pose triple in task_low_dim_state
+# RLBench places the item with a top-down drop: it is geometrically INSIDE the drawer only on
+# the FINAL demo frame (the release instant), so the terminal containment transition coincides
+# with the last timestamp and the frozen extractor's relation timeline can end on the NEAR
+# transition-source rather than INSIDE. We therefore step the live sim a few frames after the
+# demo to record the item GENUINELY AT REST inside the drawer (real physics, verified static in
+# the probe) so the achieved INSIDE relation persists past the transition and registers as the
+# terminal relation. These are honest captured frames, not fabricated padding.
+_SETTLE_FRAMES = 6
 
 # The three drawer variations and the CoppeliaSim handles each one drives. The item shape
 # is shared; the container volume is the variation's success proximity sensor.
@@ -84,21 +92,30 @@ def rlbench_available() -> bool:
 # ---------------------------------------------------------------------------
 # Neutralisation: RLBench scene state -> neutral measurements (no handle names out).
 # ---------------------------------------------------------------------------
-def _neutral_pose(obj: Any) -> Dict[str, Any]:  # pragma: no cover - needs RLBench
-    """A live PyRep object's pose as a neutral CSG pose; only its numeric pose escapes."""
-    x, y, z, qx, qy, qz, qw = (float(v) for v in obj.get_pose())
-    return {
-        "frameId": "world",
-        "positionM": {"x": x, "y": y, "z": z},
-        "orientationWxyz": {"w": qw, "x": qx, "y": qy, "z": qz},
-        "confidence": 1.0,
-    }
-
-
 def _neutral_size(obj: Any) -> List[float]:  # pragma: no cover - needs RLBench
     """Axis-aligned full extents (meters) from a live shape/sensor's bounding box."""
     x0, x1, y0, y1, z0, z1 = (float(v) for v in obj.get_bounding_box())
     return [abs(x1 - x0), abs(y1 - y0), abs(z1 - z0)]
+
+
+def _container_volume(sensor: Any) -> Dict[str, Any]:  # pragma: no cover - needs RLBench
+    """Container volume = the success sensor's POSE (origin) as centre + its bounding-box extents.
+
+    The RLBench success ProximitySensor sits in the drawer; its pose origin anchors the drawer
+    region and its extents (~0.3 x 0.3 x 0.083) approximate the drawer opening + depth. We do NOT
+    re-centre on the bbox's asymmetric AABB centre: the sensor is a *passage* detector (it trips as
+    the item descends through it) and the item then settles on the drawer floor slightly BELOW the
+    bbox; anchoring the box at the origin (extending to origin - extent/2) keeps the drawer floor
+    inside the volume, so the at-rest item is INSIDE across all three drawer heights. Validated:
+    9/9 terminal INSIDE; the AABB-centre alternative wrongly excludes the middle drawer's at-rest
+    item (floor raised ~3 cm above the rest). Returns the pose + extents for body_001."""
+    px, py, pz = (float(v) for v in sensor.get_position())
+    return {
+        "frameId": "world",
+        "positionM": {"x": px, "y": py, "z": pz},
+        "orientationWxyz": {"w": 1.0, "x": 0.0, "y": 0.0, "z": 0.0},
+        "confidence": 1.0,
+    }
 
 
 def _task_low_dim_state(obs: Any) -> List[Any]:
@@ -144,39 +161,45 @@ def _resolve_item_pose_offset(item_obj: Any, demo: Sequence[Any]) -> int:  # pra
     return matches[0]
 
 
-def _demo_to_measurements(demo: Sequence[Any], *, item_obj: Any,
-                          success_sensor_obj: Any) -> List[Dict[str, Any]]:  # pragma: no cover - needs RLBench
-    """Build neutral per-frame measurements from a recorded demo + live handles.
+def _item_measurement(frame_index: int, xyz, item_size, container_pose,
+                      container_size) -> Dict[str, Any]:  # pragma: no cover - needs RLBench
+    ix, iy, iz = (float(v) for v in xyz)
+    return {
+        "frameIndex": frame_index,
+        "timeS": frame_index / CONTROL_RATE_HZ,
+        "itemPose": {"frameId": "world", "positionM": {"x": ix, "y": iy, "z": iz},
+                     "orientationWxyz": {"w": 1.0, "x": 0.0, "y": 0.0, "z": 0.0}, "confidence": 1.0},
+        "itemSizeM": list(item_size),
+        "containerPose": container_pose,
+        "containerSizeM": list(container_size),
+        "sizeApproximate": False,
+    }
 
-    The item moves per frame (its position read from each ``Observation.task_low_dim_state``);
-    its size is read once from the item shape. The container volume is the success proximity
-    sensor's pose + bounding box, read once (the drawer interior is static within a demo). No
-    handle name, and no success boolean, appears in the output.
-    """
-    item_size = _neutral_size(item_obj)
-    container_pose = _neutral_pose(success_sensor_obj)
-    container_size = _neutral_size(success_sensor_obj)
-    item_offset = _resolve_item_pose_offset(item_obj, demo)
-    measurements: List[Dict[str, Any]] = []
-    for i, obs in enumerate(demo):
-        state = _task_low_dim_state(obs)
-        ix, iy, iz = (float(state[item_offset + k]) for k in range(3))
-        measurements.append({
-            "frameIndex": i,
-            "timeS": i / CONTROL_RATE_HZ,
-            "itemPose": {"frameId": "world", "positionM": {"x": ix, "y": iy, "z": iz},
-                         "orientationWxyz": {"w": 1.0, "x": 0.0, "y": 0.0, "z": 0.0}, "confidence": 1.0},
-            "itemSizeM": list(item_size),
-            "containerPose": container_pose,
-            "containerSizeM": list(container_size),
-            "sizeApproximate": False,
-        })
+
+def _assert_measurements_neutral(measurements: Sequence[Mapping[str, Any]]) -> None:  # pragma: no cover - needs RLBench
     # Defence in depth: a measurement must carry only neutral keys (the converter re-checks,
     # but failing here names the recorder as the leak source).
     for i, m in enumerate(measurements):
         extra = sorted(set(m) - set(NEUTRAL_MEASUREMENT_FIELDS))
         if extra:
             raise RuntimeError(f"recorder built a non-neutral measurement {i}: extra keys {extra}")
+
+
+def _demo_to_measurements(demo: Sequence[Any], *, item_obj: Any, item_size,
+                          container_pose, container_size) -> List[Dict[str, Any]]:  # pragma: no cover - needs RLBench
+    """Build neutral per-frame measurements for the recorded demo frames.
+
+    The item moves per frame (its position read from each ``Observation.task_low_dim_state``);
+    sizes + the container volume are precomputed once by the caller (the drawer interior is
+    static within a demo). No handle name, and no success boolean, appears in the output.
+    """
+    item_offset = _resolve_item_pose_offset(item_obj, demo)
+    measurements = [
+        _item_measurement(i, [_task_low_dim_state(obs)[item_offset + k] for k in range(3)],
+                          item_size, container_pose, container_size)
+        for i, obs in enumerate(demo)
+    ]
+    _assert_measurements_neutral(measurements)
     return measurements
 
 
@@ -225,13 +248,31 @@ def record_variation(variation: str, *, amount: int = 1, headless: bool = True,
     out: List[Dict[str, Any]] = []
     try:
         task_env = _make_task_env(env, variation)
+        pr = getattr(env, "_pyrep", None)
         for _ in range(amount):
-            demo = task_env.get_demos(1, live_demos=True)[0]
+            demo = list(task_env.get_demos(1, live_demos=True)[0])
             item_obj = Shape(handles["item"])
             success_sensor_obj = ProximitySensor(handles["success_sensor"])
+            item_size = _neutral_size(item_obj)
+            container_pose = _container_volume(success_sensor_obj)
+            container_size = _neutral_size(success_sensor_obj)
             measurements = _demo_to_measurements(
-                list(demo), item_obj=item_obj, success_sensor_obj=success_sensor_obj)
-            out.append({"demo": list(demo), "measurements": measurements})
+                demo, item_obj=item_obj, item_size=item_size,
+                container_pose=container_pose, container_size=container_size)
+            obs_list: List[Any] = list(demo)
+            # Honest settle tail: the item rests inside the drawer after release; the demo ends
+            # the instant the success sensor trips (1 INSIDE frame). Step the live sim to capture
+            # genuine at-rest frames so the achieved INSIDE relation persists to the terminal.
+            last_gp = [float(v) for v in getattr(demo[-1], "gripper_pose")]
+            if pr is not None:
+                for _s in range(_SETTLE_FRAMES):
+                    pr.step()
+                    xyz = [float(v) for v in item_obj.get_position()]
+                    measurements.append(_item_measurement(
+                        len(measurements), xyz, item_size, container_pose, container_size))
+                    obs_list.append({"gripper_pose": last_gp, "gripper_open": 1.0})
+            _assert_measurements_neutral(measurements)
+            out.append({"demo": obs_list, "measurements": measurements})
     finally:
         if own_env:
             env.shutdown()

@@ -1,0 +1,67 @@
+{
+  "demosPerVariation": 3,
+  "outputs": [
+    {
+      "demoIndex": 0,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_bottom_demo00.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_bottom_demo00.summary.json",
+      "variation": "bottom"
+    },
+    {
+      "demoIndex": 1,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_bottom_demo01.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_bottom_demo01.summary.json",
+      "variation": "bottom"
+    },
+    {
+      "demoIndex": 2,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_bottom_demo02.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_bottom_demo02.summary.json",
+      "variation": "bottom"
+    },
+    {
+      "demoIndex": 0,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_middle_demo00.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_middle_demo00.summary.json",
+      "variation": "middle"
+    },
+    {
+      "demoIndex": 1,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_middle_demo01.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_middle_demo01.summary.json",
+      "variation": "middle"
+    },
+    {
+      "demoIndex": 2,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_middle_demo02.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_middle_demo02.summary.json",
+      "variation": "middle"
+    },
+    {
+      "demoIndex": 0,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_top_demo00.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_top_demo00.summary.json",
+      "variation": "top"
+    },
+    {
+      "demoIndex": 1,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_top_demo01.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_top_demo01.summary.json",
+      "variation": "top"
+    },
+    {
+      "demoIndex": 2,
+      "rollout": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_top_demo02.rollout.json",
+      "summary": "/workspace/wide-robot/pilots/rlbench/_out/live_runpod_20260616_put_item/put_item_in_drawer_top_demo02.summary.json",
+      "variation": "top"
+    }
+  ],
+  "schemaVersion": "csg.rlbench_pilot_run.v0",
+  "task": "put_item_in_drawer",
+  "variations": [
+    "bottom",
+    "middle",
+    "top"
+  ],
+  "verified": true
+}

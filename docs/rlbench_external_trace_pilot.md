@@ -28,10 +28,11 @@ initial value) — still **no** contact/`CONTACT_BEGIN`/temporal-order claims. I
 real demos and is strictly stronger than value-only (a flat "born-open" drawer that PASSes
 value-only FAILs it). Contact/order semantics remain deliberately deferred. **Result E
 (Phase 2F-4)** opens the external-**simulation** leg of the `object_inside_container`
-flagship task with a second RLBench task, `PutItemInDrawer`: the offline half — a two-body
-converter, two pilot targets (`terminal_only` + `relation_event`), a committed synthetic
-fixture, and a full no-RLBench suite — is **landed and green**; the 9-demo live Runpod
-capture is a documented follow-on (see "Result E").
+flagship task with a second RLBench task, `PutItemInDrawer`. Both halves are **landed and
+green**: the offline scaffold (two-body converter, three pilot targets — `terminal_only`,
+`relation_event`, `placed_from_outside` — a synthetic fixture, and a no-RLBench suite) **and**
+a live Runpod capture of **9 real demos** that PASS `terminal_only` 9/9 and their initial-
+condition-matched strong target through the unchanged verifier (see "Result E").
 
 **Scope: deliberately very narrow.** Two RLBench tasks (`open_drawer`, `put_item_in_drawer`),
 a handful of demonstrations each, fed through the **frozen** csg verifier. This is a
@@ -406,27 +407,43 @@ positive. `csg/` stays byte-frozen.
 
 ```bash
 python3 -m pytest tests/test_rlbench_object_inside_container.py -q
-# 24 passed, 3 skipped   (the 3 skips are the RLBench-install-gated live tests)
+# 29 passed, 3 skipped   (the 3 skips are the RLBench-install-gated live-record tests)
 ```
 
-**Live capture (the follow-on half).** The 9-demo Runpod capture that turns the synthetic
-positive into real external-sim evidence is `pilots/rlbench/record_put_item_in_drawer.py`:
+#### Live evidence (Runpod, 2026-06-16) — 9/9 real demos
 
-```bash
-# On a Runpod pod with CoppeliaSim v4.1.0 + PyRep + RLBench (see "Live record" below):
-python3 -m pilots.rlbench.record_put_item_in_drawer \
-    --variations bottom,middle,top --demos-per-variation 3 \
-    --out-dir pilots/rlbench/_out --verify
-# pull back the 9 *.rollout.json + *.summary.json, commit under
-#   pilots/rlbench/fixtures/live_runpod_<date>_put_item/, then un-skip the live tests
-#   (set RLBENCH_PILOT_LIVE=1 or install RLBench) to lock the 9/9 result.
-```
+A live capture recorded **9 real `PutItemInDrawer` demos** (3 each for the bottom/middle/top
+drawers) on a Runpod community pod (RTX 4090, CoppeliaSim Edu 4.1.0 + PyRep + RLBench, run
+under `xvfb-run`). The rollouts + provenance sidecars are committed under
+`pilots/rlbench/fixtures/live_runpod_20260616_put_item/`, so the frozen verifier re-judges
+them from a clean clone with **no** RLBench installed
+(`test_committed_live_capture_9_of_9_terminal_inside`). Results through the unchanged verifier:
 
-The recorder's `_QUARANTINED_HANDLES` (item / drawer / `success_<variation>` sensor names)
-and the `task_low_dim_state` item-pose layout are best-guess CoppeliaSim names **to confirm
-against the installed RLBench `PutItemInDrawer`** at capture time; the resolvers fail loudly
-rather than guess if a handle or layout differs. The compact cross-source confusion + leakage
-report tying all the evidence together is Phase 2F-5.
+| Drawer | Demos | first→last relation | `terminal_only` | matched strong target |
+|---|---:|---|---|---|
+| bottom | 3 | FAR_FROM → INSIDE | **PASS** | `placed_from_outside` **PASS** |
+| middle | 3 | FAR_FROM → INSIDE | **PASS** | `placed_from_outside` **PASS** |
+| top | 3 | NEAR → INSIDE | **PASS** | `relation_event` **PASS** |
+
+All 9 are leakage-clean, `physicalValidity: null`, and carry a `CONTAINMENT_CHANGE` event.
+`terminal_only` PASSes **9/9**. The strong targets **partition the episodes by their observed
+initial relation**: RLBench carries the item in from across the table for the bottom/middle
+drawers (`FAR_FROM`, 6/9 → `placed_from_outside`) and from nearby for the top drawer (`NEAR`,
+3/9 → `relation_event`); each demo PASSes its matched target and FAILs the other on
+`initial_state` alone — the verifier reads each episode's initial condition faithfully, and
+both strong targets reject a born-inside item via `initial_state`.
+
+**Capture lessons (folded into the recorder, see the `wide-robot-rlbench-runpod-capture`
+note).** (1) RLBench places the item with a **top-down drop**, so it is geometrically INSIDE
+only on the final demo frame; the recorder steps the live sim a few frames after the demo to
+record the item **genuinely at rest** inside the drawer, so the achieved INSIDE relation
+persists to the terminal (without this, the terminal containment transition's `NEAR` source
+ends the timeline and `goal_satisfaction` fails). (2) The container volume is anchored at the
+success sensor's **pose origin** (not the asymmetric bbox AABB centre) so the box reaches the
+drawer floor where the item rests — the AABB-centre alternative wrongly excluded the middle
+drawer. (3) Three concurrent CoppeliaSim instances deadlock (shared remote-API port); capture
+sequentially. The compact cross-source confusion + leakage report tying all the evidence
+together is Phase 2F-5.
 
 ## Leakage contract for external traces (the heart of the pilot)
 
