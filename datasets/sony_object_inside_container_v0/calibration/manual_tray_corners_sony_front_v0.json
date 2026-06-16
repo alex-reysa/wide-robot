@@ -1,0 +1,105 @@
+{
+  "camera": "sony_front",
+  "derived": {
+    "detectedMarkers": [
+      0,
+      1,
+      2,
+      3,
+      6,
+      7
+    ],
+    "edgeLengthsM": {
+      "back": 0.186059,
+      "front": 0.191119,
+      "left": 0.124703,
+      "right": 0.132528
+    },
+    "extrinsic": {
+      "flatMarkers": [
+        0,
+        1,
+        7
+      ],
+      "maxNormalSpreadDeg": 3.38,
+      "upVectorCam": [
+        -0.0253,
+        -0.7519,
+        -0.6588
+      ],
+      "yawSource": "tray_depth_6to7"
+    },
+    "marker6OffsetM": [
+      0.045763,
+      0.051648,
+      -0.152301
+    ],
+    "marker7OffsetM": [
+      -0.049134,
+      0.049418,
+      -0.001344
+    ],
+    "measuredFootprintM": [
+      0.188589,
+      0.128616
+    ],
+    "trayCenterWorldM": [
+      -0.022058,
+      -0.053698,
+      0.0
+    ],
+    "trayYawRad": -1.618282,
+    "worldCornersM": {
+      "backLeft": [
+        0.0429,
+        0.040839,
+        0.0
+      ],
+      "backRight": [
+        0.041542,
+        -0.145215,
+        0.0
+      ],
+      "frontLeft": [
+        -0.081802,
+        0.040243,
+        0.0
+      ],
+      "frontRight": [
+        -0.090874,
+        -0.150661,
+        0.0
+      ]
+    }
+  },
+  "imageSize": [
+    3840,
+    2160
+  ],
+  "innerTrayFloorCornersPx": {
+    "backLeft": [
+      1586.0,
+      820.0
+    ],
+    "backRight": [
+      2148.0,
+      809.0
+    ],
+    "frontLeft": [
+      1564.0,
+      1067.0
+    ],
+    "frontRight": [
+      2188.0,
+      1072.0
+    ]
+  },
+  "notes": "marker7OffsetM adopted from iphone_top (top-down, accurate). The Sony 45-degree back-projection underestimated tray depth (12.9cm vs ~18), so its corner-derived center is kept only as provenance; off7 is a camera-independent physical constant.",
+  "planeZ": 0.0,
+  "referenceEpisodeId": "oic_success_001",
+  "referenceFrameIndex": 0,
+  "schemaVersion": "real_camera.manual_tray_corners.v0",
+  "adopted": {
+    "marker7OffsetMfrom": "iphone_top"
+  }
+}

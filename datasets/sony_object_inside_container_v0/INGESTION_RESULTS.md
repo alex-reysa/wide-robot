@@ -2,10 +2,11 @@
 
 > **Status: conservative Phase 3A pilot — NOT "fully-solved real-camera ingestion."**
 > The defensible claim is narrow and strong: **across 78 real clips the frozen verifier produced
-> 0 false PASSes on 30 genuine-failure clips**, with **partial success recall** (terminal target
-> ~50–62%; the misses are conservative — borderline placements → UNCERTAIN/FAIL, never a wrong-way
-> PASS). It is a marker-based, approximate-calibration pilot that demonstrates the
-> source-independent verifier's *safety* survives real evidence — not a high-recall perception system.
+> 0 false PASSes on 30 genuine-failure clips**, with **success recall now 27/32 (~84%)** after the
+> manual tray-corner calibration (was 18/32 with the marker-fit; **see "Update 2"**). The remaining
+> misses are conservative — borderline/occluded placements → UNCERTAIN, never a wrong-way PASS. It
+> is a marker-based pilot that demonstrates the source-independent verifier's *safety* survives real
+> evidence; recall is now good but still calibration-bounded, not a fully-solved perception system.
 
 Real video → `real_camera.tracks.v0` → `csg.rollout.v0` → the **unchanged** frozen verifier
 (`pilots.external_verify.verify_external_rollout`; `csg/` byte-frozen). 40 episodes × 2 cameras
@@ -13,9 +14,10 @@ Real video → `real_camera.tracks.v0` → `csg.rollout.v0` → the **unchanged*
 **0 errors**. Both bundled targets run per clip: `object_inside_container_terminal_only` and
 `object_inside_container_relation_event`.
 
-Reproduce: `python -m scripts.ingest_recordings --select all`
-(needs the `[camera]` extra; artifacts under `tracks/`, `rollouts/`, `calibration/perclip/`,
-`verdicts_all.json`).
+Reproduce: `python -m scripts.ingest_recordings --select all` (needs the `[camera]` extra; artifacts
+under `tracks/`, `rollouts/`, `calibration/perclip/`, `verdicts_all.json`). The committed results use
+the frozen manual tray-corner sidecars (`calibration/manual_tray_corners_<cam>_v0.json`), which the
+driver auto-loads (`--manual auto`; `--manual off` reverts to the marker-fit). See **Update 2**.
 
 ## Headline: the verifier's safety survives the real-evidence path
 
@@ -142,6 +144,51 @@ tray-edge fit instead of a marker-center+nominal-size box), not a footprint fudg
 
 `relation_event`'s NEAR-vs-FAR limitation is tracked separately above (resolved via the combined
 transition); it is independent of this footprint result.
+
+## Update 2 — manual tray-corner calibration (recall 18/32 → 27/32, safety intact)
+
+The false-negative audit above predicted the fix: *"a tray-edge fit instead of a marker-center +
+nominal-size box."* That is exactly what this update does — and it lifts success recall from 18/32
+to **27/32 with every safety invariant preserved** (0 false PASS on the 30 genuine failures,
+born-inside transition 8/8 FAIL, 0 regressions, 0 errors).
+
+**Method (all pilot-side; `csg/` untouched).**
+- A diagnostic overlay tool (`pilots/real_camera/visualize_episode.py`) renders the modeled tray /
+  INSIDE footprint / cube / detected tags onto a real frame; it made the ~1–2 cm tray-center offset
+  *visible* (the marker-fit box sat off the physical cardboard, so genuinely-inside cubes read NEAR).
+- `pilots/real_camera/manual_calibration.py` turns four **clicked inner-floor tray corners** on one
+  reference frame into a frozen, source-bound tray geometry: it back-projects the corner pixels onto
+  the table plane through that clip's (good) extrinsic, recovers the true tray center, and expresses
+  it as the **marker-7 → tray-center offset *in marker 7's own frame***. Marker 7 is glued to the
+  tray, so that offset is a fixed physical constant: re-applying it per clip as
+  `P7_world + R7_world @ offset` corrects every clip (the homemade tray is repositioned between
+  takes) with **no per-clip tuning**, and is yaw-convention-independent.
+- The offset is **camera-independent** (it lives in the tag's own frame). The near-top-down
+  **iPhone** view measures the tray boundary cleanly (≈16.8×19.5 cm, consistent opposite edges); the
+  **Sony 45° back-projection underestimates depth** (≈12.9 cm), so Sony **adopts the iPhone-measured
+  `marker7OffsetM`** rather than its own corners. Sidecars:
+  `calibration/manual_tray_corners_<cam>_v0.json` (schema `real_camera.manual_tray_corners.v0`),
+  auto-loaded by the ingest driver (`--manual auto|on|off`).
+- The pure geometry cores (frame select, footprint corners, world↔pixel projection, marker-frame
+  offset) are cv2-free and unit-tested. **107 real_camera tests pass; `csg/` byte-frozen.**
+
+**Result (full 78-clip rerun, `--manual on`).**
+
+| metric | marker-fit | manual | Δ |
+|---|--:|--:|--:|
+| success terminal PASS | 18/32 (sony 10, iphone 8) | **27/32 (sony 15, iphone 12)** | +9 |
+| success transition PASS | 18/32 | **27/32** | +9 |
+| false PASS — 30 genuine failures | 0 | **0** | ✓ |
+| born-inside / inside-to-inside transition leaks | 0 | **0** | ✓ |
+| regressions / errors | — | **0 / 0** | ✓ |
+| overall terminal-AND-transition match | 40/78 | **49/78** | +9 |
+
+The 5 remaining success misses are all **UNCERTAIN** (extractor noise / occlusion), not FAIL — no
+genuine success is wrong-way FAILed. The physical tray footprint stays the measured ~18×18 (no
+footprint fudge); only the **center** is corrected, which is why the failure clips (cube clearly
+outside/beside the tray) are unaffected while back/wall-placed successes are recovered. The
+before/after overlay for `oic_success_001 sony` (tray box snapping onto the physical cardboard,
+cube going from NEAR/outside the yellow INSIDE box to INSIDE) is the visual confirmation.
 
 ## Calibration-clip note
 
