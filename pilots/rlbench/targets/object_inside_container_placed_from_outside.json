@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "rlbench_object_inside_container_placed_from_outside",
+  "taskCaption": "item starts outside (far from) the drawer and is placed inside it (placed-from-outside diagnostic)",
+  "objects": [
+    {"objectId": "h_item", "categoryLabel": "item", "categoryConfidence": 0.9, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_SIM_BBOX", "orientedBox": {"sizeM": {"x": 0.04, "y": 0.04, "z": 0.04}}}},
+    {"objectId": "h_container", "categoryLabel": "container", "categoryConfidence": 0.9, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_SIM_BBOX", "orientedBox": {"sizeM": {"x": 0.24, "y": 0.18, "z": 0.03}}}}
+  ],
+  "agentParts": [],
+  "relations": [
+    {"relationId": "r0", "timeNs": "0", "subjectObjectId": "h_item", "objectObjectId": "h_container", "relation": "FAR_FROM", "confidence": 0.9},
+    {"relationId": "r1", "timeNs": "3000000000", "subjectObjectId": "h_item", "objectObjectId": "h_container", "relation": "INSIDE", "confidence": 0.9}
+  ],
+  "events": [
+    {"eventId": "e_containment", "eventKind": "CONTAINMENT_CHANGE", "timeSpan": {"startTimeNs": "1000000000", "endTimeNs": "1200000000"}, "involvedObjectIds": ["h_item", "h_container"], "observedDeltas": [{"objectId": "h_item", "confidence": 0.9, "relationTransition": {"subjectObjectId": "h_item", "objectObjectId": "h_container", "fromRelation": "NEAR", "toRelation": "INSIDE"}}], "confidence": 0.9}
+  ],
+  "plannerView": {
+    "bodies": [{"objectId": "h_item", "mobility": "MOVABLE"}, {"objectId": "h_container", "mobility": "STATIC"}],
+    "stages": [{"stageId": "s1", "confidence": 0.9, "goalConstraints": [{"constraintId": "g1", "kind": "OBJECT_RELATION_GOAL", "hard": true, "confidence": 0.9, "relation": {"subjectObjectId": "h_item", "objectObjectId": "h_container", "desiredRelation": "INSIDE"}}]}]
+  },
+  "pilotMetadata": {
+    "diagnostic": "rlbench-object-inside-container-placed-from-outside",
+    "tests": "Asserts, via the FROZEN matcher: the item's TERMINAL relation to the container is INSIDE (hard OBJECT_RELATION_GOAL -> goal_satisfaction); the item STARTED FAR_FROM, not already inside or near (initial_state, from the authored r0 FAR_FROM endpoint); it ENDED INSIDE (terminal_state + relation_transitions); and one CONTAINMENT_CHANGE event is present (event_presence). The far-start sibling of object_inside_container_relation_event (NEAR start): RLBench PutItemInDrawer carries the item in from across the table, so the bottom/middle drawer episodes start FAR_FROM while the top drawer starts NEAR -- the two targets partition the real episodes by their observed initial condition.",
+    "addedOverTerminalOnly": ["relations(authored FAR_FROM r0 + INSIDE r1) -> contributes initial_state(FAR_FROM) + terminal_state(INSIDE)", "CONTAINMENT_CHANGE event -> event_presence + relation_transitions(NEAR->INSIDE)"],
+    "enforcedVsAuthoring": "CRITICAL: a 'born-inside' episode is rejected by initial_state (its FIRST relation is INSIDE, not FAR_FROM), NOT by relation_transitions/event_presence -- csg/rollout_extract.py seeds prev_rel='NEAR' UNCONDITIONALLY so even a born-inside item emits a NEAR->INSIDE CONTAINMENT_CHANGE. The authored event delta keeps fromRelation=NEAR (the seed value the extractor emits); event_presence checks only the (kind, objects) signature, not the delta endpoints, so the authored FAR_FROM r0 and the NEAR delta are consistent under the matcher. ENFORCED: terminal INSIDE, INSIDE achieved (relation_transitions), initial FAR_FROM endpoint (initial_state), CONTAINMENT_CHANGE present (event_presence). event_order stays support 0 (one event). AUTHORING ONLY: timeSpan magnitudes, confidences, geometry source/category, representative object sizes.",
+    "deferred": ["contacts", "CONTACT_BEGIN", "HAND_OBJECT_CO_MOTION", "RELEASE_INFERRED", "temporalEdges", "contact-before-motion order"],
+    "deferredNote": "Asserting gripper-contact or causal order is deferred to a later target until honestly evidenced without weakening leakage discipline. RLBench does emit grasp/contact/co-motion/release events here (it has a real gripper), but this target deliberately asserts only relation/event semantics.",
+    "source": "RLBench PutItemInDrawer (bottom/middle variations start FAR_FROM); external simulation leg of the object_inside_container flagship task. Live demos recorded on Runpod/CoppeliaSim by pilots.rlbench.record_put_item_in_drawer; raw sim dumps stay off git. Object sizes here are representative; the container volume in each rollout is the success proximity sensor's pose + extents.",
+    "notAGoldTask": "Pilot diagnostic, deliberately NOT added to gold_tests/. Read it for placed-from-outside relation-event mappability from an external simulator, not as a full object_inside_container acceptance test."
+  }
+}

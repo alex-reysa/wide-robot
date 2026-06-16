@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "csg.v0",
+  "graphId": "rlbench_object_inside_container_terminal_only",
+  "taskCaption": "item ends up inside the drawer (terminal-relation-only diagnostic)",
+  "objects": [
+    {"objectId": "h_item", "categoryLabel": "item", "categoryConfidence": 0.9, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_SIM_BBOX", "orientedBox": {"sizeM": {"x": 0.04, "y": 0.04, "z": 0.04}}}},
+    {"objectId": "h_container", "categoryLabel": "container", "categoryConfidence": 0.9, "physicalKind": "RIGID_OBJECT", "geometry": {"source": "FROM_SIM_BBOX", "orientedBox": {"sizeM": {"x": 0.24, "y": 0.18, "z": 0.03}}}}
+  ],
+  "agentParts": [],
+  "plannerView": {
+    "bodies": [{"objectId": "h_item", "mobility": "MOVABLE"}, {"objectId": "h_container", "mobility": "STATIC"}],
+    "stages": [{"stageId": "s1", "confidence": 0.9, "goalConstraints": [{"constraintId": "g1", "kind": "OBJECT_RELATION_GOAL", "hard": true, "confidence": 0.9, "relation": {"subjectObjectId": "h_item", "objectObjectId": "h_container", "desiredRelation": "INSIDE"}}]}]
+  },
+  "pilotMetadata": {
+    "diagnostic": "rlbench-object-inside-container-terminal-only",
+    "tests": "Asserts, via the FROZEN matcher, ONLY that the item's TERMINAL relation to the container volume is INSIDE (one hard OBJECT_RELATION_GOAL -> goal_satisfaction). It does NOT require an initial NEAR state, a NEAR->INSIDE transition, a CONTAINMENT_CHANGE event, contact, gripper, or temporal order. The RLBench analogue of the RH20T/real-camera terminal-only target: it answers 'did the item end inside the drawer?' and nothing more.",
+    "enforcedVsAuthoring": "ENFORCED: terminal INSIDE(item,container) only (goal_satisfaction reads the robot's terminal relation in csg.matcher._goal_satisfaction_distance). AUTHORING ONLY (not verifier-enforced): geometry source/category, confidences, the representative object sizes (the live container volume is bound per-rollout from the PutItemInDrawer success proximity sensor bounding box). A 'born-inside' episode (item inside the whole time, but it MOVES so the extractor reports a terminal INSIDE) PASSes this target -- which is exactly why the strictly-stronger object_inside_container_relation_event target exists.",
+    "deferred": ["initial NEAR state", "NEAR->INSIDE transition", "CONTAINMENT_CHANGE event", "contacts", "CONTACT_BEGIN", "HAND_OBJECT_CO_MOTION", "RELEASE_INFERRED", "temporalEdges", "contact-before-motion order"],
+    "deferredNote": "This target deliberately asserts the weakest honest claim (terminal containment) so the relation-event target can be shown strictly stronger. Contact/causal-order semantics are deferred until honestly evidenced without weakening leakage discipline.",
+    "source": "RLBench PutItemInDrawer (bottom/middle/top variations); external simulation leg of the object_inside_container flagship task. Live demos recorded on Runpod/CoppeliaSim by pilots.rlbench.record_put_item_in_drawer; raw sim dumps stay off git. Object sizes here are representative; the container volume in each rollout is the success proximity sensor's bounding box.",
+    "notAGoldTask": "Pilot diagnostic, deliberately NOT added to gold_tests/. Read it for terminal-containment mappability from an external simulator, not as a full object_inside_container acceptance test. It asserts relation evidence only and does not assert contact causality."
+  }
+}

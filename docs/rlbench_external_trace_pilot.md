@@ -26,11 +26,17 @@ articulation **increase** to the calibrated value plus an `ARTICULATION_CHANGE` 
 matcher checks the increase *direction* + terminal value + event presence — not the numeric
 initial value) — still **no** contact/`CONTACT_BEGIN`/temporal-order claims. It PASSes all 9
 real demos and is strictly stronger than value-only (a flat "born-open" drawer that PASSes
-value-only FAILs it). Contact/order semantics remain deliberately deferred.
+value-only FAILs it). Contact/order semantics remain deliberately deferred. **Result E
+(Phase 2F-4)** opens the external-**simulation** leg of the `object_inside_container`
+flagship task with a second RLBench task, `PutItemInDrawer`. Both halves are **landed and
+green**: the offline scaffold (two-body converter, three pilot targets — `terminal_only`,
+`relation_event`, `placed_from_outside` — a synthetic fixture, and a no-RLBench suite) **and**
+a live Runpod capture of **9 real demos** that PASS `terminal_only` 9/9 and their initial-
+condition-matched strong target through the unchanged verifier (see "Result E").
 
-**Scope: deliberately very narrow.** One RLBench task (`open_drawer`), a handful of
-its demonstrations, fed through the **frozen** csg verifier. This is a feasibility
-and discipline probe, not a benchmark expansion.
+**Scope: deliberately very narrow.** Two RLBench tasks (`open_drawer`, `put_item_in_drawer`),
+a handful of demonstrations each, fed through the **frozen** csg verifier. This is a
+feasibility and discipline probe, not a benchmark expansion.
 
 - Upstream: <https://github.com/stepjam/RLBench> · <https://sites.google.com/view/rlbench>
 
@@ -348,6 +354,96 @@ tripwire, and the kinematic / calibration / leakage negatives.
 python3 -m pytest tests/test_rlbench_articulation_event.py -q
 # 25 passed
 ```
+
+### Result E — object_inside_container (Phase 2F-4, the external-sim container leg)
+
+Results A–D are all `open_drawer` (one articulated body). Result E opens the **external-
+simulation** leg of the `object_inside_container` **flagship task** — already proven on
+MuJoCo (internal sim), Sony/iPhone (real camera), and RH20T (real-robot video) — using a
+*second* RLBench task, `PutItemInDrawer` (a movable item placed into a selected drawer).
+It is the two-body sibling of the OpenDrawer path and reuses the same rollout door + leakage
+gate + frozen verifier unchanged.
+
+**Converter** — `pilots/rlbench/adapter_object_inside_container.py::put_item_in_drawer_demo_to_rollout`
+(kept separate from the OpenDrawer adapter so that path is untouched). Neutral body
+assignment: `body_000` = item (MOVABLE), `body_001` = container volume (STATIC,
+`isContainer:true`, median-clamped so jitter cannot promote it to a moving figure). The
+neutral per-frame measurement contract is `frameIndex/timeS/itemPose/itemSizeM/
+containerPose/containerSizeM/sizeApproximate` — any other key (a `task`/`variation`/
+`success_*`/handle/target id) is rejected at the door. The container volume is bound from the
+`success_<variation>` proximity sensor's **pose + bounding box**; its boolean is never
+emitted. The rollout is fully source-blind — no task/variation/handle token appears anywhere,
+not even in diagnostics prose.
+
+**Two pilot targets** (`pilots/rlbench/targets/object_inside_container_{terminal_only,relation_event}.json`),
+modelled on the RH20T pair and forming the same strictly-stronger progression:
+
+| Probe | terminal_only | relation_event | what the frozen matcher checks |
+|---|:--:|:--:|---|
+| `goal_satisfaction` | 1 | 1 | terminal relation INSIDE(item, container) |
+| `initial_state` | 0 | 1 | item STARTED NEAR (rejects born-inside) |
+| `terminal_state` | 0 | 1 | item ENDED INSIDE |
+| `relation_transitions` | 0 | 1 | INSIDE achieved |
+| `event_presence` | 0 | 1 | one `CONTAINMENT_CHANGE` event present |
+| `event_order` | 0 | 0 | vacuous on purpose — one event, no pair |
+
+The **born-inside discriminator** is identical to the RH20T finding: because
+`csg/rollout_extract.py` seeds `prev_rel="NEAR"` unconditionally, an item inside the whole
+time still emits a NEAR→INSIDE `CONTAINMENT_CHANGE` — so a born-inside trace PASSes
+terminal_only but FAILs relation_event on **`initial_state` only** (not on the
+event/transition). No contact / `CONTACT_BEGIN` / co-motion / release / temporal order is
+asserted (the effector is recorded but no contact is claimed) — that stays deferred.
+
+**Offline evidence landed (this is the committed half).** `tests/test_rlbench_object_inside_container.py`
+(24 tests, **no RLBench**, 3 live tests skip) builds synthetic `PutItemInDrawer` rollouts
+through the *real* converter and pins, against the frozen verifier: a geometry tripwire; the
+target structure / not-a-gold-task; a synthetic success PASSing both targets non-vacuously;
+the born-inside strictly-stronger discriminator; near-not-inside / rim / far / flat FAILing
+leakage-clean on `goal_satisfaction`; leaky-trace and non-neutral-measurement rejection at
+the door; the source-identity quarantine; and off-task gold confusion (matches nothing — no
+contact evidence). A committed synthetic fixture
+(`pilots/rlbench/fixtures/synthetic_put_item_in_drawer.rollout.json`) is the static repro
+positive. `csg/` stays byte-frozen.
+
+```bash
+python3 -m pytest tests/test_rlbench_object_inside_container.py -q
+# 29 passed, 3 skipped   (the 3 skips are the RLBench-install-gated live-record tests)
+```
+
+#### Live evidence (Runpod, 2026-06-16) — 9/9 real demos
+
+A live capture recorded **9 real `PutItemInDrawer` demos** (3 each for the bottom/middle/top
+drawers) on a Runpod community pod (RTX 4090, CoppeliaSim Edu 4.1.0 + PyRep + RLBench, run
+under `xvfb-run`). The rollouts + provenance sidecars are committed under
+`pilots/rlbench/fixtures/live_runpod_20260616_put_item/`, so the frozen verifier re-judges
+them from a clean clone with **no** RLBench installed
+(`test_committed_live_capture_9_of_9_terminal_inside`). Results through the unchanged verifier:
+
+| Drawer | Demos | first→last relation | `terminal_only` | matched strong target |
+|---|---:|---|---|---|
+| bottom | 3 | FAR_FROM → INSIDE | **PASS** | `placed_from_outside` **PASS** |
+| middle | 3 | FAR_FROM → INSIDE | **PASS** | `placed_from_outside` **PASS** |
+| top | 3 | NEAR → INSIDE | **PASS** | `relation_event` **PASS** |
+
+All 9 are leakage-clean, `physicalValidity: null`, and carry a `CONTAINMENT_CHANGE` event.
+`terminal_only` PASSes **9/9**. The strong targets **partition the episodes by their observed
+initial relation**: RLBench carries the item in from across the table for the bottom/middle
+drawers (`FAR_FROM`, 6/9 → `placed_from_outside`) and from nearby for the top drawer (`NEAR`,
+3/9 → `relation_event`); each demo PASSes its matched target and FAILs the other on
+`initial_state` alone — the verifier reads each episode's initial condition faithfully, and
+both strong targets reject a born-inside item via `initial_state`.
+
+**Capture lessons (folded into the recorder, see the `wide-robot-rlbench-runpod-capture`
+note).** (1) RLBench places the item with a **top-down drop**, so it is geometrically INSIDE
+only on the final demo frame; the recorder steps the live sim a few frames after the demo to
+record the item **genuinely at rest** inside the drawer, so the achieved INSIDE relation
+persists to the terminal (without this, the terminal containment transition's `NEAR` source
+ends the timeline and `goal_satisfaction` fails). (2) The container volume is anchored at the
+success sensor's **pose origin** (not the asymmetric bbox AABB centre) so the box reaches the
+drawer floor where the item rests — the AABB-centre alternative wrongly excluded the middle
+drawer. (3) Three concurrent CoppeliaSim instances deadlock (shared remote-API port); capture
+sequentially. The compact cross-source confusion + leakage report tying all the evidence
+together is Phase 2F-5.
 
 ## Leakage contract for external traces (the heart of the pilot)
 

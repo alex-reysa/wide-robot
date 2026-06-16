@@ -68,10 +68,19 @@ use **(c) requester-pays** or front it with a CDN. Users download with
 No quota walls, versioned, discoverable, free for public datasets:
 
 ```bash
-pip install -U huggingface_hub && huggingface-cli login
-huggingface-cli upload <user>/<dataset> ./mydataset --repo-type=dataset
-# others: huggingface-cli download <user>/<dataset> --repo-type=dataset
+pip install -U huggingface_hub && hf auth login        # or reuse a cached token
+# Large dataset (GBs / many files): resumable, incremental commits:
+HF_HUB_DISABLE_XET=1 hf upload-large-folder <user>/<dataset> ./mydataset --repo-type dataset
+# others: hf download <user>/<dataset> --repo-type dataset --local-dir ./mydataset
 ```
+
+> **Gotcha that cost hours (macOS, 2026-06-16):** the default **Xet** backend (`hf_xet`) HANGS here —
+> `hf upload`/`upload-large-folder` connect, transfer a little, then stall **idle with 0 commits**
+> indefinitely (tried in/out of the Bash sandbox and with `HF_XET_HIGH_PERFORMANCE=1` — all hung).
+> **Fix: `HF_HUB_DISABLE_XET=1`** forces the legacy LFS path, which works (a 37 MB file committed in
+> 19 s ≈ 2 MB/s; full 5.5 GB / 80 files ≈ 30 min). To tell tool-vs-network apart, run a **timed
+> single-file** `HF_HUB_DISABLE_XET=1 hf upload <repo> <one-file> <path>` first. Also run uploads with
+> the Bash sandbox disabled.
 
 ## Option C — Drive (only if you must; small/private)
 
