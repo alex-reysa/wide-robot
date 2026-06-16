@@ -1,0 +1,2255 @@
+{
+  "schemaVersion": "real_camera.recordings.v0",
+  "datasetId": "sony_object_inside_container_v0",
+  "task": "object_inside_container",
+  "createdUtc": "2026-06-15T16:27:57Z",
+  "rawVideosRoot": "raw_videos",
+  "capture": {
+    "primaryCamera": "sony_front",
+    "secondaryCamera": "iphone_top",
+    "sonyView": "Sony A7IV at approximately 45 degree frontal view; filenames use __sony_front.",
+    "iphoneView": "iPhone top view; filenames use __iphone_top.",
+    "cube": {
+      "sizeM": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "markerTopId": 2,
+      "markerFrontId": 3,
+      "markerPrintSizeMm": 35
+    },
+    "tray": {
+      "nominalBaseM": [
+        0.18,
+        0.18
+      ],
+      "nominalRimHeightM": 0.04,
+      "construction": "homemade cardboard tray; dimensions are approximate and not perfectly consistent",
+      "calibrationGuidance": "Use measured or fitted tray geometry for ingestion; do not assume a perfectly square, rigid 18 x 18 cm footprint."
+    },
+    "markerPlacements": [
+      {
+        "markerId": 0,
+        "role": "table",
+        "placement": "on table",
+        "confidence": "confirmed"
+      },
+      {
+        "markerId": 1,
+        "role": "table",
+        "placement": "on table",
+        "confidence": "confirmed"
+      },
+      {
+        "markerId": 2,
+        "role": "cube_top",
+        "placement": "on top face of cube",
+        "confidence": "confirmed"
+      },
+      {
+        "markerId": 3,
+        "role": "cube_front",
+        "placement": "on front face of cube",
+        "confidence": "confirmed"
+      },
+      {
+        "markerId": 7,
+        "role": "tray_inside",
+        "placement": "inside the tray",
+        "confidence": "confirmed"
+      },
+      {
+        "markerId": 6,
+        "role": "tray_front",
+        "placement": "in front of the tray",
+        "confidence": "confirmed"
+      },
+      {
+        "markerId": 5,
+        "role": "absent",
+        "placement": "not present in capture",
+        "confidence": "confirmed"
+      },
+      {
+        "markerId": 4,
+        "role": "absent",
+        "placement": "not present in capture",
+        "confidence": "confirmed"
+      }
+    ],
+    "tagSheetPdf": "output/pdf/sony_object_inside_container_v0_apriltags_a4.pdf",
+    "tagSheetScript": "scripts/make_apriltag_print_sheet.py",
+    "knownTableMarkerIds": [
+      0,
+      1
+    ],
+    "knownTrayMarkerIds": [
+      6,
+      7
+    ],
+    "absentMarkerIds": [
+      4,
+      5
+    ],
+    "notes": [
+      "Raw videos are local and ignored by git via *.mp4.",
+      "Existing datasets/sony_object_inside_container_v0/calibration/sony_table_v0.calibration.json is synthetic/obsolete for this capture: it uses marker 7 and 0.04 m cube geometry.",
+      "A real capture calibration must be authored before video_to_tracks using cube IDs 2/3 and measured/fitted tray geometry.",
+      "IDs 6 and 7 were printed as big-cube tags but were not used as cube markers; they were repurposed as tray markers."
+    ]
+  },
+  "namingConvention": {
+    "pattern": "raw_videos/<category>/oic_<category>_<sequence:03d>__<camera>.mp4",
+    "cameras": {
+      "sony_front": "Sony A7IV frontal approximately 45 degrees",
+      "iphone_top": "iPhone top view"
+    },
+    "categories": {
+      "calibration": {
+        "expectedClass": "calibration",
+        "expectedVerdicts": {}
+      },
+      "success": {
+        "expectedClass": "success",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "PASS",
+          "object_inside_container_relation_event": "PASS"
+        }
+      },
+      "fail_near_not_inside": {
+        "expectedClass": "near_not_inside",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "FAIL",
+          "object_inside_container_relation_event": "FAIL"
+        }
+      },
+      "fail_on_rim": {
+        "expectedClass": "left_on_rim",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "FAIL",
+          "object_inside_container_relation_event": "FAIL"
+        }
+      },
+      "fail_outside": {
+        "expectedClass": "dropped_or_left_outside",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "FAIL",
+          "object_inside_container_relation_event": "FAIL"
+        }
+      },
+      "control_static": {
+        "expectedClass": "static_no_task",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "FAIL",
+          "object_inside_container_relation_event": "FAIL"
+        }
+      },
+      "control_born_inside": {
+        "expectedClass": "born_inside",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "PASS",
+          "object_inside_container_relation_event": "FAIL"
+        }
+      },
+      "control_born_inside_hand_motion": {
+        "expectedClass": "born_inside_with_hand_motion",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "PASS",
+          "object_inside_container_relation_event": "FAIL"
+        }
+      },
+      "control_inside_to_inside": {
+        "expectedClass": "inside_to_inside",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "PASS",
+          "object_inside_container_relation_event": "FAIL"
+        }
+      },
+      "control_inside_to_outside": {
+        "expectedClass": "inside_to_outside",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "FAIL",
+          "object_inside_container_relation_event": "FAIL"
+        }
+      },
+      "success_tag_obstruction": {
+        "expectedClass": "success_tag_obstruction",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "PASS",
+          "object_inside_container_relation_event": "PASS_OR_UNCERTAIN"
+        }
+      },
+      "success_hand_obstruction": {
+        "expectedClass": "success_hand_obstruction",
+        "expectedVerdicts": {
+          "object_inside_container_terminal_only": "PASS_OR_UNCERTAIN",
+          "object_inside_container_relation_event": "PASS_OR_UNCERTAIN"
+        }
+      }
+    }
+  },
+  "summary": {
+    "calibration": 2,
+    "control_born_inside": 4,
+    "control_born_inside_hand_motion": 4,
+    "control_inside_to_inside": 2,
+    "control_inside_to_outside": 4,
+    "control_static": 2,
+    "fail_near_not_inside": 8,
+    "fail_on_rim": 6,
+    "fail_outside": 10,
+    "success": 32,
+    "success_hand_obstruction": 2,
+    "success_tag_obstruction": 4
+  },
+  "videos": [
+    {
+      "episodeId": "oic_calibration_caliper75mm_cube50mm_001",
+      "category": "calibration",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/calibration/oic_calibration_caliper75mm_cube50mm_001__iphone_top.mp4",
+      "originalPath": "I-Calibration-caliper75mm-cube-3x3x3cm.mp4",
+      "sha256": "48fa12b58d0fc44f4861eddd236831bf217a794868e58ecbc5139ba9d6f74e7b",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 23.056,
+        "sizeBytes": 45426916
+      },
+      "expectedClass": "calibration",
+      "expectedVerdicts": {},
+      "notes": [
+        "Original filename mentioned cube-3x3x3cm; capture notes state actual cube is 5x5x5 cm and cube tags are 35 mm IDs 2/3.",
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_calibration_caliper75mm_cube50mm_001",
+      "category": "calibration",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/calibration/oic_calibration_caliper75mm_cube50mm_001__sony_front.mp4",
+      "originalPath": "S-Calibration-caliper75mm-cube-3x3x3cm.mp4",
+      "sha256": "704e920ee8f8fd59cf387cc1f126e29a5177bdec28d0fd792ca33752df4774c5",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 23.056,
+        "sizeBytes": 172236024
+      },
+      "expectedClass": "calibration",
+      "expectedVerdicts": {},
+      "notes": [
+        "Original filename mentioned cube-3x3x3cm; capture notes state actual cube is 5x5x5 cm and cube tags are 35 mm IDs 2/3."
+      ]
+    },
+    {
+      "episodeId": "oic_control_born_inside_001",
+      "category": "control_born_inside",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/control_born_inside/oic_control_born_inside_001__iphone_top.mp4",
+      "originalPath": "others/I-already-inside.mp4",
+      "sha256": "3e5414fc2c0e173f7c848e0de6d77e70dc590764f5cdb7115f38c0a6da6a7eea",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.98,
+        "sizeBytes": 25621629
+      },
+      "expectedClass": "born_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_control_born_inside_001",
+      "category": "control_born_inside",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/control_born_inside/oic_control_born_inside_001__sony_front.mp4",
+      "originalPath": "others/S-already-inside.mp4",
+      "sha256": "da5bad22890b93bfe2c7449bc9186f540ca2a6116f5484d0e87b212fd0f1e866",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.98,
+        "sizeBytes": 89571642
+      },
+      "expectedClass": "born_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_control_born_inside_002",
+      "category": "control_born_inside",
+      "sequence": 2,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/control_born_inside/oic_control_born_inside_002__iphone_top.mp4",
+      "originalPath": "others/I-Already-Inside-2.mp4",
+      "sha256": "e721b382ed77c66ff4c6004b67fc8a31fecc98a8e993697ddf3c0a939cb555eb",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.013,
+        "sizeBytes": 25547015
+      },
+      "expectedClass": "born_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_control_born_inside_002",
+      "category": "control_born_inside",
+      "sequence": 2,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/control_born_inside/oic_control_born_inside_002__sony_front.mp4",
+      "originalPath": "others/S-Already-Inside-2.mp4",
+      "sha256": "eec5e541ef2be81448391e39db763db0b71e39b522e94a0be41572aef785ea4f",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.013,
+        "sizeBytes": 89940352
+      },
+      "expectedClass": "born_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_control_born_inside_hand_motion_001",
+      "category": "control_born_inside_hand_motion",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/control_born_inside_hand_motion/oic_control_born_inside_hand_motion_001__iphone_top.mp4",
+      "originalPath": "others/I-Already-Inside-and-hand-movement.mp4",
+      "sha256": "1415d2782d1438de4d8f49207d1f7273771e5a2c6a2861939a8910b9cf29be63",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 20.554,
+        "sizeBytes": 39989172
+      },
+      "expectedClass": "born_inside_with_hand_motion",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_control_born_inside_hand_motion_001",
+      "category": "control_born_inside_hand_motion",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/control_born_inside_hand_motion/oic_control_born_inside_hand_motion_001__sony_front.mp4",
+      "originalPath": "others/S-Already-Inside-and-hand-movement.mp4",
+      "sha256": "deb2fe312a35a65d450e24eb0797dd7b4b29ef3e47dc1a7f235cac8b3ba5fb05",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 20.554,
+        "sizeBytes": 151632736
+      },
+      "expectedClass": "born_inside_with_hand_motion",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_control_born_inside_hand_motion_002",
+      "category": "control_born_inside_hand_motion",
+      "sequence": 2,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/control_born_inside_hand_motion/oic_control_born_inside_hand_motion_002__iphone_top.mp4",
+      "originalPath": "others/I-Already-Inside-and-hand-movement-2.mp4",
+      "sha256": "c0f8d6773737134d98f021ff663b71cab87503bc0a3fa992fdb26b6492f70373",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 10.611,
+        "sizeBytes": 20753024
+      },
+      "expectedClass": "born_inside_with_hand_motion",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_control_born_inside_hand_motion_002",
+      "category": "control_born_inside_hand_motion",
+      "sequence": 2,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/control_born_inside_hand_motion/oic_control_born_inside_hand_motion_002__sony_front.mp4",
+      "originalPath": "others/S-Already-Inside-and-hand-movement-2.mp4",
+      "sha256": "ad5ebc20ce45d9c2198deed157cb02dd8cad1d80de42fd872adab6b32a335fa5",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 10.611,
+        "sizeBytes": 70297719
+      },
+      "expectedClass": "born_inside_with_hand_motion",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_control_inside_to_inside_001",
+      "category": "control_inside_to_inside",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/control_inside_to_inside/oic_control_inside_to_inside_001__iphone_top.mp4",
+      "originalPath": "others/I-Inside-to-inside.mp4",
+      "sha256": "2cdaba415c808728a49a939c2bb92213e2a96d39d4ac1fb6931130695d95f221",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.947,
+        "sizeBytes": 27789199
+      },
+      "expectedClass": "inside_to_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_control_inside_to_inside_001",
+      "category": "control_inside_to_inside",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/control_inside_to_inside/oic_control_inside_to_inside_001__sony_front.mp4",
+      "originalPath": "others/S-Inside-to-inside.mp4",
+      "sha256": "f3fb1de3a20401e286a5f21024687a3611cb520678852955b8e13b97319899c3",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.947,
+        "sizeBytes": 97588518
+      },
+      "expectedClass": "inside_to_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_control_inside_to_outside_001",
+      "category": "control_inside_to_outside",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/control_inside_to_outside/oic_control_inside_to_outside_001__iphone_top.mp4",
+      "originalPath": "others/I-Inside-to-outside.mp4",
+      "sha256": "704cbe469d0d42191caaf8aaf142acd9a40d22791fea48584184f98d7684c0ab",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 8.742,
+        "sizeBytes": 17421432
+      },
+      "expectedClass": "inside_to_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_control_inside_to_outside_001",
+      "category": "control_inside_to_outside",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/control_inside_to_outside/oic_control_inside_to_outside_001__sony_front.mp4",
+      "originalPath": "others/S-Inside-to-outside.mp4",
+      "sha256": "278772a7034016346acc953953b377e795db02221d3381759e2ca5563e387e5f",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 8.742,
+        "sizeBytes": 55390633
+      },
+      "expectedClass": "inside_to_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_control_inside_to_outside_002",
+      "category": "control_inside_to_outside",
+      "sequence": 2,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/control_inside_to_outside/oic_control_inside_to_outside_002__iphone_top.mp4",
+      "originalPath": "others/I-Inside-to-outside-2_1.mp4",
+      "sha256": "a871d44e82cdfe4cb496634a0c3d0d9c7653532d3cf89cc83cc496d6673f73a0",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 7.541,
+        "sizeBytes": 14772988
+      },
+      "expectedClass": "inside_to_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_control_inside_to_outside_002",
+      "category": "control_inside_to_outside",
+      "sequence": 2,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/control_inside_to_outside/oic_control_inside_to_outside_002__sony_front.mp4",
+      "originalPath": "others/S-Inside-to-outside-2.mp4",
+      "sha256": "0eb0c6b606cf34d19f6f7b4a3d89118c782f9a569fac3e694c0de34d6c074832",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 7.541,
+        "sizeBytes": 45108837
+      },
+      "expectedClass": "inside_to_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_control_static_001",
+      "category": "control_static",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/control_static/oic_control_static_001__iphone_top.mp4",
+      "originalPath": "static/I-Static.mp4",
+      "sha256": "db5c86b9c137c6275f97a696b1fc56386bb7583153d6f2ed72fa36905feeca48",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.546,
+        "sizeBytes": 24906924
+      },
+      "expectedClass": "static_no_task",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_control_static_001",
+      "category": "control_static",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/control_static/oic_control_static_001__sony_front.mp4",
+      "originalPath": "static/S-Static.mp4",
+      "sha256": "96c24bac41cb436b87cb8f7ad0f2117fa2bd5a8a18d9669349cb8fa4ed201552",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.546,
+        "sizeBytes": 86042964
+      },
+      "expectedClass": "static_no_task",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_near_not_inside_001",
+      "category": "fail_near_not_inside",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_near_not_inside/oic_fail_near_not_inside_001__iphone_top.mp4",
+      "originalPath": "fail-close/iphone/I-Close1.mp4",
+      "sha256": "56530b2c1495455630209715f8fc1e6ae9b69923d8dbca67c75695685fc43d9a",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 23.69,
+        "sizeBytes": 46288189
+      },
+      "expectedClass": "near_not_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_near_not_inside_001",
+      "category": "fail_near_not_inside",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_near_not_inside/oic_fail_near_not_inside_001__sony_front.mp4",
+      "originalPath": "fail-close/sony/S-Close1.mp4",
+      "sha256": "c8f6edeca9d7799d26e94d2376b47c2f90aa159f53c539065096be6df0c1144c",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 23.69,
+        "sizeBytes": 176988611
+      },
+      "expectedClass": "near_not_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_near_not_inside_002",
+      "category": "fail_near_not_inside",
+      "sequence": 2,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_near_not_inside/oic_fail_near_not_inside_002__iphone_top.mp4",
+      "originalPath": "fail-close/iphone/I-Close2.mp4",
+      "sha256": "4c67616b45641e7d8aabb0f16a0f044080a12d742c3a7036ddf00eedcf83c54e",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.212,
+        "sizeBytes": 24392537
+      },
+      "expectedClass": "near_not_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_near_not_inside_002",
+      "category": "fail_near_not_inside",
+      "sequence": 2,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_near_not_inside/oic_fail_near_not_inside_002__sony_front.mp4",
+      "originalPath": "fail-close/sony/S-Close2.mp4",
+      "sha256": "13c6406cace6b910db2d8d185f881643bb60a7ce49065eb2c57e5662a04924e2",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.212,
+        "sizeBytes": 83687657
+      },
+      "expectedClass": "near_not_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_near_not_inside_003",
+      "category": "fail_near_not_inside",
+      "sequence": 3,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_near_not_inside/oic_fail_near_not_inside_003__iphone_top.mp4",
+      "originalPath": "fail-close/iphone/I-Close3.mp4",
+      "sha256": "86483b960c68eebabb76fc5bb5421954ff3efd98ac4b9543d0857286172a7509",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.214,
+        "sizeBytes": 28098744
+      },
+      "expectedClass": "near_not_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_near_not_inside_003",
+      "category": "fail_near_not_inside",
+      "sequence": 3,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_near_not_inside/oic_fail_near_not_inside_003__sony_front.mp4",
+      "originalPath": "fail-close/sony/S-Close3.mp4",
+      "sha256": "45d7893e6c7c8d577ae2dfadec1cab066ce8a903a09efa14162a5a1d96a71cc0",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.214,
+        "sizeBytes": 99551733
+      },
+      "expectedClass": "near_not_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_near_not_inside_004",
+      "category": "fail_near_not_inside",
+      "sequence": 4,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_near_not_inside/oic_fail_near_not_inside_004__iphone_top.mp4",
+      "originalPath": "fail-close/iphone/I-Close4.mp4",
+      "sha256": "5c45b859589e6720f03c23ad60ed5be20b16920ab8a2824cdb332eb9726aff38",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 23.156,
+        "sizeBytes": 45545064
+      },
+      "expectedClass": "near_not_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_near_not_inside_004",
+      "category": "fail_near_not_inside",
+      "sequence": 4,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_near_not_inside/oic_fail_near_not_inside_004__sony_front.mp4",
+      "originalPath": "fail-close/sony/S-Close4.mp4",
+      "sha256": "22edba1af1d622fc08ceeda2c35c605f04ef8b55cb7c32f84d83535fb8cc172f",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 23.156,
+        "sizeBytes": 173375080
+      },
+      "expectedClass": "near_not_inside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_on_rim_001",
+      "category": "fail_on_rim",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_on_rim/oic_fail_on_rim_001__iphone_top.mp4",
+      "originalPath": "fail-on-top-edge/iphone/I-Ontop1.mp4",
+      "sha256": "217b77f0ef684dcaa0cd38a7b09a71f0a37e11bc552f0cc49eb6c5b246cdc470",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.679,
+        "sizeBytes": 24997215
+      },
+      "expectedClass": "left_on_rim",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_on_rim_001",
+      "category": "fail_on_rim",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_on_rim/oic_fail_on_rim_001__sony_front.mp4",
+      "originalPath": "fail-on-top-edge/sony/S-Ontop1.mp4",
+      "sha256": "41de50db25edcfc20032e9cd9a33cda608eb565f59628fe9f2e6f4dc39779081",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.679,
+        "sizeBytes": 87392723
+      },
+      "expectedClass": "left_on_rim",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_on_rim_002",
+      "category": "fail_on_rim",
+      "sequence": 2,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_on_rim/oic_fail_on_rim_002__iphone_top.mp4",
+      "originalPath": "fail-on-top-edge/iphone/I-Ontop2.mp4",
+      "sha256": "4bbea257d19977b43316b8abb18d513a588eccc8cf92ac1cee39866726b7bb89",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.713,
+        "sizeBytes": 24892504
+      },
+      "expectedClass": "left_on_rim",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_on_rim_002",
+      "category": "fail_on_rim",
+      "sequence": 2,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_on_rim/oic_fail_on_rim_002__sony_front.mp4",
+      "originalPath": "fail-on-top-edge/sony/S-Ontop2.mp4",
+      "sha256": "2f791fd533ed167ace2696ff01ca1da3a40a54811b8cba36100091f6117892ea",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.713,
+        "sizeBytes": 87377277
+      },
+      "expectedClass": "left_on_rim",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_on_rim_003",
+      "category": "fail_on_rim",
+      "sequence": 3,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_on_rim/oic_fail_on_rim_003__iphone_top.mp4",
+      "originalPath": "fail-on-top-edge/iphone/I-Ontop3.mp4",
+      "sha256": "01e70cdcc7792a42675dae70117251bc84e924d593ec0bbbd0b87b43271c196b",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 10.944,
+        "sizeBytes": 21492111
+      },
+      "expectedClass": "left_on_rim",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_on_rim_003",
+      "category": "fail_on_rim",
+      "sequence": 3,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_on_rim/oic_fail_on_rim_003__sony_front.mp4",
+      "originalPath": "fail-on-top-edge/sony/S-Ontop3.mp4",
+      "sha256": "46bece4d0b7d773b808830f4d6fd6a7f28718f2fe70620d65d2d4b117b6a6cc4",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 10.944,
+        "sizeBytes": 72981005
+      },
+      "expectedClass": "left_on_rim",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_outside_001",
+      "category": "fail_outside",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_001__iphone_top.mp4",
+      "originalPath": "fail/I-Fail-1.mp4",
+      "sha256": "ca95d8c21525142f137fc20e114eb41311775a5594f71b38e35a4d632734ebfa",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.414,
+        "sizeBytes": 28360199
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_outside_001",
+      "category": "fail_outside",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_001__sony_front.mp4",
+      "originalPath": "fail/S-Fail-1.mp4",
+      "sha256": "e382313ade70d15eb16d1bafabe44a0cf5e56cb218e744cee0950a2b7f1a8fe6",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.414,
+        "sizeBytes": 101238589
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_outside_002",
+      "category": "fail_outside",
+      "sequence": 2,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_002__iphone_top.mp4",
+      "originalPath": "fail/I-Fail-2.mp4",
+      "sha256": "38980f829c51a40fc3d168fbbe7a34552fb5eaf375ba4500ae37395717089873",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 15.582,
+        "sizeBytes": 30513103
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_outside_002",
+      "category": "fail_outside",
+      "sequence": 2,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_002__sony_front.mp4",
+      "originalPath": "fail/S-Fail-2.mp4",
+      "sha256": "61e741f7be44fafd051ebcad3a2fd2e31897f823b6898949989cf0be8194f26e",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 15.582,
+        "sizeBytes": 111312681
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_outside_003",
+      "category": "fail_outside",
+      "sequence": 3,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_003__iphone_top.mp4",
+      "originalPath": "fail/I-Fail-3.mp4",
+      "sha256": "112b74d259576c553aec014b513e38769205c9e744598e53dacbdefa17d53773",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.881,
+        "sizeBytes": 27395224
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_outside_003",
+      "category": "fail_outside",
+      "sequence": 3,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_003__sony_front.mp4",
+      "originalPath": "fail/S-Fail-3.mp4",
+      "sha256": "67e1f79badec5dc5729b5e3608c1293a20cb1a2056a277b464038ec226670efe",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.881,
+        "sizeBytes": 96888222
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_outside_004",
+      "category": "fail_outside",
+      "sequence": 4,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_004__iphone_top.mp4",
+      "originalPath": "fail/I-Fail-4.mp4",
+      "sha256": "6423a23e5bd9dc5bd3db686377dfbff2535a68f6acdd6195cccafda63c3ca1d5",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 18.552,
+        "sizeBytes": 36192726
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_outside_004",
+      "category": "fail_outside",
+      "sequence": 4,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_004__sony_front.mp4",
+      "originalPath": "fail/S-Fail-4.mp4",
+      "sha256": "09eb8e7ec49b2038114dfd01843957aab600f4e4a6aafbbc7590b0121d950545",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 18.552,
+        "sizeBytes": 135089988
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_fail_outside_005",
+      "category": "fail_outside",
+      "sequence": 5,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_005__iphone_top.mp4",
+      "originalPath": "fail/I-Fail-5.mp4",
+      "sha256": "7ff2eb40657c476451b95d57fa190da65ebd13efc78e629b61294c2dc6a4a1be",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.784,
+        "sizeBytes": 34994546
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_fail_outside_005",
+      "category": "fail_outside",
+      "sequence": 5,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/fail_outside/oic_fail_outside_005__sony_front.mp4",
+      "originalPath": "fail/S-Fail-5.mp4",
+      "sha256": "3ff4386f9298489edd8f570dfaa1af97e3f70b94d961d2c3197fd5c9caf89aad",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.784,
+        "sizeBytes": 129187173
+      },
+      "expectedClass": "dropped_or_left_outside",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "notes": []
+    },
+    {
+      "episodeId": "oic_success_001",
+      "category": "success",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_001__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S1.mp4",
+      "sha256": "720496df9d536839d2dafa6263803d769fe529ec4cb1dc1c2a4206bbfe57bcc4",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 19.253,
+        "sizeBytes": 38941629
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_001",
+      "category": "success",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_001__sony_front.mp4",
+      "originalPath": "success/sony/S-S1.mp4",
+      "sha256": "21ce724658613b855a5bb36e266a87e4739023eac9c11cd06a78a0484fd43ff0",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 19.253,
+        "sizeBytes": 136269502
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_002",
+      "category": "success",
+      "sequence": 2,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_002__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S2.mp4",
+      "sha256": "190929cfb0ec626f75f4f03c55205b1acad24d8aecf4e01c4b341e2b7f66126e",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.48,
+        "sizeBytes": 27550296
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_002",
+      "category": "success",
+      "sequence": 2,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_002__sony_front.mp4",
+      "originalPath": "success/sony/S-S2.mp4",
+      "sha256": "f2d8d44b81ae8ece9df2fd627c63ea4ad2460e4672cfc1b6ed14013a3713632a",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.48,
+        "sizeBytes": 91251058
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_003",
+      "category": "success",
+      "sequence": 3,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_003__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S3.mp4",
+      "sha256": "c0847c1712c9eb6e80f8968f4c3da4bcf05b5ec4a257c00e092e1c4791b8b6cd",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 20.454,
+        "sizeBytes": 40877918
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_003",
+      "category": "success",
+      "sequence": 3,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_003__sony_front.mp4",
+      "originalPath": "success/sony/S-S3.mp4",
+      "sha256": "684214cbc8b2dc27905655f0831ff44452b631b3b833a9fbfb37a61c3769c7a3",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 20.454,
+        "sizeBytes": 145327093
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_004",
+      "category": "success",
+      "sequence": 4,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_004__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S4.mp4",
+      "sha256": "54f67fde936f423bad25006b5c08c570e84de7c55ed032fefcd4e896d24f9044",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 15.682,
+        "sizeBytes": 31886813
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag approximately 20% visible at terminal frame; partly covered by tray.",
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_004",
+      "category": "success",
+      "sequence": 4,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_004__sony_front.mp4",
+      "originalPath": "success/sony/S-S4.mp4",
+      "sha256": "955d1f55a3f92a31d97e3233aa194727674ea2e2a8f1e8aeb9d3a36573db4576",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 15.682,
+        "sizeBytes": 107993918
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag approximately 20% visible at terminal frame; partly covered by tray.",
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_005",
+      "category": "success",
+      "sequence": 5,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_005__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S5.mp4",
+      "sha256": "12c6bd9e53512146401e98bf306109adf6e865307e9dc0a45ee771d8792410ef",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.715,
+        "sizeBytes": 29578844
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag approximately 80% visible at terminal frame; partly covered by tray.",
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_005",
+      "category": "success",
+      "sequence": 5,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_005__sony_front.mp4",
+      "originalPath": "success/sony/S-S5.mp4",
+      "sha256": "b5d5c8caf7052e58748b01fd367a7dd50646a63af480a5f0acbd6e07dd98177c",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.715,
+        "sizeBytes": 100212009
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag approximately 80% visible at terminal frame; partly covered by tray.",
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_006",
+      "category": "success",
+      "sequence": 6,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_006__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S6.mp4",
+      "sha256": "646e95b0b14789b40ce2b3a9ba848d75e3fb75a21b662c4fd48565de107d905b",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.951,
+        "sizeBytes": 36117306
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_006",
+      "category": "success",
+      "sequence": 6,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_006__sony_front.mp4",
+      "originalPath": "success/sony/S-S6.mp4",
+      "sha256": "51af9940ba286f69446eb91e71e39d280b0ab6a1f29b2fb015e802f18acb7118",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.951,
+        "sizeBytes": 125451279
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_007",
+      "category": "success",
+      "sequence": 7,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_007__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S7.mp4",
+      "sha256": "3893db4768e1a5be26a29d3098c36f6dd6db74065823f5aca3f7b470ec0ec7a5",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 16.95,
+        "sizeBytes": 34046536
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag approximately 35% visible at terminal frame; partly covered by tray.",
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_007",
+      "category": "success",
+      "sequence": 7,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_007__sony_front.mp4",
+      "originalPath": "success/sony/S-S7.mp4",
+      "sha256": "de0368e428fa8ab550f0d0a65d0daccd86d78b547fef23b710e898b846b53fac",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 16.95,
+        "sizeBytes": 117620754
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag approximately 35% visible at terminal frame; partly covered by tray.",
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_008",
+      "category": "success",
+      "sequence": 8,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_008__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S8.mp4",
+      "sha256": "d6d39138b24e1a9f17e6ddb8354b2c7584bbb9619f9c7c3ecc18444f3e9814a0",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.684,
+        "sizeBytes": 35776769
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_008",
+      "category": "success",
+      "sequence": 8,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_008__sony_front.mp4",
+      "originalPath": "success/sony/S-S8.mp4",
+      "sha256": "110cccc46675588bdcdfb36f5fbfbab72e0b57a7510fa5e365bc459e4481fbbf",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.684,
+        "sizeBytes": 123561614
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_009",
+      "category": "success",
+      "sequence": 9,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_009__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S9.mp4",
+      "sha256": "1e67166edb11f58e22455eb29e8aed31c21a1d35442b4d37b728261d570d972d",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.447,
+        "sizeBytes": 27604591
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_009",
+      "category": "success",
+      "sequence": 9,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_009__sony_front.mp4",
+      "originalPath": "success/sony/S-S9.mp4",
+      "sha256": "4df2d60a946f809f60b765e0d6618da73f023da4741c407068f95b1cc197ddf7",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 13.447,
+        "sizeBytes": 90862386
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_010",
+      "category": "success",
+      "sequence": 10,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_010__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S10.mp4",
+      "sha256": "4f24995724eb774eee5319aa43fe68ebc6f217a59baa8f5c94780c2a0959910d",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.448,
+        "sizeBytes": 29182478
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_010",
+      "category": "success",
+      "sequence": 10,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_010__sony_front.mp4",
+      "originalPath": "success/sony/S-S10.mp4",
+      "sha256": "7f646a565817dd0b71621531648f735a2fe5507e684b0487686caad40cbe5612",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.448,
+        "sizeBytes": 98158085
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_011",
+      "category": "success",
+      "sequence": 11,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_011__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S11.mp4",
+      "sha256": "5c160f5856737ce723bfd81136650c1d27b0b48ab280b7a7a3db44530f276b72",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.713,
+        "sizeBytes": 25690635
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_011",
+      "category": "success",
+      "sequence": 11,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_011__sony_front.mp4",
+      "originalPath": "success/sony/S-S11.mp4",
+      "sha256": "6461de15431a2d5fa2e18aa3a065db473c18475ba7e576d0e96b82249c7d3a3c",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 12.713,
+        "sizeBytes": 84412601
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_012",
+      "category": "success",
+      "sequence": 12,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_012__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S12.mp4",
+      "sha256": "db4d89787bf1465a499c836918e8d3053b5ca1b6f2d240f902b49d025725415f",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 11.979,
+        "sizeBytes": 24513044
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_012",
+      "category": "success",
+      "sequence": 12,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_012__sony_front.mp4",
+      "originalPath": "success/sony/S-S12.mp4",
+      "sha256": "07417bff3aba6957b551b21539de4efb6d07bc0bc1fefe88557523438c207e48",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 11.979,
+        "sizeBytes": 78402155
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_013",
+      "category": "success",
+      "sequence": 13,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_013__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S13.mp4",
+      "sha256": "6b0d4dacd39fcecc2dc0d41f9deed1decd661f50d9abba0860a83eec0ecee2b5",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.684,
+        "sizeBytes": 35604084
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag not visible at terminal frame; top cube tag fully visible.",
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_013",
+      "category": "success",
+      "sequence": 13,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_013__sony_front.mp4",
+      "originalPath": "success/sony/S-S13.mp4",
+      "sha256": "a19ec059f895a24d637a0c7dfb7412d8b745674d766bd807a0c518bc9a3a8e89",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.684,
+        "sizeBytes": 123504358
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag not visible at terminal frame; top cube tag fully visible.",
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_014",
+      "category": "success",
+      "sequence": 14,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_014__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S14.mp4",
+      "sha256": "a2af3d33f46593c97d28ee14de8e30c97337df88ee67e096de15e5ccd148fd47",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 15.949,
+        "sizeBytes": 32242706
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_014",
+      "category": "success",
+      "sequence": 14,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_014__sony_front.mp4",
+      "originalPath": "success/sony/S-S14.mp4",
+      "sha256": "85cd5e19cb60cb6360f0dbabe6a2469a8f33a41ccfc85ee8e6ae81c5b7788900",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 15.949,
+        "sizeBytes": 109775567
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_015",
+      "category": "success",
+      "sequence": 15,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_015__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S15.mp4",
+      "sha256": "da30ec88614ea38d79800166cc37d36d3ac115621721a3370cd79128db71ea69",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 20.687,
+        "sizeBytes": 40280643
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Both Sony and iPhone views show cube covering the tray/interior tag as it lands on top of it.",
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_015",
+      "category": "success",
+      "sequence": 15,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_015__sony_front.mp4",
+      "originalPath": "success/sony/S-S15.mp4",
+      "sha256": "3b84d746b7112e58e4f61553ef0c093482f5c9c004edf1d10e58d16d3123e247",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 20.687,
+        "sizeBytes": 147130614
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Both Sony and iPhone views show cube covering the tray/interior tag as it lands on top of it.",
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_016",
+      "category": "success",
+      "sequence": 16,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success/oic_success_016__iphone_top.mp4",
+      "originalPath": "success/iphone/I-S16.mp4",
+      "sha256": "2431a2414698e4b927080fda9f25c9859a00bec3c0f730d36adeca6eda4abee3",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 10.611,
+        "sizeBytes": 21048477
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag not visible at terminal frame; top cube tag fully visible.",
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_016",
+      "category": "success",
+      "sequence": 16,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success/oic_success_016__sony_front.mp4",
+      "originalPath": "success/sony/S-S16.mp4",
+      "sha256": "7f49c5fb5a64c01d75786111b7b531c941ecc3f95c4c2b4c338cfbcb38d10e3e",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 10.611,
+        "sizeBytes": 67823027
+      },
+      "expectedClass": "success",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "notes": [
+        "Sony front cube tag not visible at terminal frame; top cube tag fully visible.",
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_hand_obstruction_001",
+      "category": "success_hand_obstruction",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success_hand_obstruction/oic_success_hand_obstruction_001__iphone_top.mp4",
+      "originalPath": "sucess-hand-obstruction/I-S-Hand-obstruction-1.mp4",
+      "sha256": "e3a98f4518066aece31dbe248b09efefac7cafd4918d45b4cb40aa8e2b638343",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.581,
+        "sizeBytes": 28427700
+      },
+      "expectedClass": "success_hand_obstruction",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS_OR_UNCERTAIN",
+        "object_inside_container_relation_event": "PASS_OR_UNCERTAIN"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_hand_obstruction_001",
+      "category": "success_hand_obstruction",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success_hand_obstruction/oic_success_hand_obstruction_001__sony_front.mp4",
+      "originalPath": "sucess-hand-obstruction/S-S-Hand-obstruction-1.mp4",
+      "sha256": "43553fce824be6b8511f8c404570e218459fdd507ff798742e8407ec2bf1d795",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 14.581,
+        "sizeBytes": 102795589
+      },
+      "expectedClass": "success_hand_obstruction",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS_OR_UNCERTAIN",
+        "object_inside_container_relation_event": "PASS_OR_UNCERTAIN"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_tag_obstruction_001",
+      "category": "success_tag_obstruction",
+      "sequence": 1,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success_tag_obstruction/oic_success_tag_obstruction_001__iphone_top.mp4",
+      "originalPath": "success-rotate-cube-tag-obstruction/I-Success-Rotate-To-Cube-Tag-Obstruction.mp4",
+      "sha256": "daa6498a00b7ac55e7043cf04b7360e3591c4913bb667ef9c7768ae0a0822f44",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.718,
+        "sizeBytes": 34836674
+      },
+      "expectedClass": "success_tag_obstruction",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS_OR_UNCERTAIN"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_tag_obstruction_001",
+      "category": "success_tag_obstruction",
+      "sequence": 1,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success_tag_obstruction/oic_success_tag_obstruction_001__sony_front.mp4",
+      "originalPath": "success-rotate-cube-tag-obstruction/S-Success-Rotate-To-Cube-Tag-Obstruction.mp4",
+      "sha256": "5f43e16d756bc31bba7755b369766b5f0555df2e04c02f5bcbacc6d5e214a0ba",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 17.718,
+        "sizeBytes": 128192775
+      },
+      "expectedClass": "success_tag_obstruction",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS_OR_UNCERTAIN"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    },
+    {
+      "episodeId": "oic_success_tag_obstruction_002",
+      "category": "success_tag_obstruction",
+      "sequence": 2,
+      "camera": "iphone_top",
+      "view": "iPhone, top view",
+      "relativePath": "raw_videos/success_tag_obstruction/oic_success_tag_obstruction_002__iphone_top.mp4",
+      "originalPath": "success-rotate-cube-tag-obstruction/I-Success-Rotate-To-Cube-Tag-Obstruction-2.mp4",
+      "sha256": "5a0a9c8ee54cdcb3b62f2a81975d6dbdd16a53bb196be20d6e0c562453fa4c6f",
+      "video": {
+        "width": 1920,
+        "height": 1080,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 10.177,
+        "sizeBytes": 20373088
+      },
+      "expectedClass": "success_tag_obstruction",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS_OR_UNCERTAIN"
+      },
+      "notes": [
+        "Top view is expected to preserve cube top tag visibility unless explicitly obstructed."
+      ]
+    },
+    {
+      "episodeId": "oic_success_tag_obstruction_002",
+      "category": "success_tag_obstruction",
+      "sequence": 2,
+      "camera": "sony_front",
+      "view": "Sony A7IV, approximately 45 degree frontal view",
+      "relativePath": "raw_videos/success_tag_obstruction/oic_success_tag_obstruction_002__sony_front.mp4",
+      "originalPath": "success-rotate-cube-tag-obstruction/S-Success-Rotate-To-Cube-Tag-Obstruction-2.mp4",
+      "sha256": "6b935b421cd044bf2a382c0409dd73f8fa536af75fa666b1c1ce891c3b8ea8d5",
+      "video": {
+        "width": 3840,
+        "height": 2160,
+        "avgFrameRate": "30000/1001",
+        "codec": "h264",
+        "durationS": 10.177,
+        "sizeBytes": 66785630
+      },
+      "expectedClass": "success_tag_obstruction",
+      "expectedVerdicts": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS_OR_UNCERTAIN"
+      },
+      "notes": [
+        "Sony front view may lose cube-front marker at terminal state; prefer top marker ID 2 when visible."
+      ]
+    }
+  ]
+}

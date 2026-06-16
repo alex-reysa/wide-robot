@@ -1,0 +1,157 @@
+{
+  "cameraMatrix": [
+    [
+      3850.696378830084,
+      0.0,
+      1920.0
+    ],
+    [
+      0.0,
+      3850.696378830084,
+      1080.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "cameraModel": "Sony ILCE-7M4 (APS-C/Super35, 24mm)",
+  "cameraToWorld": [
+    [
+      -0.006360600155057562,
+      -0.6600239778889497,
+      0.7512176058754976,
+      -0.9727953427917329
+    ],
+    [
+      -0.9996396093876665,
+      0.023789752336602264,
+      0.012437806359496886,
+      -0.08385155626328629
+    ],
+    [
+      -0.026080531224280997,
+      -0.7508677621894618,
+      -0.6599374285458047,
+      0.7734061998002765
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "distCoeffs": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "imageSize": [
+    3840,
+    2160
+  ],
+  "lens": {
+    "calibrationQuality": "approximate",
+    "equivFocalMm": 36.0,
+    "fxScale": 1.0
+  },
+  "markerLengthM": 0.05,
+  "markerMap": [
+    {
+      "markerId": 2,
+      "markerLengthM": 0.035,
+      "offsetM": [
+        0.0,
+        0.0,
+        -0.025
+      ],
+      "sourceRole": "cube"
+    },
+    {
+      "markerId": 3,
+      "markerLengthM": 0.035,
+      "offsetM": [
+        0.0,
+        0.0,
+        -0.025
+      ],
+      "sourceRole": "cube"
+    },
+    {
+      "markerId": 7,
+      "markerLengthM": 0.05,
+      "offsetM": [
+        -0.00523,
+        0.08747,
+        0.00221
+      ],
+      "sourceRole": "tray"
+    },
+    {
+      "markerId": 6,
+      "markerLengthM": 0.05,
+      "offsetM": [
+        0.0399,
+        -0.00065,
+        -0.08579
+      ],
+      "sourceRole": "tray"
+    }
+  ],
+  "markerMapHash": "c56305e281c8c7f28a13ad836b2495df4cdee8eb79bab0a0ed96b1da0ddd9f96",
+  "objects": [
+    {
+      "isContainer": false,
+      "mobility": "MOVABLE",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeM": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sourceRole": "cube"
+    },
+    {
+      "isContainer": true,
+      "mobility": "STATIC",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeM": [
+        0.18,
+        0.18,
+        0.07
+      ],
+      "sourceRole": "tray"
+    }
+  ],
+  "schemaVersion": "real_camera.calibration.v0",
+  "tableToWorld": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ]
+}

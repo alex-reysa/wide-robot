@@ -1,0 +1,157 @@
+{
+  "cameraMatrix": [
+    [
+      1390.5292479108637,
+      0.0,
+      960.0
+    ],
+    [
+      0.0,
+      1390.5292479108637,
+      540.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "cameraModel": "iPhone (top view)",
+  "cameraToWorld": [
+    [
+      0.01368923629221016,
+      -0.972300975681004,
+      0.23333113272665407,
+      -0.2992018537490793
+    ],
+    [
+      -0.9978976187350224,
+      -0.028068355362440962,
+      -0.05841669239369309,
+      0.13665402572747548
+    ],
+    [
+      0.0633478281609375,
+      -0.23204090181908693,
+      -0.9706410626747032,
+      0.9595421517654831
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "distCoeffs": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "imageSize": [
+    1920,
+    1080
+  ],
+  "lens": {
+    "calibrationQuality": "approximate",
+    "equivFocalMm": 26.0,
+    "fxScale": 1.0
+  },
+  "markerLengthM": 0.05,
+  "markerMap": [
+    {
+      "markerId": 2,
+      "markerLengthM": 0.035,
+      "offsetM": [
+        0.0,
+        0.0,
+        -0.025
+      ],
+      "sourceRole": "cube"
+    },
+    {
+      "markerId": 3,
+      "markerLengthM": 0.035,
+      "offsetM": [
+        0.0,
+        0.0,
+        -0.025
+      ],
+      "sourceRole": "cube"
+    },
+    {
+      "markerId": 7,
+      "markerLengthM": 0.05,
+      "offsetM": [
+        -0.00523,
+        0.08747,
+        0.00221
+      ],
+      "sourceRole": "tray"
+    },
+    {
+      "markerId": 6,
+      "markerLengthM": 0.05,
+      "offsetM": [
+        0.0,
+        -0.09,
+        0.005000000000000001
+      ],
+      "sourceRole": "tray"
+    }
+  ],
+  "markerMapHash": "b13826d25a112cbc260eeba80379f7d7e894387ef744221d298cfe5db4082ef9",
+  "objects": [
+    {
+      "isContainer": false,
+      "mobility": "MOVABLE",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeM": [
+        0.05,
+        0.05,
+        0.05
+      ],
+      "sourceRole": "cube"
+    },
+    {
+      "isContainer": true,
+      "mobility": "STATIC",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeM": [
+        0.18,
+        0.18,
+        0.07
+      ],
+      "sourceRole": "tray"
+    }
+  ],
+  "schemaVersion": "real_camera.calibration.v0",
+  "tableToWorld": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ]
+}

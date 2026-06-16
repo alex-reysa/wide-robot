@@ -176,6 +176,12 @@ def compose_marker_world_pose(
     return (pos, rotmat_to_wxyz(R_world), float(confidence))
 
 
+def marker_square_length_m(marker_entry: Mapping[str, Any], calibration: Mapping[str, Any]) -> float:
+    """Physical side length of this marker square, allowing mixed-size print sheets."""
+    value = marker_entry.get("markerLengthM", calibration["markerLengthM"])
+    return float(value)
+
+
 class PnPPoseEstimator:  # pragma: no cover - real cv2 path, smoke-tested only
     """Real marker→world pose: cv2.solvePnP against a square marker (camera frame) then
     the validated ``cameraToWorld`` extrinsic via :func:`compose_marker_world_pose`.
@@ -189,7 +195,7 @@ class PnPPoseEstimator:  # pragma: no cover - real cv2 path, smoke-tested only
         import cv2
         import numpy as np
 
-        half = float(calibration["markerLengthM"]) / 2.0
+        half = marker_square_length_m(marker_entry, calibration) / 2.0
         # Marker corner model in the marker's own frame (matches ArUco corner order).
         obj_pts = np.array([[-half, half, 0], [half, half, 0], [half, -half, 0], [-half, -half, 0]],
                            dtype=np.float64)

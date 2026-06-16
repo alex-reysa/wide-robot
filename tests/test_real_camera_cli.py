@@ -14,7 +14,7 @@ import pytest
 from pilots.real_camera import tracks_to_rollout as t2r
 from pilots.real_camera import verify_episode as ve
 from pilots.real_camera.calibrate_table import make_calibration, validate_calibration_v0
-from pilots.real_camera.marker_tracker import FakeDetector, MarkerObservation
+from pilots.real_camera.marker_tracker import ArucoDetector, FakeDetector, MarkerObservation
 from pilots.real_camera.video_to_tracks import MarkerPoseEstimator, build_tracks
 
 _REPO = Path(__file__).resolve().parents[1]
@@ -179,6 +179,26 @@ def test_calibration_helper_is_valid():
     validate_calibration_v0(_calibration())  # make_calibration produces a schema-valid doc
 
 
+def test_aruco_detector_defaults_to_printed_apriltag_dictionary():
+    assert ArucoDetector().dictionary_name == "DICT_APRILTAG_36h11"
+
+
+def test_marker_square_length_prefers_per_marker_size():
+    from pilots.real_camera.video_to_tracks import marker_square_length_m
+    calib = _calibration()
+    calib["markerLengthM"] = 0.075
+    marker_entry = {"markerId": 2, "sourceRole": "cube", "markerLengthM": 0.035}
+    assert marker_square_length_m(marker_entry, calib) == pytest.approx(0.035)
+
+
+def test_marker_square_length_falls_back_to_calibration_default():
+    from pilots.real_camera.video_to_tracks import marker_square_length_m
+    calib = _calibration()
+    calib["markerLengthM"] = 0.075
+    marker_entry = {"markerId": 0, "sourceRole": "table"}
+    assert marker_square_length_m(marker_entry, calib) == pytest.approx(0.075)
+
+
 # ---------------------------------------------------------------------------
 # Committed dataset regression — manifest verdicts must hold against the frozen verifier
 # ---------------------------------------------------------------------------
@@ -269,13 +289,13 @@ def test_csg_is_byte_frozen():
 def test_aruco_detector_roundtrip_smoke():
     cv2 = pytest.importorskip("cv2")
     np = pytest.importorskip("numpy")
-    from pilots.real_camera.marker_tracker import ArucoDetector, camera_available
+    from pilots.real_camera.marker_tracker import camera_available
     assert camera_available() is True
     aruco = cv2.aruco
     if hasattr(aruco, "getPredefinedDictionary"):
-        ar_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
+        ar_dict = aruco.getPredefinedDictionary(aruco.DICT_APRILTAG_36h11)
     else:  # pragma: no cover
-        ar_dict = aruco.Dictionary_get(aruco.DICT_4X4_50)
+        ar_dict = aruco.Dictionary_get(aruco.DICT_APRILTAG_36h11)
     gen = getattr(aruco, "generateImageMarker", None) or getattr(aruco, "drawMarker")
     marker = gen(ar_dict, 7, 240)
     canvas = np.full((400, 400), 255, dtype=np.uint8)

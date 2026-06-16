@@ -56,9 +56,9 @@ class MarkerDetector(Protocol):
 
 
 class ArucoDetector:
-    """Real OpenCV ArUco detector. Lazy-imports cv2; smoke-tested only (needs cv2 + footage)."""
+    """Real OpenCV AprilTag/Aruco detector. Lazy-imports cv2; smoke-tested only."""
 
-    def __init__(self, dictionary_name: str = "DICT_4X4_50", min_confidence: float = 1.0) -> None:
+    def __init__(self, dictionary_name: str = "DICT_APRILTAG_36h11", min_confidence: float = 1.0) -> None:
         self.dictionary_name = dictionary_name
         self.min_confidence = float(min_confidence)
 
