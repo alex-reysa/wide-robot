@@ -3,10 +3,12 @@
 > **Status: conservative Phase 3A pilot — NOT "fully-solved real-camera ingestion."**
 > The defensible claim is narrow and strong: **across 78 real clips the frozen verifier produced
 > 0 false PASSes on 30 genuine-failure clips**, with **success recall now 27/32 (~84%)** after the
-> manual tray-corner calibration (was 18/32 with the marker-fit; **see "Update 2"**). The remaining
-> misses are conservative — borderline/occluded placements → UNCERTAIN, never a wrong-way PASS. It
-> is a marker-based pilot that demonstrates the source-independent verifier's *safety* survives real
-> evidence; recall is now good but still calibration-bounded, not a fully-solved perception system.
+> manual tray-corner calibration (was 18/32 with the marker-fit; **see "Update 2"**). The 5 non-PASS
+> successes are UNCERTAIN, not FAIL — **0 genuine successes wrongly failed, 0 false PASS**; each is a
+> correct abstention where the placing hand occludes the cube tag mid-place (the cube is confirmed
+> inside at the last-seen frame). It is a marker-based pilot that demonstrates the source-independent
+> verifier's *safety* survives real evidence; recall is conservative-by-design (abstentions are not
+> counted as confirmations), not a fully-solved perception system.
 
 Real video → `real_camera.tracks.v0` → `csg.rollout.v0` → the **unchanged** frozen verifier
 (`pilots.external_verify.verify_external_rollout`; `csg/` byte-frozen). 40 episodes × 2 cameras
@@ -183,12 +185,27 @@ born-inside transition 8/8 FAIL, 0 regressions, 0 errors).
 | regressions / errors | — | **0 / 0** | ✓ |
 | overall terminal-AND-transition match | 40/78 | **49/78** | +9 |
 
-The 5 remaining success misses are all **UNCERTAIN** (extractor noise / occlusion), not FAIL — no
-genuine success is wrong-way FAILed. The physical tray footprint stays the measured ~18×18 (no
-footprint fudge); only the **center** is corrected, which is why the failure clips (cube clearly
-outside/beside the tray) are unaffected while back/wall-placed successes are recovered. The
-before/after overlay for `oic_success_001 sony` (tray box snapping onto the physical cardboard,
-cube going from NEAR/outside the yellow INSIDE box to INSIDE) is the visual confirmation.
+**Reading the recall honestly (what 27/32 does and does not mean).** Of the 32 true-success clips:
+**27 PASS, 5 UNCERTAIN, 0 FAIL → 0 genuine successes misclassified as failures, 0 false PASS.** Recall
+("true successes that PASS", per roadmap §8A) is therefore **27/32** — but the 5 non-PASS are *correct
+abstentions, not wrong verdicts*: in each (`success_005` both cams, `success_008/009/012` iphone) the cube
+is confirmed **INSIDE at the last-seen frame** (verified via `visualize_episode` overlays — see
+`output/overlays_review/`), yet the placing hand occludes the cube tag for **39–78 consecutive frames
+(1.3–2.6 s)** mid-place, so the evidence gate (`max_consecutive_missing=30`) declines to certify a
+placement it could not watch continuously — exactly the designed "surface uncertainty, don't hide it"
+behavior (roadmap §8A). Two numbers must coexist and not be collapsed: the verifier produced a
+**contract-appropriate verdict on all 32** (27 PASS + 5 correct-UNCERTAIN + 0 wrong FAIL), *and* recall
+is **27/32** because UNCERTAIN ≠ PASS (the system did not, and should not, confirm a placement it didn't
+observe). The 5 reflect a **single-camera / gap-handling limitation** — the cube *is* seen landing, and a
+second camera or smarter gap interpolation would likely confirm them — not an immutable evidence gap and
+not a system error. We deliberately do **not** inflate to 32/32 by counting abstentions as confirmations,
+nor drop the 5 from the denominator.
+
+The physical tray footprint stays the measured ~18×18 (no footprint fudge); only the **center** is
+corrected, which is why the failure clips (cube clearly outside/beside the tray) are unaffected while
+back/wall-placed successes are recovered. The before/after overlay for `oic_success_001 sony` (tray box
+snapping onto the physical cardboard, cube going from NEAR/outside the yellow INSIDE box to INSIDE) is
+the visual confirmation.
 
 ## Calibration-clip note
 
