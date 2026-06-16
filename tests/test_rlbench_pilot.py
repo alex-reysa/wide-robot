@@ -558,7 +558,7 @@ def test_recorder_measurements_are_neutral_and_resolve_the_ramping_joint():
 
 
 def test_recorder_accepts_numpy_low_dim_state_from_live_rlbench():
-    import numpy as np
+    np = pytest.importorskip("numpy")  # numpy ships in the optional [camera] extra; skip without it
     import pilots.rlbench.record_open_drawer as rec
 
     demo = _fake_open_drawer_demo(open_ext=0.18, n=6)
