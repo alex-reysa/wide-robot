@@ -56,7 +56,14 @@ CUBE_HALF_M = 0.025                # marker face-center -> cube center, along th
 # would otherwise drop the cube's bottom below the tray floor and break the INSIDE
 # 'not below floor' test for a cube genuinely resting inside. The TOP (rim) is unchanged, so the
 # INSIDE-vs-ON_RIM discrimination is preserved.
-TRAY_FOOTPRINT_M = [0.18, 0.18]    # nominal homemade-cardboard tray footprint (approximate)
+# CALIBRATED / EFFECTIVE tray footprint == the physical ~18x18 cm. A single global +1 cm/side
+# expansion to 20 cm was tested under the acceptance protocol (one global value, no per-clip tuning,
+# rerun all 78) and REJECTED: it false-PASSes a genuine near-not-inside clip (the cube sits clearly
+# outside, beside the tray, but the enlarged box reaches it). The ~1-2 cm approximate-calibration
+# error is comparable to the gap between "inside against the wall" and "outside against the wall", so
+# no global expansion separates them. Kept at 18 cm -> conservative but calibration-limited (see
+# INGESTION_RESULTS.md acceptance log).
+TRAY_FOOTPRINT_M = [0.18, 0.18]
 TRAY_RIM_M = 0.04                  # rim height above the floor
 TRAY_FLOOR_TOL_M = 0.03            # box extends this far below the floor (top-view z-noise tolerance)
 TRAY_SIZE_M = [TRAY_FOOTPRINT_M[0], TRAY_FOOTPRINT_M[1], TRAY_RIM_M + TRAY_FLOOR_TOL_M]

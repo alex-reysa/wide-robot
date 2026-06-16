@@ -23,7 +23,7 @@ import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from csg.common import write_json
+from csg.common import load_json, write_json
 from pilots.real_camera import author_calibration as ac
 from pilots.real_camera.marker_tracker import ArucoDetector
 from pilots.real_camera.track_postprocess import (
@@ -32,7 +32,7 @@ from pilots.real_camera.track_postprocess import (
     trim_to_mover_span,
 )
 from pilots.real_camera.tracks_to_rollout import tracks_to_rollout
-from pilots.real_camera.verify_episode import verify_episode_both
+from pilots.real_camera.verify_episode import _TARGETS_DIR, verify_episode, verify_episode_both
 from pilots.real_camera.video_to_tracks import (
     PnPPoseEstimator,
     build_tracks,
@@ -40,8 +40,22 @@ from pilots.real_camera.video_to_tracks import (
     sha256_file,
 )
 
-TARGETS = ("object_inside_container_terminal_only", "object_inside_container_relation_event")
+TARGET_TERMINAL = "object_inside_container_terminal_only"
+TARGET_RELATION = "object_inside_container_relation_event"        # initial NEAR -> INSIDE
+TARGET_PLACED = "object_inside_container_placed_from_outside"     # initial FAR  -> INSIDE
+TARGETS = (TARGET_TERMINAL, TARGET_RELATION, TARGET_PLACED)
 FPS = 30000.0 / 1001.0  # 29.97
+
+
+def combined_transition(rel_status: str, placed_status: str) -> str:
+    """Put-in transition = relation_event PASS OR placed_from_outside PASS. The two targets bracket
+    a real put-in's start (NEAR vs FAR); a born-inside cube (initial INSIDE) FAILs both. UNCERTAIN
+    only if neither PASSes and at least one is UNCERTAIN (the evidence gate fired)."""
+    if rel_status == "PASS" or placed_status == "PASS":
+        return "PASS"
+    if "UNCERTAIN" in (rel_status, placed_status):
+        return "UNCERTAIN"
+    return "FAIL"
 
 # Evidence-quality thresholds RELAXED for raw 30 fps video (the pilot defaults were tuned for
 # short synthetic fixtures). At 30 fps a hand occluding the mover for ~0.5-1 s during the place
@@ -125,6 +139,11 @@ def ingest_clip(video_path: Path, camera: str, episode_id: str, *, fx_scale: flo
     write_json(out_dir / "tracks" / f"{stem}.tracks.json", tracks)
 
     record = verify_episode_both(tracks=tracks, thresholds=REAL_VIDEO_THRESHOLDS)
+    # placed_from_outside is evaluated alongside the canonical bundle (kept at the RLBench-parity
+    # pair) so the combined put-in transition can be reported without changing verify_episode_both.
+    placed_target = load_json(_TARGETS_DIR / f"{TARGET_PLACED}.json")
+    record[TARGET_PLACED] = verify_episode(placed_target, tracks=tracks,
+                                           thresholds=REAL_VIDEO_THRESHOLDS, case_name=TARGET_PLACED)
     try:  # best-effort rollout artifact (skipped when the UNCERTAIN gate rejects the evidence)
         write_json(out_dir / "rollouts" / f"{stem}.rollout.json", tracks_to_rollout(tracks))
     except Exception:
@@ -204,13 +223,19 @@ def main(argv: Optional[List[str]] = None) -> int:
                               marker6_offset=(sony_off6 if cam == "sony_front" else None),
                               marker7_offset=ref_off7, world_off7=world_off7,
                               out_dir=out_dir, max_frames=args.max_frames)
-            term = rec["perTarget"][TARGETS[0]]
-            rel = rec["perTarget"][TARGETS[1]]
+            term = rec["perTarget"][TARGET_TERMINAL]
+            rel = rec["perTarget"][TARGET_RELATION]
+            placed = rec["perTarget"][TARGET_PLACED]
+            trans = combined_transition(rel["status"], placed["status"])
             row.update({
                 "actualTerminal": term["status"], "actualRelation": rel["status"],
-                "terminalClass": term["failureClass"], "relationClass": rel["failureClass"],
+                "actualPlaced": placed["status"], "actualTransition": trans,
+                "terminalClass": term["failureClass"],
+                "transitionClass": (rel["failureClass"] if rel["status"] != "PASS" else None)
+                                   or placed["failureClass"],
                 "termFits": verdict_fits(exp[0], term["status"]),
-                "relFits": verdict_fits(exp[1], rel["status"]),
+                "relFits": verdict_fits(exp[1], rel["status"]),       # relation_event alone (NEAR-start)
+                "transFits": verdict_fits(exp[1], trans),             # combined put-in transition
                 "numFrames": rec["numFrames"],
                 "minConf": rec["trackingMetrics"].get("minPoseConfidence"),
                 "dropout": rec["trackingMetrics"].get("dropoutFraction"),
@@ -218,10 +243,10 @@ def main(argv: Optional[List[str]] = None) -> int:
                 "normalSpreadDeg": rec["calibDiag"].get("extrinsic", {}).get("maxNormalSpreadDeg"),
                 "cubeSpacingM": rec["calibDiag"].get("cubeMarkerSpacingM"),
             })
-            tag = "OK " if (row["termFits"] and row["relFits"]) else "XX "
+            tag = "OK " if (row["termFits"] and row["transFits"]) else "XX "
             print(f"{tag}{eid:34s} {cam:11s} exp[{exp[0]}/{exp[1]}] "
-                  f"got[{term['status']}/{rel['status']}] "
-                  f"{rel['failureClass'] or ''} markers={row['detectedMarkers']}")
+                  f"got[term={term['status']} trans={trans} (rel={rel['status']},placed={placed['status']})] "
+                  f"markers={row['detectedMarkers']}")
         except Exception as exc:  # never let one bad clip kill the batch
             row.update({"error": f"{type(exc).__name__}: {exc}", "trace": traceback.format_exc()[-800:]})
             print(f"ERR {eid:34s} {cam:11s} -> {type(exc).__name__}: {exc}")
@@ -234,17 +259,18 @@ def main(argv: Optional[List[str]] = None) -> int:
         if "error" in r:
             continue
         k = (r["expectedClass"], r["camera"])
-        d = by_key.setdefault(k, {"n": 0, "term": 0, "rel": 0, "both": 0})
+        d = by_key.setdefault(k, {"n": 0, "term": 0, "rel": 0, "trans": 0, "both": 0})
         d["n"] += 1
         d["term"] += int(r["termFits"])
         d["rel"] += int(r["relFits"])
-        d["both"] += int(r["termFits"] and r["relFits"])
+        d["trans"] += int(r["transFits"])
+        d["both"] += int(r["termFits"] and r["transFits"])
     for (cls, cam), d in sorted(by_key.items()):
         print(f"  {cls:28s} {cam:11s} n={d['n']:2d}  term={d['term']}/{d['n']}  "
-              f"rel={d['rel']}/{d['n']}  both={d['both']}/{d['n']}")
+              f"rel-only={d['rel']}/{d['n']}  transition={d['trans']}/{d['n']}  both={d['both']}/{d['n']}")
     n_err = sum(1 for r in rows if "error" in r)
-    n_both = sum(1 for r in rows if r.get("termFits") and r.get("relFits"))
-    print(f"\noverall: {n_both}/{len(rows)} clips match BOTH targets; errors={n_err}")
+    n_both = sum(1 for r in rows if r.get("termFits") and r.get("transFits"))
+    print(f"\noverall: {n_both}/{len(rows)} clips match terminal AND transition; errors={n_err}")
 
     verdicts_out = Path(args.verdicts_out) if args.verdicts_out else out_dir / f"verdicts_{args.select}.json"
     write_json(verdicts_out, {"select": args.select, "cameras": sorted(cameras),

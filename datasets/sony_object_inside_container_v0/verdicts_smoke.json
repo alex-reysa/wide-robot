@@ -7,8 +7,10 @@
   "fxScaleSony": 1.0,
   "rows": [
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "iphone_top",
       "cubeSpacingM": null,
       "detectedMarkers": [
@@ -29,13 +31,16 @@
       "normalSpreadDeg": 16.76,
       "numFrames": 389,
       "relFits": true,
-      "relationClass": "DROPPED_OUTSIDE",
       "termFits": false,
-      "terminalClass": "DROPPED_OUTSIDE"
+      "terminalClass": "DROPPED_OUTSIDE",
+      "transFits": true,
+      "transitionClass": "DROPPED_OUTSIDE"
     },
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "sony_front",
       "cubeSpacingM": null,
       "detectedMarkers": [
@@ -57,13 +62,16 @@
       "normalSpreadDeg": 3.49,
       "numFrames": 389,
       "relFits": true,
-      "relationClass": "DROPPED_OUTSIDE",
       "termFits": false,
-      "terminalClass": "DROPPED_OUTSIDE"
+      "terminalClass": "DROPPED_OUTSIDE",
+      "transFits": true,
+      "transitionClass": "DROPPED_OUTSIDE"
     },
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "iphone_top",
       "cubeSpacingM": null,
       "detectedMarkers": [
@@ -84,13 +92,16 @@
       "normalSpreadDeg": 16.76,
       "numFrames": 616,
       "relFits": true,
-      "relationClass": "DROPPED_OUTSIDE",
       "termFits": false,
-      "terminalClass": "DROPPED_OUTSIDE"
+      "terminalClass": "DROPPED_OUTSIDE",
+      "transFits": true,
+      "transitionClass": "DROPPED_OUTSIDE"
     },
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "sony_front",
       "cubeSpacingM": null,
       "detectedMarkers": [
@@ -112,13 +123,16 @@
       "normalSpreadDeg": 3.71,
       "numFrames": 616,
       "relFits": true,
-      "relationClass": "DROPPED_OUTSIDE",
       "termFits": false,
-      "terminalClass": "DROPPED_OUTSIDE"
+      "terminalClass": "DROPPED_OUTSIDE",
+      "transFits": true,
+      "transitionClass": "DROPPED_OUTSIDE"
     },
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "iphone_top",
       "cubeSpacingM": null,
       "detectedMarkers": [
@@ -139,13 +153,16 @@
       "normalSpreadDeg": 6.66,
       "numFrames": 710,
       "relFits": true,
-      "relationClass": "NEAR_NOT_INSIDE",
       "termFits": true,
-      "terminalClass": "NEAR_NOT_INSIDE"
+      "terminalClass": "NEAR_NOT_INSIDE",
+      "transFits": true,
+      "transitionClass": "NEAR_NOT_INSIDE"
     },
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "sony_front",
       "cubeSpacingM": 0.047868279355686556,
       "detectedMarkers": [
@@ -168,13 +185,16 @@
       "normalSpreadDeg": 3.99,
       "numFrames": 710,
       "relFits": true,
-      "relationClass": "NEAR_NOT_INSIDE",
       "termFits": true,
-      "terminalClass": "NEAR_NOT_INSIDE"
+      "terminalClass": "NEAR_NOT_INSIDE",
+      "transFits": true,
+      "transitionClass": "NEAR_NOT_INSIDE"
     },
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "iphone_top",
       "cubeSpacingM": null,
       "detectedMarkers": [
@@ -195,13 +215,16 @@
       "normalSpreadDeg": 14.96,
       "numFrames": 380,
       "relFits": true,
-      "relationClass": "NEAR_NOT_INSIDE",
       "termFits": true,
-      "terminalClass": "NEAR_NOT_INSIDE"
+      "terminalClass": "NEAR_NOT_INSIDE",
+      "transFits": true,
+      "transitionClass": "NEAR_NOT_INSIDE"
     },
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "sony_front",
       "cubeSpacingM": 0.04533805933353514,
       "detectedMarkers": [
@@ -224,13 +247,16 @@
       "normalSpreadDeg": 4.13,
       "numFrames": 380,
       "relFits": true,
-      "relationClass": "NEAR_NOT_INSIDE",
       "termFits": true,
-      "terminalClass": "NEAR_NOT_INSIDE"
+      "terminalClass": "NEAR_NOT_INSIDE",
+      "transFits": true,
+      "transitionClass": "NEAR_NOT_INSIDE"
     },
     {
+      "actualPlaced": "PASS",
       "actualRelation": "FAIL",
       "actualTerminal": "PASS",
+      "actualTransition": "PASS",
       "camera": "iphone_top",
       "cubeSpacingM": null,
       "detectedMarkers": [
@@ -251,13 +277,16 @@
       "normalSpreadDeg": 5.87,
       "numFrames": 577,
       "relFits": false,
-      "relationClass": "BORN_INSIDE_NO_TRANSITION",
       "termFits": true,
-      "terminalClass": null
+      "terminalClass": null,
+      "transFits": true,
+      "transitionClass": "BORN_INSIDE_NO_TRANSITION"
     },
     {
+      "actualPlaced": "FAIL",
       "actualRelation": "FAIL",
       "actualTerminal": "FAIL",
+      "actualTransition": "FAIL",
       "camera": "sony_front",
       "cubeSpacingM": 0.048694472235192805,
       "detectedMarkers": [
@@ -280,9 +309,10 @@
       "normalSpreadDeg": 3.64,
       "numFrames": 577,
       "relFits": false,
-      "relationClass": "NEAR_NOT_INSIDE",
       "termFits": false,
-      "terminalClass": "NEAR_NOT_INSIDE"
+      "terminalClass": "NEAR_NOT_INSIDE",
+      "transFits": false,
+      "transitionClass": "NEAR_NOT_INSIDE"
     }
   ],
   "select": "smoke"

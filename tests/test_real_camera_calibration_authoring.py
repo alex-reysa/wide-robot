@@ -112,3 +112,60 @@ def test_stabilize_static_median_when_no_override():
                  tray_frames=[(8, 0, 0), (10, 0, 0), (12, 0, 0)])
     stabilize_static_objects(tr)  # no override -> per-axis median (x=10)
     assert all(f["poses"]["tray"]["positionM"]["x"] == 10 for f in tr["frames"])
+
+
+# ----------------------------------------------------------- placed_from_outside target semantics
+# Real put-ins start NEAR *or* FAR; relation_event (initial NEAR) and placed_from_outside (initial
+# FAR) bracket both, and a born-inside cube (initial INSIDE) FAILs both. cv2-free (synthetic tracks).
+from pathlib import Path  # noqa: E402
+
+from csg.common import load_json  # noqa: E402
+from pilots.real_camera.verify_episode import verify_episode  # noqa: E402
+
+_TX, _TY, _TZ = 0.30, 0.0, 0.015
+_INSIDE = (_TX, _TY, 0.03)
+_NEAR = (_TX + 0.16, _TY, 0.05)
+_FAR = (_TX + 0.35, _TY, 0.02)
+_TGT = Path(__file__).resolve().parents[1] / "pilots" / "real_camera" / "targets"
+
+
+def _verdicts(tracks):
+    return {name: verify_episode(load_json(_TGT / f"object_inside_container_{name}.json"),
+                                 tracks=tracks)["status"]
+            for name in ("terminal_only", "relation_event", "placed_from_outside")}
+
+
+def _scenario(start, end):
+    sx, sy, sz = start; ex, ey, ez = end
+    seq = [start, start, (0.5 * (sx + ex), 0.5 * (sy + ey), 0.5 * (sz + ez)), end, end, end]
+    objs = [
+        {"sourceRole": "cube", "physicalKind": "RIGID_OBJECT", "mobility": "MOVABLE",
+         "isContainer": False, "sizeM": [0.04, 0.04, 0.04], "markerIds": [2]},
+        {"sourceRole": "tray", "physicalKind": "RIGID_OBJECT", "mobility": "STATIC",
+         "isContainer": True, "sizeM": [0.24, 0.18, 0.03], "markerIds": [6, 7]},
+    ]
+    frames = [{"frameIndex": i, "timeS": i * 0.1, "poses": {
+        "cube": {"positionM": {"x": c[0], "y": c[1], "z": c[2]}, "confidence": 0.95},
+        "tray": {"positionM": {"x": _TX, "y": _TY, "z": _TZ}, "confidence": 0.99}}}
+        for i, c in enumerate(seq)]
+    return {"schemaVersion": "real_camera.tracks.v0", "episodeId": "ep", "videoSha256": None,
+            "calibrationHash": None, "fps": 30.0, "objects": objs, "frames": frames}
+
+
+def test_placed_from_outside_recovers_far_start_putin():
+    v = _verdicts(_scenario(_FAR, _INSIDE))
+    assert v["terminal_only"] == "PASS"
+    assert v["relation_event"] != "PASS"          # started FAR, not NEAR -> relation_event misses it
+    assert v["placed_from_outside"] == "PASS"      # ...but placed_from_outside recovers it
+
+
+def test_near_start_putin_is_relation_event_not_placed():
+    v = _verdicts(_scenario(_NEAR, _INSIDE))
+    assert v["relation_event"] == "PASS"
+    assert v["placed_from_outside"] != "PASS"      # started NEAR, not FAR
+
+
+def test_born_inside_fails_both_transition_targets():
+    v = _verdicts(_scenario(_INSIDE, _INSIDE))     # inside the whole time
+    assert v["relation_event"] != "PASS"
+    assert v["placed_from_outside"] != "PASS"      # neither transition target accepts born-inside
