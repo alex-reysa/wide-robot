@@ -78,6 +78,18 @@ external evidence and that source bindings are required for cross-source
 calibration.
 ```
 
+**Allowed now (Phase 3A real-camera ingestion):**
+
+```text
+Real Sony/tripod (and iPhone-top) object_inside_container episodes are converted
+to tracks and csg.rollout.v0 and judged by the unchanged verifier: across 78 real
+clips, 0 false PASSes on 30 genuine-failure clips, born-inside rejected by
+relation_event 8/8, with success recall 27/32 after a frozen manual tray-corner
+calibration. It is a marker-based, calibration-bounded pilot demonstrating that the
+verifier's safety survives real-video evidence — not a high-recall or marker-free
+perception system.
+```
+
 **Allowed after the One Task, Four Worlds report (Phase 6):**
 
 ```text
@@ -288,10 +300,10 @@ quotient equivalence (`KNOWN_EQUIVALENT_TASKS`, `tests/test_confusion.py`).
 | **1** | Lock the problem | ✅ **DONE** |
 | **2** | No-hardware proof | 🟡 **2A/2B/2D done; 2C covers all five V0 gold tasks in MuJoCo with real validity verdicts; 2E shipped as the public v0.3.x sim-only benchmark release (randomized reports, invalid fixtures, failure taxonomy, baseline comparison, release hygiene, hardened `csg.verify_release`). One item open: MuJoCo physics is self-attested on the laptop-cut tags (`evidence.complete=false`/exit 1) until a CI-attested release lands.** |
 | **2F** | External trace verification | 🟡 **RLBench OpenDrawer value-only target is a 9/9 positive result; gold target rejects the same traces 9/9 leakage-clean; a mutation/negative suite proves the calibration is not too permissive; an articulation-event target adds an articulation-increase + event-present check (9/9, strictly stronger than value-only). Next: external object-inside-container.** |
-| **3A** | Real-camera episode ingestion (video → rollout evidence) | ⬜ pending |
+| **3A** | Real-camera episode ingestion (video → rollout evidence) | ✅ **DONE — real Sony/iPhone `object_inside_container` clips judged by the frozen verifier.** 78 clips ingested (`datasets/sony_object_inside_container_v0/`); **0 false PASSes on 30 genuine-failure clips**, born-inside→relation_event FAIL 8/8, success recall **27/32** after a frozen manual tray-corner calibration (was 18/32 marker-fit), 5 remaining misses are conservative UNCERTAIN. `pilots/real_camera/` (author calibration→tracks→rollout→verify, + `visualize_episode.py` overlay diagnostic + `manual_calibration.py`); 107 real_camera tests; `csg/` byte-frozen; raw mp4s off-repo, derived JSON committed. Marker-based + calibration-bounded — not marker-free or high-recall. |
 | **3A.5** | RH20T external-source smoke test | ✅ **DONE — real RH20T episode PASSES the frozen verifier.** `pilots/rh20t/` (annotation→tracks→rollout→frozen verifier) passes 22 synthetic tests; a real episode (`task_0017` pen→holder, cfg3 scene rating 9/10, reviewed from a global camera) PASSes both targets — relation-event non-vacuously — leakage-clean, `physicalValidity` null, source-blind rollout; a derived negative FAILs leakage-clean. `csg/` byte-frozen; no raw RH20T media committed (data obtained via an own-OAuth-client Drive copy bypass and kept off-repo). See `datasets/rh20t_object_inside_container_v0/{manifest.json,reports/eligibility_report.md}`. Gates only RH20T-as-external-source evidence; not a Sony/tripod Phase 3A replacement, not a 3B compiler. |
 | **3B** | Human-demo compiler (video → target CSG) | ⬜ pending, after 3A |
-| **4** | Cross-source flagship task | ⬜ pending: object_inside_container across MuJoCo + external sim + Sony/tripod |
+| **4** | Cross-source flagship task | 🟡 **Sony/tripod leg landed (Phase 3A); MuJoCo put_cube_in_tray exists (2C).** Remaining: the external-sim container binding (2F-4) and the unified cross-source report (Phase 6) tying object_inside_container across MuJoCo + external sim + Sony/tripod through the unchanged verifier. |
 | **5** | DK1 / real robot recorded evidence | ⬜ pending (hardware-gated, data campaign first) |
 | **6** | One Task, Four Worlds report | ⬜ pending |
 | **7** | Verifier-as-a-service / dataset audit tool | ⬜ pending |
@@ -541,6 +553,38 @@ Sony/tripod failure episodes FAIL with useful classes
 uncertain tracking is surfaced as uncertainty, not hidden
 leakage remains clean
 ```
+
+Current status (2026-06-16): **DONE — real Sony/iPhone `object_inside_container` episodes are
+judged by the frozen verifier, conservatively and leakage-clean.** 40 episodes × 2 cameras
+(`sony_front` 45°, `iphone_top`) = 80 clips; 78 task clips ingested (2 calibration clips excluded),
+**0 errors** (`datasets/sony_object_inside_container_v0/`: `verdicts_all.json`, `INGESTION_RESULTS.md`).
+Headline (the point of the phase): the source-independent verifier's *safety* survives real video —
+**0 false PASSes across 30 genuine-failure clips** (near-not-inside / left-on-rim / dropped-outside /
+inside→outside / static), and **born-inside → relation_event FAIL 8/8**. The pipeline lives entirely
+under `pilots/real_camera/` (`calibrate_table.py`, `marker_tracker.py`, `author_calibration.py`,
+`video_to_tracks.py`, `track_postprocess.py`, `tracks_to_rollout.py`, `verify_episode.py`) and consumes
+the frozen verifier; `csg/` is byte-frozen; raw mp4s are kept off-repo (derived JSON committed). Targets:
+the RLBench-parity bundle (`terminal_only` + `relation_event`) plus a sibling `placed_from_outside`
+(FAR-start) OR-combined at ingest into a put-in **transition** (real put-ins start NEAR *or* FAR).
+
+Success recall was lifted from **18/32 → 27/32** (Sony 10→15, iPhone 8→12) by a **frozen manual
+tray-corner calibration** (commit `3ece64e`): the marker-fit tray center was ~1–2 cm off the physical
+cardboard, so genuinely-inside cubes read NEAR. A diagnostic overlay tool
+(`pilots/real_camera/visualize_episode.py`) made the offset visible; `pilots/real_camera/manual_calibration.py`
+turns four clicked inner-floor tray corners on one reference frame into the marker-7→tray-center offset
+**in marker 7's own frame** — a camera-independent physical constant reapplied per clip via each clip's
+marker 7 (no per-clip tuning; the top-down iPhone view measures the boundary, Sony adopts that offset
+since its 45° depth back-projection is unreliable). The recovery preserved every safety invariant (0
+false PASS, born-inside transition 8/8 FAIL, 0 regressions); the 5 remaining success misses are honest
+UNCERTAIN, and the physical footprint stays the measured ~18×18 (center-only fix). A global footprint
+expansion (18→20 cm) was tested earlier and **rejected** for causing 1 false PASS. Honest limits
+(perception, not bugs): born-inside *terminal* is unjudgeable (≈0 net cube displacement → no figure for
+the motion-based extractor; relation_event still correct), and the iPhone-top vs Sony-45° trade-off
+(top keeps the cube tag but loses the tray floor tag when filled; 45° resolves the terminal relation but
+occludes the cube during the place) — sensor fusion is future work. Full method + per-class numbers in
+`datasets/sony_object_inside_container_v0/INGESTION_RESULTS.md` (see "Update 2"). This is the **Sony/tripod
+leg of the Phase 4 flagship**; it is **not** a Phase 3B target compiler (it judges episodes, it does not
+author target CSGs from video).
 
 ### Phase 3A.5 — RH20T external-source smoke test
 
@@ -969,11 +1013,14 @@ target (Result A); a value-only diagnostic target PASSes the same traces non-vac
 (Result B); a negative/mutation suite proves the calibration is not too permissive
 (Result C); and an articulation-event target adds the increase + event check, strictly
 stronger than value-only (Result D) — all reproducible from committed fixtures without
-Runpod. So the next concrete research item is **not** more identical RLBench recording
-or another single-task target; it is `object_inside_container` as the cross-source
-flagship task: MuJoCo + external sim + Sony/tripod first, then DK1/robot recorded
-evidence. Broader ablated/noisy baselines remain optional later extensions, not
-blockers for the current Phase 2E/2F minimum.
+Runpod. The cross-source flagship task `object_inside_container` has since advanced: the
+**Sony/tripod real-camera leg is DONE (Phase 3A)** — 78 real clips judged by the frozen
+verifier, 0 false PASS on 30 genuine failures, success recall 27/32 after a frozen manual
+tray-corner calibration. So the next concrete research items are the **external-sim container
+binding (2F-4)** and the **unified cross-source report (Phase 6)** tying MuJoCo + external sim
++ Sony/tripod through the unchanged verifier, then DK1/robot recorded evidence. Broader
+ablated/noisy baselines remain optional later extensions, not blockers for the current
+Phase 2E/2F minimum.
 
 ```text
 python3 -m pytest tests/ -q                          # core suite; mujoco tests skip without extra

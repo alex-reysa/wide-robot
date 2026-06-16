@@ -85,9 +85,9 @@
       "markerId": 7,
       "markerLengthM": 0.05,
       "offsetM": [
-        -0.00523,
-        0.08747,
-        0.00221
+        -0.049134,
+        0.049418,
+        -0.001344
       ],
       "sourceRole": "tray"
     },
@@ -95,14 +95,14 @@
       "markerId": 6,
       "markerLengthM": 0.05,
       "offsetM": [
-        0.0399,
-        -0.00065,
-        -0.08579
+        0.045763,
+        0.051648,
+        -0.152301
       ],
       "sourceRole": "tray"
     }
   ],
-  "markerMapHash": "26a7c2a2f96412d6c3f2a6d862668934492566af393902af8e44dd32528e769c",
+  "markerMapHash": "5c82fa68fee1d7a2386ceaddc92e4f3fc8f9c16c48bbe69e42089a619ac4fe69",
   "objects": [
     {
       "isContainer": false,

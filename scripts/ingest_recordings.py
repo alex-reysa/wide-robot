@@ -99,10 +99,17 @@ def fx_scale_for(camera: str, args: argparse.Namespace) -> float:
     return float(args.fx_scale_sony if camera == "sony_front" else args.fx_scale_iphone)
 
 
-def tray_center_override(cdiag: Dict[str, Any], world_off7: Optional[List[float]]) -> Optional[List[float]]:
-    """The tray center to hold the STATIC tray at, in the clip's world frame. When the front
-    wall (marker 6) is visible we trust the per-clip midpoint; otherwise (top view) we apply
-    the reference world-frame marker7->center offset to this clip's marker 7."""
+def tray_center_override(cdiag: Dict[str, Any], world_off7: Optional[List[float]],
+                         prefer_marker7: bool = False) -> Optional[List[float]]:
+    """The tray center to hold the STATIC tray at, in the clip's world frame.
+
+    With a frozen MANUAL marker-7 offset (``prefer_marker7``), use the per-clip marker-7-applied
+    center (``cdiag['marker7TrayCenter']``): marker 7 is glued to the homemade tray, so this
+    tracks a repositioned tray and is yaw-convention-independent. Otherwise fall back to the
+    marker-fit heuristic: the per-clip midpoint when the front wall (marker 6) is visible, else
+    the reference world-frame marker7->center offset applied to this clip's marker 7."""
+    if prefer_marker7 and cdiag.get("marker7TrayCenter"):
+        return cdiag["marker7TrayCenter"]
     det = cdiag.get("detectedMarkers") or []
     if 6 in det and cdiag.get("trayCenterWorld"):
         return cdiag["trayCenterWorld"]
@@ -112,9 +119,26 @@ def tray_center_override(cdiag: Dict[str, Any], world_off7: Optional[List[float]
     return cdiag.get("trayCenterWorld")
 
 
+def load_manual_offsets(camera: str, out_dir: Path) -> tuple:
+    """Load a frozen ``real_camera.manual_tray_corners.v0`` sidecar for ``camera`` if present.
+
+    Returns ``(off6, off7)`` marker-frame offsets (off6 may be None on the top view), or
+    ``(None, None)`` when no sidecar exists. These OVERRIDE the marker-fit so the clicked tray
+    boundary drives every clip's static tray center."""
+    from pilots.real_camera.manual_calibration import sidecar_path, validate_manual_corners_v0
+    path = sidecar_path(camera, out_dir)
+    if not path.exists():
+        return None, None
+    doc = load_json(path)
+    validate_manual_corners_v0(doc)
+    d = doc.get("derived", {})
+    return d.get("marker6OffsetM"), d.get("marker7OffsetM")
+
+
 def ingest_clip(video_path: Path, camera: str, episode_id: str, *, fx_scale: float,
                 marker6_offset: Optional[List[float]], marker7_offset: Optional[List[float]],
-                world_off7: Optional[List[float]], out_dir: Path, max_frames: int) -> Dict[str, Any]:
+                world_off7: Optional[List[float]], out_dir: Path, max_frames: int,
+                prefer_marker7: bool = False) -> Dict[str, Any]:
     """Author calibration, build tracks, mint rollout, verify both targets. Returns a record."""
     calib, cdiag = ac.calibration_for_clip(video_path, camera, fx_scale=fx_scale,
                                            marker6_offset_m=marker6_offset,
@@ -133,7 +157,7 @@ def ingest_clip(video_path: Path, camera: str, episode_id: str, *, fx_scale: flo
     )
     trim_to_mover_span(tracks)  # episode = the span over which the cube is observed
     interpolate_mover_gaps(tracks, max_gap=int(REAL_VIDEO_THRESHOLDS["max_consecutive_missing"]))
-    tray_world = tray_center_override(cdiag, world_off7)
+    tray_world = tray_center_override(cdiag, world_off7, prefer_marker7=prefer_marker7)
     stabilize_static_objects(tracks, overrides={"tray": tray_world})  # hold STATIC tray at its fitted center
     cdiag["trayCenterInjected"] = tray_world
     write_json(out_dir / "tracks" / f"{stem}.tracks.json", tracks)
@@ -186,6 +210,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--fx-scale-sony", type=float, default=1.0)
     parser.add_argument("--fx-scale-iphone", type=float, default=1.0)
     parser.add_argument("--max-frames", type=int, default=30)
+    parser.add_argument("--manual", choices=("auto", "on", "off"), default="auto",
+                        help="use frozen manual_tray_corners sidecars to set the tray center: "
+                             "auto (use if present), on (require), off (ignore). Default: auto.")
     parser.add_argument("--verdicts-out", default=None, help="defaults to <out-dir>/verdicts_<select>.json")
     args = parser.parse_args(argv)
 
@@ -210,6 +237,21 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     sony_off6, ref_off7, world_off7 = fit_sony_tray_offsets(manifest, recordings_root, args.max_frames)
 
+    # Frozen manual tray-corner sidecars (manual_calibration) override the marker-fit center.
+    manual_off: Dict[str, tuple] = {cam: load_manual_offsets(cam, out_dir) for cam in cameras}
+    use_manual: Dict[str, bool] = {}
+    for cam in cameras:
+        has = manual_off[cam][1] is not None
+        if args.manual == "off":
+            has = False
+        elif args.manual == "on" and not has:
+            print(f"ERROR: --manual on but no manual_tray_corners sidecar for {cam}", file=sys.stderr)
+            return 2
+        use_manual[cam] = has
+        if has:
+            print(f"[manual] {cam}: tray center from frozen sidecar offsets "
+                  f"off6={manual_off[cam][0]} off7={manual_off[cam][1]}")
+
     rows: List[Dict[str, Any]] = []
     for v in clips:
         cam = v["camera"]
@@ -219,10 +261,13 @@ def main(argv: Optional[List[str]] = None) -> int:
         row: Dict[str, Any] = {"episodeId": eid, "camera": cam, "expectedClass": v["expectedClass"],
                                "expectedTerminal": exp[0], "expectedRelation": exp[1]}
         try:
+            if use_manual[cam]:
+                m6_off, m7_off, prefer = manual_off[cam][0], manual_off[cam][1], True
+            else:
+                m6_off, m7_off, prefer = (sony_off6 if cam == "sony_front" else None), ref_off7, False
             rec = ingest_clip(path, cam, eid, fx_scale=fx_scale_for(cam, args),
-                              marker6_offset=(sony_off6 if cam == "sony_front" else None),
-                              marker7_offset=ref_off7, world_off7=world_off7,
-                              out_dir=out_dir, max_frames=args.max_frames)
+                              marker6_offset=m6_off, marker7_offset=m7_off, world_off7=world_off7,
+                              out_dir=out_dir, max_frames=args.max_frames, prefer_marker7=prefer)
             term = rec["perTarget"][TARGET_TERMINAL]
             rel = rec["perTarget"][TARGET_RELATION]
             placed = rec["perTarget"][TARGET_PLACED]

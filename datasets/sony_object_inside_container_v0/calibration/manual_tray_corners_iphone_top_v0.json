@@ -1,0 +1,96 @@
+{
+  "camera": "iphone_top",
+  "derived": {
+    "detectedMarkers": [
+      0,
+      1,
+      2,
+      7
+    ],
+    "edgeLengthsM": {
+      "back": 0.166569,
+      "front": 0.170132,
+      "left": 0.194569,
+      "right": 0.195247
+    },
+    "extrinsic": {
+      "flatMarkers": [
+        0,
+        1,
+        7
+      ],
+      "maxNormalSpreadDeg": 5.87,
+      "upVectorCam": [
+        0.026,
+        -0.3399,
+        -0.9401
+      ],
+      "yawSource": "marker7_axis"
+    },
+    "marker6OffsetM": null,
+    "marker7OffsetM": [
+      -0.049134,
+      0.049418,
+      -0.001344
+    ],
+    "measuredFootprintM": [
+      0.16835,
+      0.194908
+    ],
+    "trayCenterWorldM": [
+      -0.049163,
+      0.049408,
+      0.0
+    ],
+    "trayYawRad": -3.05681,
+    "worldCornersM": {
+      "backLeft": [
+        0.043036,
+        -0.040231,
+        -0.0
+      ],
+      "backRight": [
+        -0.122879,
+        -0.054975,
+        0.0
+      ],
+      "frontLeft": [
+        0.026356,
+        0.153622,
+        0.0
+      ],
+      "frontRight": [
+        -0.143165,
+        0.139215,
+        0.0
+      ]
+    }
+  },
+  "imageSize": [
+    1920,
+    1080
+  ],
+  "innerTrayFloorCornersPx": {
+    "backLeft": [
+      1123.0,
+      400.0
+    ],
+    "backRight": [
+      1150.0,
+      617.0
+    ],
+    "frontLeft": [
+      858.0,
+      414.0
+    ],
+    "frontRight": [
+      869.0,
+      639.0
+    ]
+  },
+  "notes": "Frozen source-bound tray boundary. marker7OffsetM is the marker-7->tray-center offset in marker 7's own frame; re-apply per clip as P7_world + R7_world @ offset to recover the tray center without per-clip tuning.",
+  "planeZ": 0.0,
+  "referenceEpisodeId": "oic_success_001",
+  "referenceFrameIndex": 0,
+  "schemaVersion": "real_camera.manual_tray_corners.v0"
+}

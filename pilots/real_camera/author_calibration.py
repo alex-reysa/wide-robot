@@ -279,6 +279,26 @@ def marker_world_position(corners_by_id: Mapping[int, Sequence[Sequence[float]]]
     return [round(float(v), 5) for v in (M[:3, :3] @ np.array(t) + M[:3, 3])]
 
 
+def tray_center_from_marker_offset(corners_by_id: Mapping[int, Sequence[Sequence[float]]], camera_matrix,
+                                   cam_to_world: Sequence[Sequence[float]], marker_id: int,
+                                   offset_marker: Sequence[float]) -> Optional[List[float]]:
+    """World tray center implied by applying a marker-frame offset to a marker's world pose:
+    ``P_world + R_world @ offset``. This is how a FROZEN marker->tray-center offset (e.g. from
+    manual_calibration's clicked corners) transfers to a clip without per-clip tuning — marker 7
+    is glued to the tray, so the offset in its own frame is a fixed physical property and is
+    yaw-convention-independent (unlike a world-frame offset). Returns None if the marker is absent."""
+    import numpy as np
+    if marker_id not in corners_by_id:
+        return None
+    M = np.array(cam_to_world, dtype=np.float64)
+    R_cw, t_cw = M[:3, :3], M[:3, 3]
+    t, R = solve_marker_pose(corners_by_id[marker_id], MARKER_SIZE_M[marker_id], camera_matrix)
+    pos = R_cw @ np.array(t) + t_cw
+    R_world = R_cw @ R
+    off = np.array([float(o) for o in offset_marker])
+    return [round(float(v), 5) for v in (pos + R_world @ off)]
+
+
 def measure_cube_marker_spacing(corners_by_id: Mapping[int, Sequence[Sequence[float]]],
                                 camera_matrix) -> Optional[float]:
     """3D distance (m) between cube markers 2 and 3 centers — the AprilTag-based scale check
@@ -381,9 +401,14 @@ def calibration_for_clip(video_path: str | Path, camera: str, *, fx_scale: float
     calib = assemble_calibration(camera=camera, width=w, height=h, cam_to_world=cam_to_world,
                                  marker6_offset_m=off6, marker7_offset_m=off7,
                                  fx_scale=fx_scale, tray_size_m=tray_size_m)
+    # Tray center implied by applying off7 (fitted OR a frozen manual offset) to THIS clip's
+    # marker 7 — the per-clip static center the ingest driver injects when a manual sidecar is in
+    # play (marker 7 moves with the homemade tray, so this tracks a repositioned tray correctly).
+    marker7_tray_center = (tray_center_from_marker_offset(corners, camera_matrix, cam_to_world, 7, off7)
+                           if off7 is not None else None)
     diag = {"camera": camera, "resolution": [w, h], "detectedMarkers": sorted(corners.keys()),
             "extrinsic": ediag, "marker6Offset": off6, "marker7Offset": off7,
-            "trayCenterWorld": tray_center,
+            "trayCenterWorld": tray_center, "marker7TrayCenter": marker7_tray_center,
             "marker7World": marker_world_position(corners, camera_matrix, cam_to_world, 7),
             "cubeMarkerSpacingM": measure_cube_marker_spacing(corners, camera_matrix),
             "cubeSpacingNominalM": round(CUBE_23_NOMINAL_M, 5), "fxScale": fx_scale}
