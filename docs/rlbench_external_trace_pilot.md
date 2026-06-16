@@ -26,11 +26,16 @@ articulation **increase** to the calibrated value plus an `ARTICULATION_CHANGE` 
 matcher checks the increase *direction* + terminal value + event presence — not the numeric
 initial value) — still **no** contact/`CONTACT_BEGIN`/temporal-order claims. It PASSes all 9
 real demos and is strictly stronger than value-only (a flat "born-open" drawer that PASSes
-value-only FAILs it). Contact/order semantics remain deliberately deferred.
+value-only FAILs it). Contact/order semantics remain deliberately deferred. **Result E
+(Phase 2F-4)** opens the external-**simulation** leg of the `object_inside_container`
+flagship task with a second RLBench task, `PutItemInDrawer`: the offline half — a two-body
+converter, two pilot targets (`terminal_only` + `relation_event`), a committed synthetic
+fixture, and a full no-RLBench suite — is **landed and green**; the 9-demo live Runpod
+capture is a documented follow-on (see "Result E").
 
-**Scope: deliberately very narrow.** One RLBench task (`open_drawer`), a handful of
-its demonstrations, fed through the **frozen** csg verifier. This is a feasibility
-and discipline probe, not a benchmark expansion.
+**Scope: deliberately very narrow.** Two RLBench tasks (`open_drawer`, `put_item_in_drawer`),
+a handful of demonstrations each, fed through the **frozen** csg verifier. This is a
+feasibility and discipline probe, not a benchmark expansion.
 
 - Upstream: <https://github.com/stepjam/RLBench> · <https://sites.google.com/view/rlbench>
 
@@ -348,6 +353,80 @@ tripwire, and the kinematic / calibration / leakage negatives.
 python3 -m pytest tests/test_rlbench_articulation_event.py -q
 # 25 passed
 ```
+
+### Result E — object_inside_container (Phase 2F-4, the external-sim container leg)
+
+Results A–D are all `open_drawer` (one articulated body). Result E opens the **external-
+simulation** leg of the `object_inside_container` **flagship task** — already proven on
+MuJoCo (internal sim), Sony/iPhone (real camera), and RH20T (real-robot video) — using a
+*second* RLBench task, `PutItemInDrawer` (a movable item placed into a selected drawer).
+It is the two-body sibling of the OpenDrawer path and reuses the same rollout door + leakage
+gate + frozen verifier unchanged.
+
+**Converter** — `pilots/rlbench/adapter_object_inside_container.py::put_item_in_drawer_demo_to_rollout`
+(kept separate from the OpenDrawer adapter so that path is untouched). Neutral body
+assignment: `body_000` = item (MOVABLE), `body_001` = container volume (STATIC,
+`isContainer:true`, median-clamped so jitter cannot promote it to a moving figure). The
+neutral per-frame measurement contract is `frameIndex/timeS/itemPose/itemSizeM/
+containerPose/containerSizeM/sizeApproximate` — any other key (a `task`/`variation`/
+`success_*`/handle/target id) is rejected at the door. The container volume is bound from the
+`success_<variation>` proximity sensor's **pose + bounding box**; its boolean is never
+emitted. The rollout is fully source-blind — no task/variation/handle token appears anywhere,
+not even in diagnostics prose.
+
+**Two pilot targets** (`pilots/rlbench/targets/object_inside_container_{terminal_only,relation_event}.json`),
+modelled on the RH20T pair and forming the same strictly-stronger progression:
+
+| Probe | terminal_only | relation_event | what the frozen matcher checks |
+|---|:--:|:--:|---|
+| `goal_satisfaction` | 1 | 1 | terminal relation INSIDE(item, container) |
+| `initial_state` | 0 | 1 | item STARTED NEAR (rejects born-inside) |
+| `terminal_state` | 0 | 1 | item ENDED INSIDE |
+| `relation_transitions` | 0 | 1 | INSIDE achieved |
+| `event_presence` | 0 | 1 | one `CONTAINMENT_CHANGE` event present |
+| `event_order` | 0 | 0 | vacuous on purpose — one event, no pair |
+
+The **born-inside discriminator** is identical to the RH20T finding: because
+`csg/rollout_extract.py` seeds `prev_rel="NEAR"` unconditionally, an item inside the whole
+time still emits a NEAR→INSIDE `CONTAINMENT_CHANGE` — so a born-inside trace PASSes
+terminal_only but FAILs relation_event on **`initial_state` only** (not on the
+event/transition). No contact / `CONTACT_BEGIN` / co-motion / release / temporal order is
+asserted (the effector is recorded but no contact is claimed) — that stays deferred.
+
+**Offline evidence landed (this is the committed half).** `tests/test_rlbench_object_inside_container.py`
+(24 tests, **no RLBench**, 3 live tests skip) builds synthetic `PutItemInDrawer` rollouts
+through the *real* converter and pins, against the frozen verifier: a geometry tripwire; the
+target structure / not-a-gold-task; a synthetic success PASSing both targets non-vacuously;
+the born-inside strictly-stronger discriminator; near-not-inside / rim / far / flat FAILing
+leakage-clean on `goal_satisfaction`; leaky-trace and non-neutral-measurement rejection at
+the door; the source-identity quarantine; and off-task gold confusion (matches nothing — no
+contact evidence). A committed synthetic fixture
+(`pilots/rlbench/fixtures/synthetic_put_item_in_drawer.rollout.json`) is the static repro
+positive. `csg/` stays byte-frozen.
+
+```bash
+python3 -m pytest tests/test_rlbench_object_inside_container.py -q
+# 24 passed, 3 skipped   (the 3 skips are the RLBench-install-gated live tests)
+```
+
+**Live capture (the follow-on half).** The 9-demo Runpod capture that turns the synthetic
+positive into real external-sim evidence is `pilots/rlbench/record_put_item_in_drawer.py`:
+
+```bash
+# On a Runpod pod with CoppeliaSim v4.1.0 + PyRep + RLBench (see "Live record" below):
+python3 -m pilots.rlbench.record_put_item_in_drawer \
+    --variations bottom,middle,top --demos-per-variation 3 \
+    --out-dir pilots/rlbench/_out --verify
+# pull back the 9 *.rollout.json + *.summary.json, commit under
+#   pilots/rlbench/fixtures/live_runpod_<date>_put_item/, then un-skip the live tests
+#   (set RLBENCH_PILOT_LIVE=1 or install RLBench) to lock the 9/9 result.
+```
+
+The recorder's `_QUARANTINED_HANDLES` (item / drawer / `success_<variation>` sensor names)
+and the `task_low_dim_state` item-pose layout are best-guess CoppeliaSim names **to confirm
+against the installed RLBench `PutItemInDrawer`** at capture time; the resolvers fail loudly
+rather than guess if a handle or layout differs. The compact cross-source confusion + leakage
+report tying all the evidence together is Phase 2F-5.
 
 ## Leakage contract for external traces (the heart of the pilot)
 
