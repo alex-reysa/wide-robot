@@ -2,8 +2,8 @@
 
 **Status:** converter implemented and tested; live record exercised on Runpod (9-demo
 rerun); a value-only diagnostic target accepts the real traces, a mutation/negative suite
-proves it is not too permissive, and an articulation-event target adds the
-started-closed-and-changed semantics. The verifier seam, the
+proves it is not too permissive, and an articulation-event target adds an
+articulation-increase + event-present check (strictly stronger than value-only). The verifier seam, the
 hardened leakage gate, the `open_drawer` ingest converter, and the cross-task confusion
 report are all in place and unit-tested with fake observations (`pilots/rlbench/`,
 `tests/test_rlbench_pilot.py`, green with **no** RLBench installed). The live
@@ -21,11 +21,12 @@ reproducible without RLBench. **Result C** then answers the reviewer's natural f
 (`tests/test_rlbench_mutations.py`): mutated-kinematics traces, mis-calibrated targets,
 and leaky traces all FAIL or are rejected, while the real traces still PASS. **Result D**
 takes the next honest step: an *articulation-event* target
-(`pilots/rlbench/targets/open_drawer_rlbench_articulation_event.json`) that adds the
-drawer **started near-closed and changed** (an `ARTICULATION_CHANGE` event + the
-`0.0 → 0.234` transition) — still **no** contact/`CONTACT_BEGIN`/temporal-order claims.
-It PASSes all 9 real demos and is strictly stronger than value-only (a "born-open" drawer
-that PASSes value-only FAILs it). Contact/order semantics remain deliberately deferred.
+(`pilots/rlbench/targets/open_drawer_rlbench_articulation_event.json`) that adds an
+articulation **increase** to the calibrated value plus an `ARTICULATION_CHANGE` event (the
+matcher checks the increase *direction* + terminal value + event presence — not the numeric
+initial value) — still **no** contact/`CONTACT_BEGIN`/temporal-order claims. It PASSes all 9
+real demos and is strictly stronger than value-only (a flat "born-open" drawer that PASSes
+value-only FAILs it). Contact/order semantics remain deliberately deferred.
 
 **Scope: deliberately very narrow.** One RLBench task (`open_drawer`), a handful of
 its demonstrations, fed through the **frozen** csg verifier. This is a feasibility
@@ -95,10 +96,10 @@ is the point — it forecloses "you adapted the verifier to fit RLBench".
 | `pilots/rlbench/fixtures/live_runpod_20260614/*.rollout.json` | the three committed **real** RLBench `OpenDrawer` demos (bottom/middle/top) + provenance sidecars — so Results A/B reproduce without Runpod | **real** (leakage-clean; FAIL gold, PASS value-only) |
 | `pilots/rlbench/fixtures/live_runpod_20260614_rerun/*.rollout.json` | the **nine** committed fresh demos (3× bottom/middle/top) backing the reproducibility result | **real** (9/9 value-only PASS, gold FAIL-leakage-clean, off-task-clean) |
 | `pilots/rlbench/targets/open_drawer_rlbench_value_only.json` | value-only diagnostic target: keeps the drawer + hard `ARTICULATION_GOAL` (`targetJointValue 0.234`), drops contacts/events/temporal/object-states | **real** (PASSes the live demos; not a gold task) |
-| `pilots/rlbench/targets/open_drawer_rlbench_articulation_event.json` | articulation-event diagnostic target: value-only **plus** initial/terminal articulation states (`0.0 → 0.234`) and one `ARTICULATION_CHANGE` event; still no contact/`CONTACT_BEGIN`/temporal-order | **real** (Result D — PASSes the 9 demos; strictly stronger than value-only; not a gold task) |
+| `pilots/rlbench/targets/open_drawer_rlbench_articulation_event.json` | articulation-event diagnostic target: value-only **plus** authored articulation states (`0.0 → 0.234`) and one `ARTICULATION_CHANGE` event — enforces an articulation *increase* (direction) + terminal value + event presence; still no contact/`CONTACT_BEGIN`/temporal-order | **real** (Result D — PASSes the 9 demos; strictly stronger than value-only; not a gold task) |
 | `tests/test_rlbench_pilot.py` | seam + hardened-leakage + converter + confusion + live-evidence (A/B) + 9/9 rerun tests, no RLBench needed | **green** (73 passed, 3 live-only skipped) |
 | `tests/test_rlbench_mutations.py` | Result C: value-only negative/mutation suite over the 9 rerun demos — positive 9/9, preserved gold-FAIL 9/9, off-task-clean 9/9, kinematic mutations FAIL, leakage mutations rejected, target-calibration negative | **green** (39 passed, no RLBench needed) |
-| `tests/test_rlbench_articulation_event.py` | Result D: articulation-event target — structure, positive 9/9 with the intended probe supports, strictly-stronger-than-value-only discriminator, kinematic + calibration + leakage negatives | **green** (23 passed, no RLBench needed) |
+| `tests/test_rlbench_articulation_event.py` | Result D: articulation-event target — structure, positive 9/9 with the intended probe supports, strictly-stronger-than-value-only discriminator, initial-value-not-pinned tripwire, kinematic + calibration + leakage negatives | **green** (25 passed, no RLBench needed) |
 
 Run the seam **and** the confusion today, with no RLBench installed:
 
@@ -122,7 +123,7 @@ python3 -m pytest tests/test_rlbench_mutations.py -q
 # 39 passed  (Result C — value-only negative/mutation suite)
 
 python3 -m pytest tests/test_rlbench_articulation_event.py -q
-# 23 passed  (Result D — articulation-event target)
+# 25 passed  (Result D — articulation-event target)
 
 python3 -m pilots.rlbench.run_external \
   --target gold_tests/open_drawer/target.json \
@@ -296,18 +297,19 @@ python3 -m pytest tests/test_rlbench_mutations.py -q
 ### Result D — articulation-event target (one honest step beyond value-only)
 
 Result B/C assert only the *terminal* extension. Result D adds the next increment that
-RLBench can honestly evidence: the drawer **started near-closed (`0.0`) and underwent an
-articulation change** to `0.234 m`. `pilots/rlbench/targets/open_drawer_rlbench_articulation_event.json`
-is the value-only target **plus** two articulation `objectStates` (`0.0` → `0.234`) and one
-`ARTICULATION_CHANGE` event carrying the `0.0 → 0.234` transition. It deliberately adds
-**nothing else** — no `contacts`, no handle contact, no `CONTACT_BEGIN`, no `temporalEdges`,
-no contact-before-motion order — because the adapter has no honest RLBench evidence for who
-or what caused the motion.
+RLBench can honestly evidence and the frozen matcher actually **enforces**: the drawer's
+articulation **increased** to the RLBench-calibrated `0.234 m` and an `ARTICULATION_CHANGE`
+event is present. `pilots/rlbench/targets/open_drawer_rlbench_articulation_event.json` is the
+value-only target **plus** two articulation `objectStates` (authored `0.0` → `0.234`) and one
+`ARTICULATION_CHANGE` event carrying the authored `0.0 → 0.234` transition. It deliberately
+adds **nothing else** — no `contacts`, no handle contact, no `CONTACT_BEGIN`, no
+`temporalEdges`, no contact-before-motion order — because the adapter has no honest RLBench
+evidence for who or what caused the motion.
 
-| Probe | Support | Role |
+| Probe | Support | Role (what the frozen matcher checks) |
 |---|---:|---|
-| `goal_satisfaction` | 1 | terminal `0.234 ± 0.05 m` (the calibrated value) |
-| `articulation_transitions` | 1 | a `0.0 → 0.234` PRISMATIC EXTENSION transition occurred |
+| `goal_satisfaction` | 1 | terminal value within `0.234 ± 0.05 m` (numeric, robot **terminal** only) |
+| `articulation_transitions` | 1 | a PRISMATIC `EXTENSION_M` **increase** occurred — **direction only**, numeric endpoints not compared |
 | `event_presence` | 1 | one `ARTICULATION_CHANGE` event is present |
 | `event_order` | 0 | **vacuous on purpose** — a single event has no pair to order |
 
@@ -319,21 +321,32 @@ is that it is **strictly stronger** than value-only:
 | Trace | value-only | articulation-event |
 |---|---|---|
 | real RLBench demo (`0 → 0.234` ramp) | PASS | **PASS** |
-| "born-open" drawer (every frame at `0.234`, never changes) | PASS | **FAIL** (`articulation_transitions`, `event_presence`) |
+| "born-open" drawer (every frame at `0.234`, FLAT — never increases) | PASS | **FAIL** (`articulation_transitions`, `event_presence`) |
 | below/above window (`0.18` / `0.30`) | FAIL `goal_satisfaction` | **FAIL** `goal_satisfaction` |
 | flat `0.0` / opened-then-closed | FAIL `goal_satisfaction` | **FAIL** `goal_satisfaction` + `articulation_transitions` + `event_presence` |
 
-A terminal value alone is no longer enough — the drawer must have *started closed and
-changed*. Everything is the **same frozen verifier**; only the target's asserted semantics
-grew by exactly one honest articulation event. The stricter **contact/order** target is the
-deferred next step (still no honest RLBench evidence source for handle contact or
-contact-before-motion order). `tests/test_rlbench_articulation_event.py` (23 tests) locks
-the structure, the 9/9 positive with its probe supports, the strictly-stronger
-discriminator, and the kinematic / calibration / leakage negatives.
+A terminal value alone is no longer enough — the drawer's articulation must have
+**increased** to the calibrated value (a flat / born-open drawer is rejected). Everything is
+the **same frozen verifier**; only the target's asserted semantics grew by exactly one honest
+articulation event.
+
+**What Result D does NOT claim.** It does **not** pin the *initial* value. The frozen matcher
+reduces every articulation transition to `(object, jointKind, valueKind,
+INCREASE/DECREASE/FLAT)` (direction only — `csg.matcher._probe_articulation_transitions`) and
+the only numeric articulation check (`goal_satisfaction`) reads the robot's *terminal* value,
+never the initial. So the target's `0.0` initial state and the `0.0 → 0.234` from/to values
+are honest **authoring**, not verifier-enforced: a trace that starts already part-open (e.g.
+`0.10`) and increases to `0.234` PASSes too. The suite locks this in directly
+(`test_articulation_event_does_not_pin_initial_value`), so the "started at 0.0" overclaim
+cannot creep back. The stricter **contact/order** target is the deferred next step (still no
+honest RLBench evidence source for handle contact or contact-before-motion order).
+`tests/test_rlbench_articulation_event.py` (25 tests) locks the structure, the 9/9 positive
+with its probe supports, the strictly-stronger discriminator, the initial-value-not-pinned
+tripwire, and the kinematic / calibration / leakage negatives.
 
 ```bash
 python3 -m pytest tests/test_rlbench_articulation_event.py -q
-# 23 passed
+# 25 passed
 ```
 
 ## Leakage contract for external traces (the heart of the pilot)
@@ -425,11 +438,12 @@ line in `roadmap.md`. The failure modes are as informative as the success.
    `goal_satisfaction`, a mis-calibrated target FAILs, and leaky traces are rejected before
    the matcher can PASS — all with `csg/` frozen.
 8. ✅ **Articulation-event target (Result D)** — `open_drawer_rlbench_articulation_event.json`
-   adds a minimal `ARTICULATION_CHANGE` event (near-zero `0.0` → `0.234 m`) plus the two
-   articulation `objectStates`, still **without** `CONTACT_BEGIN`, overlap/handle-contact
-   claims, or strict event order. It PASSes the 9 demos non-vacuously, is strictly stronger
-   than value-only, and `tests/test_rlbench_articulation_event.py` (23 tests) locks it —
-   `csg/` frozen.
+   adds a minimal `ARTICULATION_CHANGE` event plus two articulation `objectStates`, enforcing
+   an articulation **increase** to `0.234 m` (direction) + terminal value + event presence,
+   still **without** `CONTACT_BEGIN`, overlap/handle-contact claims, or strict event order. It
+   PASSes the 9 demos non-vacuously, is strictly stronger than value-only (a flat born-open
+   drawer FAILs it), does **not** pin the initial value (authoring only), and
+   `tests/test_rlbench_articulation_event.py` (25 tests) locks it — `csg/` frozen.
 9. ⏳ **Follow-on: contact/order target** — only once the adapter has an honest RLBench
    evidence source for handle contact, author a target adding `CONTACT_BEGIN` and a
    `CONTACT_BEGIN → ARTICULATION_CHANGE` temporal order. Not before — asserting contact or
