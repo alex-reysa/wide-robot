@@ -69,3 +69,7 @@ MUJOCO_LOG.TXT
 
 # Private / internal notes — never publish to the open-source repo
 .internal/
+
+# Real-camera pilot scratch: regenerable overlays, helper images, and local ingest runs.
+# Committed dataset artifacts live under datasets/; raw mp4s and these derived outputs do not.
+output/
