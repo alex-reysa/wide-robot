@@ -1,23 +1,35 @@
 """RLBench articulation-event target — Result D, one honest step beyond value-only.
 
 The value-only target (`Result B/C`) asserts only the *terminal* drawer extension. This
-target adds the next honest increment: the drawer **started near-closed** (`0.0`) and
-**underwent an articulation change** to the RLBench-calibrated extension (`0.234 m`). It
-adds — and only adds — an `ARTICULATION_CHANGE` event and the `0.0 -> 0.234`
-articulation transition. It deliberately does **not** add contacts, handle contact,
-`CONTACT_BEGIN`, temporal edges, or any contact-before-motion order: the adapter has no
-honest RLBench evidence for who/what caused the motion, so asserting it would be
-unevidenced (that is deferred to a later target).
+target adds the next increment that the FROZEN matcher actually enforces. Concretely it
+enforces three things:
+  * terminal extension ≈ `0.234 m` (hard ARTICULATION_GOAL → `goal_satisfaction`, numeric);
+  * the drawer's articulation **increased** rather than stayed flat
+    (`articulation_transitions` — DIRECTION only, see below);
+  * an `ARTICULATION_CHANGE` event is present (`event_presence`).
+
+It deliberately does **not** add contacts, handle contact, `CONTACT_BEGIN`, temporal edges,
+or any contact-before-motion order: the adapter has no honest RLBench evidence for who/what
+caused the motion (deferred to a later target).
+
+What the matcher does NOT enforce — and this suite proves it — is the *numeric initial
+value*. `csg.matcher._probe_articulation_transitions` reduces every transition to
+`(object, jointKind, valueKind, INCREASE/DECREASE/FLAT)` (direction only, numeric endpoints
+discarded), and the only numeric articulation check (`goal_satisfaction`) reads the robot's
+*terminal* value, never the initial. So the target's `0.0` initial objectState and the
+`0.0 → 0.234` fromState/toState are honest **authoring**, not verifier-enforced: a trace
+that starts at `0.10` and increases to `0.234` PASSes too (see
+`test_articulation_event_does_not_pin_initial_value`). The honest claim is "increased to the
+calibrated value + event present", not "started at 0.0".
 
 What this buys, made executable:
-  * all 9 fresh rerun demos still PASS leakage-clean, `physicalValidity null`, and the
-    intended probes carry support — `goal_satisfaction`, `articulation_transitions`, and
-    `event_presence` at support 1, while `event_order` stays support 0 (a single event
-    has no pair to order against), so the PASS is non-vacuous but order-free.
+  * all 9 fresh rerun demos still PASS leakage-clean, `physicalValidity null`, non-vacuous:
+    `goal_satisfaction`, `articulation_transitions`, and `event_presence` at support 1,
+    while `event_order` stays support 0 (a single event has no pair to order against).
   * it is **strictly stronger** than value-only: a "born-open" drawer (every frame already
-    at `0.234`, no change) PASSes value-only but FAILs this target on
-    `articulation_transitions` + `event_presence` — terminal value alone is no longer
-    enough.
+    at `0.234`, FLAT — no change) PASSes value-only but FAILs this target on
+    `articulation_transitions` + `event_presence` — a terminal value alone is no longer
+    enough; the articulation must have *increased*.
   * kinematic mutations FAIL: below/above the window FAIL `goal_satisfaction`; a flat or
     opened-then-closed trajectory additionally FAILs the added event/transition semantics.
   * a mis-calibrated target FAILs the real demos; a leaky trace is rejected before the
@@ -77,6 +89,16 @@ def _ramp(rollout, final):
     return r
 
 
+def _ramp_from(rollout, start, final):
+    """Deep copy whose body_000 articulation ramps linearly from a NONZERO ``start`` to
+    ``final`` — used to show the frozen matcher does not pin the initial value."""
+    r = copy.deepcopy(rollout)
+    n = len(r["frames"])
+    for i, f in enumerate(r["frames"]):
+        f["articulation"]["body_000"] = start + (final - start) * (i / (n - 1)) if n > 1 else final
+    return r
+
+
 def _flat(rollout, value):
     r = copy.deepcopy(rollout)
     for f in r["frames"]:
@@ -111,12 +133,17 @@ def test_articulation_event_target_structure():
     assert [g["kind"] for g in goals] == ["ARTICULATION_GOAL"]
     assert goals[0]["hard"] is True
 
-    # exactly two articulation states: near-closed 0.0 -> calibrated 0.234.
+    # exactly two articulation states, authored near-closed 0.0 -> calibrated 0.234.
+    # NOTE: these numeric values are the target's AUTHORING. The frozen matcher reduces
+    # transitions to a direction (INCREASE/DECREASE/FLAT) and only checks the terminal goal
+    # numerically, so the 0.0 initial value is NOT verifier-enforced — see
+    # test_articulation_event_does_not_pin_initial_value.
     states = ae["objectStates"]
     assert [s["articulation"]["jointValue"] for s in states] == [0.0, _RLBENCH_VALUE]
     assert all(s["objectId"] == "h_drawer" for s in states)
 
-    # exactly one ARTICULATION_CHANGE event with a 0.0 -> 0.234 articulation transition.
+    # exactly one ARTICULATION_CHANGE event; its authored transition is 0.0 -> 0.234 (again,
+    # only the increase DIRECTION + the event's presence reach the verifier, not the endpoints).
     events = ae["events"]
     assert [e["eventKind"] for e in events] == ["ARTICULATION_CHANGE"]
     trans = events[0]["observedDeltas"][0]["articulationTransition"]
@@ -153,7 +180,9 @@ def test_articulation_event_passes_all_real_demos_non_vacuously(path):
 
     res = match(ae, extract_robot_csg(rollout), MatcherConfig())
     assert res.vacuous is False
-    # the three asserted semantics carry real support and agree ...
+    # the three asserted semantics carry real support and agree: terminal value
+    # (goal_satisfaction, numeric), an articulation INCREASE (articulation_transitions —
+    # direction only), and an ARTICULATION_CHANGE event present (event_presence) ...
     assert res.probe_support["goal_satisfaction"] == 1
     assert res.probe_support["articulation_transitions"] == 1
     assert res.probe_support["event_presence"] == 1
@@ -169,19 +198,41 @@ def test_articulation_event_passes_all_real_demos_non_vacuously(path):
 
 
 def test_articulation_event_is_strictly_stronger_than_value_only():
-    # A "born-open" drawer: every frame already at 0.234, so it never CHANGES. Its terminal
-    # value satisfies value-only, but the articulation-event target rejects it because no
-    # articulation change occurred — the added event/transition semantics are load-bearing.
+    # A "born-open" drawer: every frame already at 0.234, so the trajectory is FLAT — no
+    # INCREASE. Its terminal value satisfies value-only, but the articulation-event target
+    # rejects it because no articulation increase/change occurred (NOT because of any initial
+    # value — see test_articulation_event_does_not_pin_initial_value). The added
+    # event/transition semantics are load-bearing.
     born_open = _flat(load_json(_RERUN_PATHS[0]), _RLBENCH_VALUE)
     assert_rollout_leakage_clean(born_open)  # only float values changed -> still clean
 
     vo = verify_external_rollout(load_json(_VALUE_ONLY_TARGET), born_open, case_name="vo")
     ae = verify_external_rollout(load_json(_ARTICULATION_EVENT_TARGET), born_open, case_name="ae")
     assert vo["passed"] is True, vo["hardMismatches"]            # value-only: terminal value ok
-    assert ae["passed"] is False                                # articulation-event: no change
+    assert ae["passed"] is False                                # articulation-event: no increase
     assert "articulation_transitions" in ae["hardMismatches"]
     assert "event_presence" in ae["hardMismatches"]
     assert "goal_satisfaction" not in ae["hardMismatches"]      # terminal value still matched
+
+
+@pytest.mark.parametrize("start", [0.10, 0.15])
+def test_articulation_event_does_not_pin_initial_value(start):
+    # Honest-limitation tripwire (locks in what Result D does NOT claim). The frozen matcher
+    # reduces articulation transitions to a DIRECTION
+    # (csg.matcher._probe_articulation_transitions: INCREASE/DECREASE/FLAT) and only checks the
+    # TERMINAL value numerically (goal_satisfaction). So a trace that starts already part-open
+    # (0.10 / 0.15) and INCREASES to the calibrated 0.234 still PASSes — the target's authored
+    # 0.0 initial state is documentary, not verifier-enforced. This stops the "started at 0.0"
+    # overclaim from creeping back.
+    ae = load_json(_ARTICULATION_EVENT_TARGET)
+    for path in _RERUN_PATHS:
+        nonzero_start = _ramp_from(load_json(path), start, _RLBENCH_VALUE)
+        assert_rollout_leakage_clean(nonzero_start)  # only float values changed -> still clean
+        case = verify_external_rollout(ae, nonzero_start, case_name="ae")
+        assert case["passed"] is True, (start, path.name, case["hardMismatches"])
+        res = match(ae, extract_robot_csg(nonzero_start), MatcherConfig())
+        for probe in ("goal_satisfaction", "articulation_transitions", "event_presence"):
+            assert res.probe_agreement[probe] is True, (start, path.name, probe)
 
 
 # ---------------------------------------------------------------------------
@@ -251,8 +302,10 @@ def test_calibrated_value_passes_all_real_demos():
 
 def test_enforced_tolerance_is_the_window_this_target_relies_on():
     assert MatcherConfig().articulation_tol == _ENFORCED_TOL
-    # initial 0.0 and terminal 0.234 are both far outside the 0.05 m window, so the change
-    # registers and the goal is met; pin the tolerance so a future widening fails here.
+    # The enforced mechanics: a transition registers as INCREASE when last - first > tol, and
+    # goal_satisfaction passes when the robot's terminal value is within tol of 0.234. The real
+    # demos ramp ~0 -> 0.234 (delta >> tol), so the increase registers and the goal is met; pin
+    # the tolerance so a future widening that blurred increase/flat or the goal window fails here.
     assert abs(_RLBENCH_VALUE - 0.0) > _ENFORCED_TOL
 
 
