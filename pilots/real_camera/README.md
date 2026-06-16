@@ -86,8 +86,11 @@ python3 -m pilots.real_camera.verify_episode \
 
 - Tripod; fixed zoom, focus, exposure, white balance; stable diffuse lighting; ~28 mm if
   the whole workspace fits.
-- One ArUco marker on a **known face** of the cube (record the fixed marker→center offset);
-  fixed markers on/around the tray and table for the table→world board.
+- AprilTag/Aruco markers on known object faces (record each fixed marker→center offset);
+  fixed markers on/around the tray and table for the table→world board. The current
+  capture uses AprilTag `tag36h11`: table IDs `0/1`, cube IDs `2/3`, and tray IDs `6/7`.
+  Mixed marker sizes are supported through per-marker `markerLengthM` entries in the
+  calibration, falling back to the calibration-level `markerLengthM` when omitted.
 - **Recalibrate** (new `calibration.v0`, new `markerMapHash`) whenever zoom, focus distance,
   resolution, camera position, or the table/marker layout changes.
 - Record a success/failure set: successes, near-not-inside, rim placement, dropped outside,
