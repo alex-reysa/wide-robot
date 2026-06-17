@@ -1,0 +1,44 @@
+{
+  "clipStem": "oic_success_001__iphone_top",
+  "episodeId": "oic_success_001",
+  "camera": "iphone_top",
+  "humanLabel": "success",
+  "humanVerdict": "PASS",
+  "lesson": "a clean success: baselines PASS and wide-robot terminal_only PASS -- the verifier is not a fail-everything oracle",
+  "numFrames": 577,
+  "fps": 29.97002997002997,
+  "videoSha256": "720496df9d536839d2dafa6263803d769fe529ec4cb1dc1c2a4206bbfe57bcc4",
+  "calibrationHash": "1a00afc63b19387e6877a2d95c79b101bd7c1914bd16836d2e6af3a850ab5ee3",
+  "rawVideoRelativePath": "raw_videos/success/oic_success_001__iphone_top.mp4",
+  "rawVideoNote": "raw mp4 is gitignored (repo *.mp4 rule); present locally for overlay regeneration. The tracked evidence is the tracks/calibration JSON.",
+  "geometry": {
+    "cubeFirst": [
+      0.20833592792339026,
+      0.0023458820949133208,
+      0.010079324998003437
+    ],
+    "cubeLast": [
+      -0.08316497295498192,
+      0.04756088267417961,
+      0.010597567730255015
+    ],
+    "trayCenter": [
+      -0.04916,
+      0.04941,
+      0.0
+    ],
+    "cubeSize": [
+      0.05,
+      0.05,
+      0.05
+    ],
+    "traySize": [
+      0.18,
+      0.18,
+      0.07
+    ],
+    "numCubeFrames": 577,
+    "numFrames": 577
+  },
+  "tracksPath": "datasets/sony_object_inside_container_v0/tracks/oic_success_001__iphone_top.tracks.json"
+}

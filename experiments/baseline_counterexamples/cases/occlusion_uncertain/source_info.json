@@ -1,0 +1,44 @@
+{
+  "clipStem": "oic_success_005__iphone_top",
+  "episodeId": "oic_success_005",
+  "camera": "iphone_top",
+  "humanLabel": "success",
+  "humanVerdict": "PASS",
+  "lesson": "a genuine success by geometry (all baselines PASS) but the cube is occluded for 50 frames -> wide-robot UNCERTAIN (fail-closed)",
+  "numFrames": 441,
+  "fps": 29.97002997002997,
+  "videoSha256": "12c6bd9e53512146401e98bf306109adf6e865307e9dc0a45ee771d8792410ef",
+  "calibrationHash": "144945215fa9d9173ef6f50a0d920cc355dc3501578db9d58e3581545dd326c8",
+  "rawVideoRelativePath": "raw_videos/success/oic_success_005__iphone_top.mp4",
+  "rawVideoNote": "raw mp4 is gitignored (repo *.mp4 rule); present locally for overlay regeneration. The tracked evidence is the tracks/calibration JSON.",
+  "geometry": {
+    "cubeFirst": [
+      -0.09558031755030537,
+      0.2793393181545587,
+      0.011094223122273393
+    ],
+    "cubeLast": [
+      -0.08257260221212025,
+      0.07189376354942902,
+      0.015782336327954276
+    ],
+    "trayCenter": [
+      -0.04902,
+      0.04939,
+      0.00399
+    ],
+    "cubeSize": [
+      0.05,
+      0.05,
+      0.05
+    ],
+    "traySize": [
+      0.18,
+      0.18,
+      0.07
+    ],
+    "numCubeFrames": 391,
+    "numFrames": 441
+  },
+  "tracksPath": "datasets/sony_object_inside_container_v0/tracks/oic_success_005__iphone_top.tracks.json"
+}

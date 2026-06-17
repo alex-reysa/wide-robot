@@ -1,0 +1,80 @@
+{
+  "object_inside_container_placed_from_outside": {
+    "case": "object_inside_container_placed_from_outside",
+    "failureClass": "extractor_uncertainty",
+    "passed": false,
+    "physicalValidity": null,
+    "status": "UNCERTAIN",
+    "traceSource": "real_camera_external",
+    "trackingMetrics": {
+      "dropoutFraction": {
+        "cube": 0.11337868480725624,
+        "tray": 0.0
+      },
+      "maxConsecutiveMissing": {
+        "cube": 50,
+        "tray": 0
+      },
+      "minPoseConfidence": 1.0,
+      "numFrames": 441,
+      "staticExcursionM": {
+        "tray": 0.0
+      }
+    },
+    "uncertaintyReasons": [
+      "object 'cube' missing for 50 consecutive frames > 30"
+    ]
+  },
+  "object_inside_container_relation_event": {
+    "case": "object_inside_container_relation_event",
+    "failureClass": "extractor_uncertainty",
+    "passed": false,
+    "physicalValidity": null,
+    "status": "UNCERTAIN",
+    "traceSource": "real_camera_external",
+    "trackingMetrics": {
+      "dropoutFraction": {
+        "cube": 0.11337868480725624,
+        "tray": 0.0
+      },
+      "maxConsecutiveMissing": {
+        "cube": 50,
+        "tray": 0
+      },
+      "minPoseConfidence": 1.0,
+      "numFrames": 441,
+      "staticExcursionM": {
+        "tray": 0.0
+      }
+    },
+    "uncertaintyReasons": [
+      "object 'cube' missing for 50 consecutive frames > 30"
+    ]
+  },
+  "object_inside_container_terminal_only": {
+    "case": "object_inside_container_terminal_only",
+    "failureClass": "extractor_uncertainty",
+    "passed": false,
+    "physicalValidity": null,
+    "status": "UNCERTAIN",
+    "traceSource": "real_camera_external",
+    "trackingMetrics": {
+      "dropoutFraction": {
+        "cube": 0.11337868480725624,
+        "tray": 0.0
+      },
+      "maxConsecutiveMissing": {
+        "cube": 50,
+        "tray": 0
+      },
+      "minPoseConfidence": 1.0,
+      "numFrames": 441,
+      "staticExcursionM": {
+        "tray": 0.0
+      }
+    },
+    "uncertaintyReasons": [
+      "object 'cube' missing for 50 consecutive frames > 30"
+    ]
+  }
+}
