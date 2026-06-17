@@ -1,0 +1,165 @@
+{
+  "clipStem": "oic_fail_on_rim_001__derived",
+  "note": "Perturbing the tray center +/-5,+/-10 mm (x,y) and the cube size 4-6 cm, the wide-robot terminal_only verdict is NEVER PASS (always FAIL/UNCERTAIN). The naive B1 center-in-footprint PASS is knife-edge and flips under one ~10 mm shift; the wide-robot rejection is robust because the cube sits ~26 mm above the rim+slack.",
+  "geometry": {
+    "cubeFirst": [
+      -0.12851790361874627,
+      0.396283674690154,
+      0.006330031144412787
+    ],
+    "cubeLast": [
+      -0.11144051504284617,
+      0.1340588599220177,
+      0.07463599295313131
+    ],
+    "trayCenter": [
+      -0.04902,
+      0.04942,
+      0.00358
+    ],
+    "cubeSize": [
+      0.05,
+      0.05,
+      0.05
+    ],
+    "traySize": [
+      0.18,
+      0.18,
+      0.07
+    ],
+    "numCubeFrames": 380,
+    "numFrames": 380
+  },
+  "wr_terminal_only_ever_PASS": false,
+  "b1_flips_under": [
+    "tray_y-10mm"
+  ],
+  "rows": [
+    {
+      "perturbation": "baseline",
+      "kind": "none",
+      "deltaMm": 0.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "tray_x-10mm",
+      "kind": "tray_x",
+      "deltaMm": -10.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "tray_x-5mm",
+      "kind": "tray_x",
+      "deltaMm": -5.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "tray_x+5mm",
+      "kind": "tray_x",
+      "deltaMm": 5.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "tray_x+10mm",
+      "kind": "tray_x",
+      "deltaMm": 10.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "tray_y-10mm",
+      "kind": "tray_y",
+      "deltaMm": -10.0,
+      "B1_center_in_footprint": false,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "tray_y-5mm",
+      "kind": "tray_y",
+      "deltaMm": -5.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "tray_y+5mm",
+      "kind": "tray_y",
+      "deltaMm": 5.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "tray_y+10mm",
+      "kind": "tray_y",
+      "deltaMm": 10.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "cube_size_40mm",
+      "kind": "cube_size",
+      "deltaMm": 40.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "NEAR_NOT_INSIDE"
+    },
+    {
+      "perturbation": "cube_size_45mm",
+      "kind": "cube_size",
+      "deltaMm": 45.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "NEAR_NOT_INSIDE"
+    },
+    {
+      "perturbation": "cube_size_50mm",
+      "kind": "cube_size",
+      "deltaMm": 50.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "cube_size_55mm",
+      "kind": "cube_size",
+      "deltaMm": 55.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    },
+    {
+      "perturbation": "cube_size_60mm",
+      "kind": "cube_size",
+      "deltaMm": 60.0,
+      "B1_center_in_footprint": true,
+      "B5_terminal_3d_containment": false,
+      "wr_terminal_only_status": "FAIL",
+      "wr_terminal_only_class": "LEFT_ON_RIM"
+    }
+  ]
+}

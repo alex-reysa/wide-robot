@@ -225,6 +225,14 @@ tests/                   core suite + validity-checks + mujoco backend (gated):
 pilots/                  research pilots outside the package. They consume the
                          frozen csg verifier as external users; RLBench lives here,
                          not in the released `csg` package.
+experiments/             standalone evidence experiments built on the frozen verifier.
+  baseline_counterexamples/  on the 78 real Sony/iPhone clips: a hand-coded
+                         terminal-predicate ladder (B1..B5) vs. the structured
+                         verifier. Shows a single-condition (and even the maximal
+                         single-frame) terminal predicate false-PASSes genuine
+                         failures the verifier rejects (0 structured false-PASS);
+                         born-inside + occlusion overlays, perturbation-robustness
+                         table, independent-geometry + reproducibility cross-checks.
 
 Causal_Skill_Graph_V0.md CSG schema (observable facts only) + audit notes
 physical_quotient.md     the math: observable quotient Q̂*_CSG; §0 lists the

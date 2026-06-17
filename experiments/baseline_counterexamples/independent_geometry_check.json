@@ -1,0 +1,19 @@
+{
+  "kind": "independent second-implementation cross-check (from-scratch geometry vs the verifier's extracted terminal relation)",
+  "constants": {
+    "inside_footprint_margin_m": 0.005,
+    "inside_rim_slack_m": 0.01,
+    "on_top_eps_m": 0.012,
+    "near_gap_m": 0.1,
+    "min_xy_overlap_frac": 0.3
+  },
+  "constantsMatchCsgDefault": true,
+  "clipsCompared": 57,
+  "agree": 57,
+  "disagreements": [],
+  "scope": {
+    "gateRejectedUnconvertible": 14,
+    "verifierEmitsNoRelation_noCubeMotion": 7
+  },
+  "note": "On every clip where the verifier extracts a terminal relation, an independent from-scratch reimplementation of the containment geometry reproduces it. Excluded: clips gate-rejected as occluded (no rollout to extract), and clips with no cube motion (the verifier's figure-ground step emits no relation \u2014 a motion decision, outside the geometry's scope)."
+}

@@ -1,0 +1,10 @@
+{
+  "kind": "reproducibility / regression-consistency (SAME verifier code path, not independent)",
+  "nClips": 78,
+  "storedVerdicts": "datasets/sony_object_inside_container_v0/verdicts_all.json (built by scripts/ingest_recordings.py via the same verify_episode)",
+  "agreeTerminal": 78,
+  "agreeRelation": 78,
+  "agreePlaced": 78,
+  "decisionFieldDisagreements": [],
+  "note": "Decision fields (PASS/FAIL/UNCERTAIN) reproduce the committed dataset verdicts exactly. Because both sides call the same verifier, this is a snapshot/regression check (the experiment uses the production verifier unchanged), NOT independent corroboration. The harness's cosmetic transitionClass label is not a decision field and is excluded here."
+}

@@ -1,0 +1,44 @@
+{
+  "clipStem": "oic_control_inside_to_inside_001__sony_front",
+  "episodeId": "oic_control_inside_to_inside_001",
+  "camera": "sony_front",
+  "humanLabel": "inside_to_inside",
+  "humanVerdict": "FAIL",
+  "lesson": "cube ends inside (terminal predicate + wide-robot terminal_only PASS) but no outside->inside transition -> structured target FAIL / BORN_INSIDE_NO_TRANSITION",
+  "numFrames": 418,
+  "fps": 29.97002997002997,
+  "videoSha256": "f3fb1de3a20401e286a5f21024687a3611cb520678852955b8e13b97319899c3",
+  "calibrationHash": "458b276f27b648e48c28615704315788ddb47c3d028889db47a47822786290aa",
+  "rawVideoRelativePath": "raw_videos/control_inside_to_inside/oic_control_inside_to_inside_001__sony_front.mp4",
+  "rawVideoNote": "raw mp4 is gitignored (repo *.mp4 rule); present locally for overlay regeneration. The tracked evidence is the tracks/calibration JSON.",
+  "geometry": {
+    "cubeFirst": [
+      -0.07687387539603709,
+      -0.08870872255757994,
+      0.038619795533341605
+    ],
+    "cubeLast": [
+      -0.005079369938853134,
+      -0.10605807646873257,
+      0.03132410725739844
+    ],
+    "trayCenter": [
+      -0.05249,
+      -0.04584,
+      0.00112
+    ],
+    "cubeSize": [
+      0.05,
+      0.05,
+      0.05
+    ],
+    "traySize": [
+      0.18,
+      0.18,
+      0.07
+    ],
+    "numCubeFrames": 418,
+    "numFrames": 418
+  },
+  "tracksPath": "datasets/sony_object_inside_container_v0/tracks/oic_control_inside_to_inside_001__sony_front.tracks.json"
+}

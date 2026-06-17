@@ -1,0 +1,54 @@
+{
+  "predicatesVersion": "baseline_counterexamples.predicates.v0",
+  "params": {
+    "b2_min_overlap_frac": 0.5,
+    "inner_margin_m": 0.005
+  },
+  "results": {
+    "B1_center_in_footprint": true,
+    "B2_footprint_overlap": true,
+    "B3_full_inner_containment": true,
+    "B4_full_containment_started_outside": true,
+    "B5_terminal_3d_containment": true
+  },
+  "ladder": [
+    {
+      "key": "B1_center_in_footprint",
+      "label": "B1 center-in-footprint",
+      "question": "terminal cube center within the tray outer footprint (2D, no rim)",
+      "verdict": "PASS"
+    },
+    {
+      "key": "B2_footprint_overlap",
+      "label": "B2 footprint-overlap",
+      "question": "terminal cube footprint overlaps tray footprint >= 0.5 (2D, no rim)",
+      "verdict": "PASS"
+    },
+    {
+      "key": "B3_full_inner_containment",
+      "label": "B3 full-inner-containment",
+      "question": "terminal cube footprint fully inside shrunk inner region (2D, margin)",
+      "verdict": "PASS"
+    },
+    {
+      "key": "B4_full_containment_started_outside",
+      "label": "B4 contained+started-outside",
+      "question": "B3 and cube started outside the footprint (2D + initial, no evidence gate)",
+      "verdict": "PASS"
+    },
+    {
+      "key": "B5_terminal_3d_containment",
+      "label": "B5 terminal-3D-containment",
+      "question": "csg.is_inside on the LAST frame: shrunk footprint AND rim height (3D, the maximal single-frame terminal predicate)",
+      "verdict": "PASS"
+    }
+  ],
+  "overlapFrac": 1.0,
+  "naivePassSet": [
+    "B1_center_in_footprint",
+    "B2_footprint_overlap",
+    "B3_full_inner_containment",
+    "B4_full_containment_started_outside",
+    "B5_terminal_3d_containment"
+  ]
+}

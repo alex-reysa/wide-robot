@@ -1,0 +1,44 @@
+{
+  "clipStem": "oic_fail_on_rim_001__iphone_top",
+  "episodeId": "oic_fail_on_rim_001",
+  "camera": "iphone_top",
+  "humanLabel": "left_on_rim",
+  "humanVerdict": "FAIL",
+  "lesson": "cube center is inside the tray footprint (B1 PASS) but the cube is on the rim -> wide-robot FAIL / LEFT_ON_RIM",
+  "numFrames": 380,
+  "fps": 29.97002997002997,
+  "videoSha256": "217b77f0ef684dcaa0cd38a7b09a71f0a37e11bc552f0cc49eb6c5b246cdc470",
+  "calibrationHash": "4cdd85a75a83fff3ff7717a891575d355df9b3848711035113f53ffd724cbde5",
+  "rawVideoRelativePath": "raw_videos/fail_on_rim/oic_fail_on_rim_001__iphone_top.mp4",
+  "rawVideoNote": "raw mp4 is gitignored (repo *.mp4 rule); present locally for overlay regeneration. The tracked evidence is the tracks/calibration JSON.",
+  "geometry": {
+    "cubeFirst": [
+      -0.12851790361874627,
+      0.396283674690154,
+      0.006330031144412787
+    ],
+    "cubeLast": [
+      -0.11144051504284617,
+      0.1340588599220177,
+      0.07463599295313131
+    ],
+    "trayCenter": [
+      -0.04902,
+      0.04942,
+      0.00358
+    ],
+    "cubeSize": [
+      0.05,
+      0.05,
+      0.05
+    ],
+    "traySize": [
+      0.18,
+      0.18,
+      0.07
+    ],
+    "numCubeFrames": 380,
+    "numFrames": 380
+  },
+  "tracksPath": "datasets/sony_object_inside_container_v0/tracks/oic_fail_on_rim_001__iphone_top.tracks.json"
+}

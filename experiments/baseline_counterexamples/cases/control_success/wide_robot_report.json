@@ -1,0 +1,275 @@
+{
+  "headline": {
+    "placed_from_outside": {
+      "cameraFailureClass": null,
+      "failureClass": null,
+      "hardMismatches": [],
+      "leakageClean": true,
+      "passed": true,
+      "physicalValidity": null,
+      "status": "PASS"
+    },
+    "relation_event": {
+      "cameraFailureClass": "BORN_INSIDE_NO_TRANSITION",
+      "failureClass": null,
+      "hardMismatches": [
+        "initial_state"
+      ],
+      "leakageClean": true,
+      "passed": false,
+      "physicalValidity": null,
+      "status": "FAIL"
+    },
+    "structuredCertifies": true,
+    "terminal_only": {
+      "cameraFailureClass": null,
+      "failureClass": null,
+      "hardMismatches": [],
+      "leakageClean": true,
+      "passed": true,
+      "physicalValidity": null,
+      "status": "PASS"
+    }
+  },
+  "note": "terminal_only is the verifier asked the WEAK (terminal-containment) question. relation_event (near-start) and placed_from_outside (far-start) are the STRUCTURED targets (initial state + outside->inside transition + event); 'structuredCertifies' is true iff one of them PASSes. physicalValidity is null by contract for real-camera traces.",
+  "records": {
+    "object_inside_container_placed_from_outside": {
+      "baseCase": "object_inside_container_placed_from_outside",
+      "case": "object_inside_container_placed_from_outside",
+      "distance": 0.05555555555555555,
+      "failureClassification": {
+        "category": "passed",
+        "evidence": {
+          "status": "PASS"
+        }
+      },
+      "hardMismatches": [],
+      "leakage": {
+        "badEstimators": [],
+        "clean": true,
+        "forbiddenKeys": [],
+        "hasEvidence": true,
+        "readTargetCsg": false
+      },
+      "leakageClean": true,
+      "matcherPassed": true,
+      "objectMapping": {
+        "h_cube": "body_000",
+        "h_tray": "body_001"
+      },
+      "objectOrbitAmbiguous": false,
+      "passed": true,
+      "physicalValidity": null,
+      "physicalValidityReason": "external real-camera trace: csg cannot re-check physics from marker tracks; physics-unverified by contract (csg/validity.md)",
+      "probeAgreement": {
+        "articulation_transitions": true,
+        "contact_evidence": true,
+        "contact_word": true,
+        "event_order": true,
+        "event_presence": true,
+        "goal_satisfaction": true,
+        "initial_state": true,
+        "object_carrier": true,
+        "object_trajectory": false,
+        "relation_transitions": true,
+        "terminal_state": true
+      },
+      "probeSupport": {
+        "articulation_transitions": 0,
+        "contact_evidence": 0,
+        "contact_word": 0,
+        "event_order": 0,
+        "event_presence": 1,
+        "goal_satisfaction": 1,
+        "initial_state": 1,
+        "object_carrier": 2,
+        "object_trajectory": 0,
+        "relation_transitions": 1,
+        "terminal_state": 1
+      },
+      "status": "PASS",
+      "traceSource": "real_camera_external",
+      "trackingMetrics": {
+        "dropoutFraction": {
+          "cube": 0.0,
+          "tray": 0.0
+        },
+        "maxConsecutiveMissing": {
+          "cube": 0,
+          "tray": 0
+        },
+        "minPoseConfidence": 1.0,
+        "numFrames": 577,
+        "staticExcursionM": {
+          "tray": 0.0
+        }
+      },
+      "vacuous": false
+    },
+    "object_inside_container_relation_event": {
+      "baseCase": "object_inside_container_relation_event",
+      "cameraFailureClass": "BORN_INSIDE_NO_TRANSITION",
+      "case": "object_inside_container_relation_event",
+      "distance": 0.12962962962962962,
+      "failureClassification": {
+        "category": "verifier_mismatch",
+        "evidence": {
+          "hardMismatches": [
+            "initial_state"
+          ],
+          "matcherPassed": false,
+          "probeAgreement": {
+            "articulation_transitions": true,
+            "contact_evidence": true,
+            "contact_word": true,
+            "event_order": true,
+            "event_presence": true,
+            "goal_satisfaction": true,
+            "initial_state": false,
+            "object_carrier": true,
+            "object_trajectory": false,
+            "relation_transitions": true,
+            "terminal_state": true
+          }
+        }
+      },
+      "hardMismatches": [
+        "initial_state"
+      ],
+      "leakage": {
+        "badEstimators": [],
+        "clean": true,
+        "forbiddenKeys": [],
+        "hasEvidence": true,
+        "readTargetCsg": false
+      },
+      "leakageClean": true,
+      "matcherPassed": false,
+      "objectMapping": {
+        "h_cube": "body_000",
+        "h_tray": "body_001"
+      },
+      "objectOrbitAmbiguous": false,
+      "passed": false,
+      "physicalValidity": null,
+      "physicalValidityReason": "external real-camera trace: csg cannot re-check physics from marker tracks; physics-unverified by contract (csg/validity.md)",
+      "probeAgreement": {
+        "articulation_transitions": true,
+        "contact_evidence": true,
+        "contact_word": true,
+        "event_order": true,
+        "event_presence": true,
+        "goal_satisfaction": true,
+        "initial_state": false,
+        "object_carrier": true,
+        "object_trajectory": false,
+        "relation_transitions": true,
+        "terminal_state": true
+      },
+      "probeSupport": {
+        "articulation_transitions": 0,
+        "contact_evidence": 0,
+        "contact_word": 0,
+        "event_order": 0,
+        "event_presence": 1,
+        "goal_satisfaction": 1,
+        "initial_state": 1,
+        "object_carrier": 2,
+        "object_trajectory": 0,
+        "relation_transitions": 1,
+        "terminal_state": 1
+      },
+      "status": "FAIL",
+      "traceSource": "real_camera_external",
+      "trackingMetrics": {
+        "dropoutFraction": {
+          "cube": 0.0,
+          "tray": 0.0
+        },
+        "maxConsecutiveMissing": {
+          "cube": 0,
+          "tray": 0
+        },
+        "minPoseConfidence": 1.0,
+        "numFrames": 577,
+        "staticExcursionM": {
+          "tray": 0.0
+        }
+      },
+      "vacuous": false
+    },
+    "object_inside_container_terminal_only": {
+      "baseCase": "object_inside_container_terminal_only",
+      "case": "object_inside_container_terminal_only",
+      "distance": 0.05555555555555555,
+      "failureClassification": {
+        "category": "passed",
+        "evidence": {
+          "status": "PASS"
+        }
+      },
+      "hardMismatches": [],
+      "leakage": {
+        "badEstimators": [],
+        "clean": true,
+        "forbiddenKeys": [],
+        "hasEvidence": true,
+        "readTargetCsg": false
+      },
+      "leakageClean": true,
+      "matcherPassed": true,
+      "objectMapping": {
+        "h_cube": "body_000",
+        "h_tray": "body_001"
+      },
+      "objectOrbitAmbiguous": true,
+      "passed": true,
+      "physicalValidity": null,
+      "physicalValidityReason": "external real-camera trace: csg cannot re-check physics from marker tracks; physics-unverified by contract (csg/validity.md)",
+      "probeAgreement": {
+        "articulation_transitions": true,
+        "contact_evidence": true,
+        "contact_word": true,
+        "event_order": true,
+        "event_presence": true,
+        "goal_satisfaction": true,
+        "initial_state": true,
+        "object_carrier": true,
+        "object_trajectory": false,
+        "relation_transitions": true,
+        "terminal_state": true
+      },
+      "probeSupport": {
+        "articulation_transitions": 0,
+        "contact_evidence": 0,
+        "contact_word": 0,
+        "event_order": 0,
+        "event_presence": 0,
+        "goal_satisfaction": 1,
+        "initial_state": 0,
+        "object_carrier": 2,
+        "object_trajectory": 0,
+        "relation_transitions": 0,
+        "terminal_state": 0
+      },
+      "status": "PASS",
+      "traceSource": "real_camera_external",
+      "trackingMetrics": {
+        "dropoutFraction": {
+          "cube": 0.0,
+          "tray": 0.0
+        },
+        "maxConsecutiveMissing": {
+          "cube": 0,
+          "tray": 0
+        },
+        "minPoseConfidence": 1.0,
+        "numFrames": 577,
+        "staticExcursionM": {
+          "tray": 0.0
+        }
+      },
+      "vacuous": false
+    }
+  }
+}
