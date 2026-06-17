@@ -93,17 +93,21 @@ perception system.
 **Allowed now (baseline-counterexamples experiment, on the Phase 3A clips):**
 
 ```text
-On the same 78 real Sony/iPhone object_inside_container clips, common terminal
-success predicates encode a weaker question than the task. A single-condition
+On the same 78 real Sony/iPhone object_inside_container clips, SINGLE-FRAME
+terminal success predicates encode a weaker question than the task. A
 center-in-footprint predicate false-PASSes 11 of the 40 genuine-failure clips;
 even the strongest single-frame terminal predicate (B5 = csg.is_inside on the
-last frame) still false-PASSes 10 (the born-inside family); the structured
-transition targets false-PASS 0. The residue no terminal predicate can reach is
-the outside->inside transition (born-inside, irreducibly structural) and
-evidence quality (occlusion, caught by a separable fail-closed evidence gate).
-This is single-condition terminal predicate vs. structured leakage-clean
-verifier — NOT learned-vs-hand-coded (every predicate is hand-coded; they differ
-only in how much of the task they encode). See experiments/baseline_counterexamples/.
+last frame) still false-PASSes 10 (the born-inside family). Rejecting born-inside
+needs the INITIAL state too: a two-frame "contained + started-outside" predicate
+(B4) AND the structured targets both reach 0 false-PASS — so born-inside means
+"terminal state underspecifies the task," not "only the verifier can judge it."
+The structured verifier's edge over even B4 is narrow and specific: a fail-closed
+evidence gate (B4 certifies the occluded successes the verifier refuses) and a real
+relation-transition vs a two-endpoint proxy — a recall/evidence-honesty tradeoff
+(B4 certifies 32/38 successes, structured 27/38), not a clean dominance. This is
+terminal predicate vs. structured leakage-clean verifier — NOT learned-vs-hand-coded
+(every predicate is hand-coded; they differ only in how much of the task they
+encode). See experiments/baseline_counterexamples/.
 ```
 
 **Allowed after the One Task, Four Worlds report (Phase 6):**
@@ -612,16 +616,20 @@ author target CSGs from video).
 hand-coded baseline ladder **B1..B5** — center-in-footprint, footprint-overlap, full-inner-containment,
 contained+started-outside, and **B5 = the verifier's own `csg.is_inside` on the last frame (the maximal
 single-frame terminal predicate)** — next to the frozen verifier's three targets. Headline over all 78
-clips: naive **B1 false-PASSes 11/40** genuine-failure clips; **B5 still false-PASSes 10** (the born-inside
-family — even a rim-aware 3D terminal check can't see the missing transition); the verifier's weak
-`terminal_only` target false-PASSes the 3 born-inside clips that end inside (it asks the same weak question);
-**structured (`relation_event` ∨ `placed_from_outside`) false-PASSes 0**. Three escalating lessons:
+clips (per-baseline scoreboard, nothing hidden): single-frame terminal predicates all false-PASS born-inside —
+**B1 11/40**, even the maximal **B5 10/40**; the weak `terminal_only` target 3/40. The two predicates that
+reach **0/40** false-PASS are the *two-frame* **B4** (contained + started-outside) and the **structured**
+verifier — and B4 even out-certifies the verifier on successes (**32/38 vs 27/38**) by not fail-closing on
+occlusion. So the verifier's edge over a strong two-frame baseline is narrow and specific (fail-closed evidence
+gate + a real transition vs a two-endpoint proxy + leakage/cross-source) — a recall/evidence-honesty tradeoff,
+not a dominance. Three escalating lessons:
 **rim** `oic_fail_on_rim_001__iphone_top` (a *dimensionality* lesson — B1 PASS, B5/verifier reject `ON_TOP_OF`;
 the rejection is calibration-robust at +26 mm above rim while B1's PASS is a +5.4 mm knife-edge, quantified in
-a 14-row perturbation table where the verifier *never* flips to PASS), **born-inside** (the *irreducibly
-structural* residue — only the initial-state/transition check rejects it), and **occlusion** (a *separable
-fail-closed evidence gate* lesson — a 50-frame dropout → UNCERTAIN; the gate is target-blind and bolt-on-able,
-so this is evidence discipline, not structure). Hardened by adversarial review: a from-scratch geometry
+a 14-row perturbation table where the verifier *never* flips to PASS), **born-inside** (terminal state
+underspecifies — rejected by any initial-state check, B4 *or* the structured target, not by a single-frame
+predicate), and **occlusion** (the one lesson separating the verifier from even B4 — a 50-frame dropout →
+UNCERTAIN; every geometric baseline including B4 certifies it; the gate is target-blind and bolt-on-able, so
+this is evidence discipline, not structure). Hardened by adversarial review: a from-scratch geometry
 reimplementation reproduces the verifier's terminal relation **57/57** (genuine second implementation), a
 reproducibility check matches the committed dataset verdicts **78/78**, and the test suite + `--no-overlays`
 build pass in a **clean room with OpenCV blocked and all raw mp4s hidden**. Reproducible with no cv2/video;
