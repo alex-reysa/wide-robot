@@ -350,6 +350,32 @@ CSV_COLUMNS = [
 ]
 
 
+def per_baseline_scoreboard(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Success-certifications and false-PASSes for every predicate, side by side —
+    the honest tradeoff table. A predicate that reaches 0 false-PASS by also
+    refusing to certify successes is not free; this surfaces that."""
+    succ = [r for r in rows if r["humanSuccess"]]
+    nons = [r for r in rows if not r["humanSuccess"]]
+
+    def score(label: str, kind: str, pred) -> Dict[str, Any]:
+        return {
+            "predicate": label,
+            "kind": kind,
+            "successCert": sum(1 for r in succ if pred(r)),
+            "successTotal": len(succ),
+            "falsePass": sum(1 for r in nons if pred(r)),
+            "nonSuccessTotal": len(nons),
+        }
+
+    board = [score(k["label"], "naive single/two-frame", (lambda key: lambda r: r[key] is True)(k["key"]))
+             for k in LADDER]
+    board.append(score("wr terminal_only", "verifier (weak target)",
+                       lambda r: r["wr_terminal_only_status"] == "PASS"))
+    board.append(score("wr structured (rel OR placed)", "verifier (structured)",
+                       lambda r: bool(r["wrStructuredCertifies"])))
+    return board
+
+
 def write_csv(rows: List[Dict[str, Any]], path: Path) -> None:
     with path.open("w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=CSV_COLUMNS, extrasaction="ignore")
@@ -399,6 +425,18 @@ def write_md(rows: List[Dict[str, Any]], path: Path, aggregate: Dict[str, Any]) 
                  "\"structured certifies\" = relation_event (near-start) OR placed_from_outside "
                  "(far-start) PASSes — i.e. the verifier saw a real outside→inside transition._\n")
 
+    lines.append("\n## Per-baseline scoreboard (the tradeoff, nothing hidden)\n")
+    lines.append("| predicate | kind | success-cert | false-PASS |")
+    lines.append("|---|---|---|---|")
+    for s in per_baseline_scoreboard(rows):
+        lines.append(f"| {s['predicate']} | {s['kind']} | {s['successCert']}/{s['successTotal']} | "
+                     f"{s['falsePass']}/{s['nonSuccessTotal']} |")
+    lines.append("\n_Read this honestly: **B4** (contained + started-outside, a two-frame predicate) reaches "
+                 "**0 false-PASS** — matching the structured verifier — and even out-certifies it on successes, "
+                 "because it does not fail-close on occlusion. The structured verifier trades that recall for a "
+                 "fail-closed evidence gate and a real relation-transition (vs B4's brittle two-endpoint proxy). "
+                 "The single-FRAME terminal predicates (B1/B2/B3/B5) are the ones that cannot reject born-inside._\n")
+
     lines.append("\n## Aggregate over all clips\n")
     lines.append(f"- clips scored: **{aggregate['nClips']}** "
                  f"({aggregate['nSuccess']} human-success, {aggregate['nNonSuccess']} human-non-success)")
@@ -406,9 +444,13 @@ def write_md(rows: List[Dict[str, Any]], path: Path, aggregate: Dict[str, Any]) 
                  f"{aggregate['naiveB1FalsePass']}**")
     lines.append(f"- **B5 (maximal single-frame terminal predicate = csg.is_inside on last frame) "
                  f"false PASSes on human-non-success clips: {aggregate['b5FalsePass']}** "
-                 f"(the born-inside clips — even a rim-aware 3D terminal check cannot see the missing transition)")
-    lines.append(f"- naive *any-predicate* false PASSes on human-non-success clips: "
-                 f"{aggregate['anyNaiveFalsePass']}")
+                 f"(the born-inside clips — a single-frame terminal check cannot see the missing transition)")
+    lines.append(f"- **B4 (contained + started-outside, a TWO-frame predicate) false PASSes: "
+                 f"{aggregate['b4FalsePass']}** — the started-outside clause rejects born-inside, so B4 matches "
+                 f"the structured verifier's 0 false-PASS. Tradeoff: B4 certifies "
+                 f"{aggregate['b4SuccessCert']}/{aggregate['nSuccess']} successes (it does NOT fail-close on "
+                 f"occlusion), vs the structured verifier's {aggregate['structuredCertifiesSuccess']}/"
+                 f"{aggregate['nSuccess']}. See the scoreboard above.")
     lines.append(f"- wide-robot `terminal_only` PASSes on human-non-success clips: "
                  f"{aggregate['terminalOnlyFalsePass']} "
                  f"(the verifier asked the *weak* terminal question — these are the born-inside clips)")
@@ -572,6 +614,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         "nSuccess": len(success),
         "nNonSuccess": len(non_success),
         "naiveB1FalsePass": sum(1 for r in non_success if r["B1_center_in_footprint"] is True),
+        "b4FalsePass": sum(1 for r in non_success if r["B4_full_containment_started_outside"] is True),
+        "b4SuccessCert": sum(1 for r in success if r["B4_full_containment_started_outside"] is True),
         "b5FalsePass": sum(1 for r in non_success if r["B5_terminal_3d_containment"] is True),
         "anyNaiveFalsePass": sum(1 for r in non_success if r["anyNaivePass"] is True),
         "terminalOnlyFalsePass": sum(1 for r in non_success if r["wr_terminal_only_status"] == "PASS"),

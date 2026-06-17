@@ -40,6 +40,7 @@ from scripts.build_baseline_counterexamples import (
     load_expected_classes,
     load_verdict_rows,
     parse_stem,
+    per_baseline_scoreboard,
     reproducibility_check,
     rim_perturbation_table,
     run_all_targets,
@@ -171,6 +172,26 @@ def test_aggregate_naive_false_pass_and_zero_structured_false_pass(all_rows):
     assert len(b1_false_pass) >= 1
     assert len(b5_false_pass) >= 1
     assert len(structured_false_pass) == 0
+
+
+def test_per_baseline_scoreboard_tradeoff(all_rows):
+    """Lock the honest per-baseline scoreboard, including the tradeoff a critic would
+    look for: B4 (a two-frame started-outside predicate) AND the structured verifier
+    BOTH reach 0 false-PASS — so the claim is 'terminal predicates (incl. maximal B5)
+    are insufficient', NOT 'against the strongest fair baseline'. B4 even out-certifies
+    the verifier on successes (it does not fail-close on occlusion)."""
+    board = {s["predicate"]: s for s in per_baseline_scoreboard(all_rows)}
+    # single-frame terminal predicates false-PASS born-inside; even maximal B5 = 10.
+    assert board["B1 center-in-footprint"]["falsePass"] == 11
+    assert board["B5 terminal-3D-containment"]["falsePass"] == 10
+    # the two predicates that reach 0 false-PASS: two-frame B4 and the structured verifier.
+    assert board["B4 contained+started-outside"]["falsePass"] == 0
+    assert board["wr structured (rel OR placed)"]["falsePass"] == 0
+    # the disclosed tradeoff: B4 out-recalls the structured verifier on successes.
+    assert board["B4 contained+started-outside"]["successCert"] == 32
+    assert board["wr structured (rel OR placed)"]["successCert"] == 27
+    assert (board["B4 contained+started-outside"]["successCert"]
+            > board["wr structured (rel OR placed)"]["successCert"])
 
 
 def _csv_cell(value) -> str:

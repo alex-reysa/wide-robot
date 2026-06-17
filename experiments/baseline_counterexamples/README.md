@@ -12,23 +12,32 @@
 > This is **single-condition terminal predicate vs. structured, leakage-clean
 > verifier** — *not* learned-verifier vs. hand-coded predicate. Every predicate
 > here, including the baselines, is hand-coded; they differ only in **how much of
-> the task definition they encode**. To make that undeniable we include **B5**, the
-> *strongest possible single-frame terminal predicate* (the verifier's own
-> `csg.is_inside` on the last frame). B5 closes the rim case — and **still** cannot
-> see the two things that actually define a put-in:
+> the task definition they encode**. We include two *strong* baselines so the
+> comparison is honest, not a strawman:
 >
-> 1. the **transition** (born-inside) — *irreducibly structural*: it needs two time
->    points and the target-aware initial-state/transition check inside the matcher;
->    no single-frame predicate can ever close it;
-> 2. the **evidence quality** (occlusion) — caught by a **fail-closed evidence
->    gate**. Honest caveat: that gate (`assess_evidence_quality`) is *target-blind*
->    and runs *before* the matcher, so it is **separable** — any baseline could bolt
->    on the same check. wide-robot bundles it; a bare terminal predicate has it by
->    default no more than it has the transition check.
+> - **B5** = the verifier's own `csg.is_inside` on the last frame — the *strongest
+>   single-frame terminal predicate*. It closes the rim (rim-height aware) but
+>   **still false-PASSes born-inside (10/40)**: a terminal state cannot encode a
+>   *transition*.
+> - **B4** = contained **and started-outside** — a *two-frame* predicate that adds
+>   exactly the missing initial-state check. It **rejects born-inside and reaches
+>   0/40 false-PASS, matching the structured verifier.** That is not a hole in the
+>   argument; it *is* the argument — the task is an outside→inside transition, so
+>   you must read more than the terminal frame.
 >
-> So the *irreducibly structural* residue is **born-inside**; occlusion is the
-> residue of **fail-closed evidence discipline**. A single-condition terminal
-> predicate has neither.
+> So what does the structured verifier buy *over even B4*? Two specific things, with
+> their limits stated: (1) a **fail-closed evidence gate** — on the occluded clip
+> **every** baseline including B4 certifies a success the verifier refuses (it could
+> not see the trajectory); honest caveat: that gate is *target-blind* and
+> *separable*, so any baseline could bolt it on. (2) a **real relation-transition**
+> instead of B4's brittle two-endpoint "started-outside + ended-inside" proxy (more
+> robust to non-continuous / decoy transitions, though this dataset does not stress
+> that), plus leakage discipline and the *same* target running across
+> MuJoCo / RLBench / RH20T. The honest per-baseline scoreboard (below) shows the
+> full tradeoff: **B4 even out-recalls the verifier (32 vs 27 successes)** precisely
+> because it does *not* fail-close on occlusion. The defensible claim is therefore
+> "against *terminal* predicates, including the strongest single-frame one (B5)" —
+> **not** "against the strongest fair baseline."
 
 All evidence below is real: 78 committed Sony/iPhone `object_inside_container`
 clips (`datasets/sony_object_inside_container_v0/`), scored by the ladder in
@@ -57,11 +66,13 @@ the verifier (`csg.predicates`), so the comparison is fair:
 | **B4** contained + started-outside | B3 **and** the cube started outside the footprint (2D + initial state) |
 | **B5** terminal-3D-containment | **`csg.is_inside` on the last frame**: shrunk footprint **and** rim height (3D) — the maximal single-frame terminal predicate |
 
-What no baseline can see: a real **outside→inside transition** vs. born-inside
-(none of B1–B5), or whether the evidence was good enough to certify anything
-(none of B1–B5). B1/B2 additionally ignore the **rim height**; **B5 fixes that**,
-which is the whole point of including it — the gap that survives B5 is structural,
-not a 2D-vs-3D artifact.
+Note the dividing line: **B1/B2/B3/B5 read essentially the terminal frame**, so
+none of them can reject **born-inside** (the cube ends inside). **B4 is the
+exception** — it also reads the **first** frame ("started outside"), exactly what a
+put-in requires, so it *does* reject born-inside. What **no** baseline here has is a
+**fail-closed evidence gate**: on a mid-trajectory occlusion all of B1–B5 certify
+from the clean first/last frames. B1/B2 additionally ignore the **rim height**,
+which B5 fixes. The honest per-baseline scoreboard is below.
 
 ## Three lessons, escalating
 
@@ -82,13 +93,16 @@ Read top to bottom, the gap that survives gets deeper:
    legible failure, but the honest claim is "a *single-condition* terminal predicate
    is insufficient," not "only a structured verifier can catch this."
 
-2. **Born-inside — the first genuinely structural gap.** The cube is inside the
-   whole time; it is never *placed*. It ends inside, so **B5 — the strongest
-   single-frame terminal predicate — PASSES**, and so does the verifier's
-   `terminal_only` target (which encodes the same weak definition). Only the
-   structured targets, which require the cube to have **started outside** and
-   crossed in, reject it (`initial_state`). No terminal predicate, however
-   sophisticated, can close this — it needs two points in time.
+2. **Born-inside — terminal state is not enough; you need the transition.** The
+   cube is inside the whole time; it is never *placed*. It ends inside, so **every
+   single-frame terminal predicate PASSES** — including the maximal **B5** and the
+   verifier's weak `terminal_only` target. Rejecting it requires reading the
+   **initial** state, and **both** `B4` (its started-outside clause) **and** the
+   structured targets (`initial_state`) do — both reject it. So this is *not* "only
+   the structured verifier can catch born-inside"; it is "you must look at more than
+   the terminal frame." B4 is a hand-coded, two-frame proof of exactly that; the
+   structured target does the same via the relation transition. The honest gap B4
+   does *not* close is the next lesson.
 
 3. **Occlusion — an evidence-discipline gap (separable, not "structure").** A
    genuine success, but the cube marker is occluded for **50 consecutive frames**.
@@ -99,14 +113,21 @@ Read top to bottom, the gap that survives gets deeper:
    only on `(tracks, thresholds)`; it is **separable** and any baseline could adopt
    the identical check. So occlusion shows the value of **fail-closed evidence
    discipline**, which wide-robot bundles in, not the value of structure per se.
+   This is the one lesson that separates the verifier from **even B4**: on this
+   clip B4 (and every baseline) certifies; only the gated verifier returns
+   UNCERTAIN.
 
-**The sharpened thesis:** even the maximal single-frame terminal predicate (B5)
-false-passes the born-inside clips and the occluded successes. The *irreducibly
-structural* residue — *did a real outside→inside transition happen?* — can never be
-reached by any single-frame predicate; the *evidence* residue — *did we actually
-see the trajectory?* — is reached by a fail-closed gate that wide-robot includes by
-default and a bare terminal predicate does not. wide-robot has both; a
-single-condition terminal predicate has neither.
+**The sharpened thesis (honest scope):** a *single-frame* terminal predicate — even
+the maximal one (B5) — cannot reject born-inside, because the task is a
+**transition**, not a terminal state. Closing born-inside needs the **initial**
+state too: B4 (two frames) does it, and so does the structured verifier — so the
+born-inside lesson is "terminal state underspecifies the task," not "only the
+verifier can judge it." Over and above a strong two-frame baseline like B4, the
+structured verifier adds only two specific things — a **fail-closed evidence gate**
+(separable, bolt-on-able) and a **real relation-transition** check (vs B4's
+two-endpoint proxy) plus leakage discipline and cross-source portability. The
+scoreboard makes the tradeoff explicit, including where B4 *beats* the verifier
+on recall.
 
 ## The flagship visual: `oic_fail_on_rim_001__iphone_top`
 
@@ -139,12 +160,25 @@ say so.
 
 (see [`results_table.md`](results_table.md) / [`results_table.csv`](results_table.csv))
 
-- **40** clips are human-non-successes (rim, near-not-inside, dropped, born-inside, static, removed).
-- naive **B1** falsely PASSes **11** of them (every born-inside / inside-to-inside variant, plus the rim clip).
-- **B5** — the maximal single-frame terminal predicate — *still* falsely PASSes **10** of them: the born-inside-family clips (`born_inside*` + `inside_to_inside`, all "cube ends inside without a valid placement"). It correctly drops the rim; everything else a terminal check can't see remains.
-- wide-robot **`terminal_only` falsely PASSes 3** — born-inside-family clips that end inside (including the `inside_to_inside` clip). *This is the verifier asked the weak question*, and it is the point.
-- wide-robot **structured** (`relation_event` ∨ `placed_from_outside`) **falsely PASSes 0**.
-- On the 38 human-successes, structured **certifies 27**, fail-closes **5 to UNCERTAIN** (occlusion), and **hard-FAILs 6** (see limitation).
+**40** clips are human-non-successes; **38** are human-successes. Per-baseline
+scoreboard — success-certifications vs. false-PASSes, nothing hidden (this table is
+regenerated into [`results_table.md`](results_table.md)):
+
+| predicate | success-cert | false-PASS / 40 |
+|---|---|---|
+| B1 center-in-footprint | 35/38 | 11 |
+| B2 footprint-overlap | 35/38 | 11 |
+| B3 full-inner-containment | 32/38 | 6 |
+| **B4** contained + started-outside (2-frame) | **32/38** | **0** |
+| B5 terminal-3D-containment (max single-frame) | 33/38 | 10 |
+| wr `terminal_only` (weak target) | 27/38 | 3 |
+| **wr structured** (`relation_event` ∨ `placed_from_outside`) | **27/38** | **0** |
+
+Reading it honestly:
+- **Single-frame terminal predicates** (B1/B2/B3/B5) all false-PASS born-inside; even the maximal **B5 false-PASSes 10/40**. Terminal state underspecifies the task.
+- **B4** adds a started-outside check and reaches **0/40 false-PASS — equal to the structured verifier** — and even **out-certifies it on successes (32 vs 27)** because it does not fail-close on occlusion. So the win over a *terminal* predicate is real and large; the win over a good *two-frame* baseline is narrow and specific (fail-closed evidence gate + a real transition vs a two-endpoint proxy + leakage/cross-source), and it is a recall-vs-evidence-honesty **tradeoff**, not a clean dominance.
+- B4's 0 false-PASS holds on *this* dataset; with no evidence gate it would also certify an occluded *failure* (the dataset happens not to contain one), which the structured verifier's UNCERTAIN posture would refuse.
+- On the 38 successes, structured certifies **27**, UNCERTAINs **5** (occlusion), hard-FAILs **6** (obstruction — see limitation).
 
 ### Reproducibility + independent corroboration
 - **Reproducibility** ([`reproducibility_check.json`](reproducibility_check.json)):
