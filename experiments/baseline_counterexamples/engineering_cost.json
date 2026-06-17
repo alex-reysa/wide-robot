@@ -1,0 +1,41 @@
+{
+  "kind": "what each predicate must know / reimplements",
+  "rows": [
+    {
+      "predicate": "B1 / B2",
+      "mustKnow": "tray footprint (XY rectangle)",
+      "reimplements": "terminal containment (2D, rim-blind)",
+      "form": "bespoke predicate code"
+    },
+    {
+      "predicate": "B3",
+      "mustKnow": "cube + tray dimensions, containment margin (still 2D, rim-blind)",
+      "reimplements": "the verifier's footprint-containment geometry (2D \u2014 a cube 1 m above the tray still passes B3)",
+      "form": "bespoke predicate code"
+    },
+    {
+      "predicate": "B5",
+      "mustKnow": "+ rim height (the z test B3 lacks)",
+      "reimplements": "the verifier's FULL 3D `csg.is_inside` (shrunk footprint AND rim height)",
+      "form": "bespoke predicate code"
+    },
+    {
+      "predicate": "B4",
+      "mustKnow": "+ initial-state semantics (the cube must have STARTED outside)",
+      "reimplements": "the initial-state / outside->inside transition check (as a two-endpoint proxy)",
+      "form": "bespoke predicate code"
+    },
+    {
+      "predicate": "B6",
+      "mustKnow": "+ evidence-quality thresholds (dropout / consecutive-missing / confidence)",
+      "reimplements": "the fail-closed evidence gate \u2014 here by IMPORTING the verifier's own `assess_evidence_quality` (a from-scratch baseline would have to re-derive it)",
+      "form": "bespoke predicate code + bolt-on of the verifier's gate"
+    },
+    {
+      "predicate": "wide-robot",
+      "mustKnow": "the same assumptions, but DECLARED as data in the target graph (objects, objectStates, events, plannerView goals)",
+      "reimplements": "nothing per-task: one frozen engine (csg.matcher / verify_external_rollout) reads the graph; initial-state, transition, evidence gate, and leakage discipline are reusable components, not task-specific code",
+      "form": "declarative task graph + frozen reusable verifier"
+    }
+  ]
+}

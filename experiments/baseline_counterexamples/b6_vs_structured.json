@@ -1,0 +1,41 @@
+{
+  "kind": "B6 (engineered steelman) vs structured verifier \u2014 clip-level diff",
+  "claim": "B6 and the structured verifier TIE on the aggregate scoreboard (same success-cert and same 0 false-PASS) but disagree on individual clips that cancel out; this lists every disagreement with its cause.",
+  "agreeCertify": 25,
+  "agreeReject": 49,
+  "b6CertifiesVerifierDoesNot": [
+    {
+      "clip": "oic_success_hand_obstruction_001__sony_front",
+      "humanSuccess": true,
+      "wr_relation_event_status": "FAIL",
+      "wr_relation_event_class": "LEFT_ON_RIM",
+      "why": "B6 certifies via raw terminal-center geometry; the verifier's relation extraction reads a corrupted terminal relation and hard-FAILs (a known verifier false-negative on obstruction successes)"
+    },
+    {
+      "clip": "oic_success_tag_obstruction_001__sony_front",
+      "humanSuccess": true,
+      "wr_relation_event_status": "FAIL",
+      "wr_relation_event_class": "NEAR_NOT_INSIDE",
+      "why": "B6 certifies via raw terminal-center geometry; the verifier's relation extraction reads a corrupted terminal relation and hard-FAILs (a known verifier false-negative on obstruction successes)"
+    }
+  ],
+  "verifierCertifiesB6DoesNot": [
+    {
+      "clip": "oic_success_016__iphone_top",
+      "humanSuccess": true,
+      "B3": false,
+      "wr_placed_from_outside_status": "PASS",
+      "why": "the verifier certifies via the placed_from_outside (far-start) target \u2014 the cube's CENTER is INSIDE by csg.is_inside \u2014 but B6's B3 requires the WHOLE footprint inside the shrunk inner region, which is stricter, so B6 rejects (a definitional difference in 'inside': center-in vs footprint-in)"
+    },
+    {
+      "clip": "oic_success_016__sony_front",
+      "humanSuccess": true,
+      "B3": false,
+      "wr_placed_from_outside_status": "PASS",
+      "why": "the verifier certifies via the placed_from_outside (far-start) target \u2014 the cube's CENTER is INSIDE by csg.is_inside \u2014 but B6's B3 requires the WHOLE footprint inside the shrunk inner region, which is stricter, so B6 rejects (a definitional difference in 'inside': center-in vs footprint-in)"
+    }
+  ],
+  "nDisagreements": 4,
+  "tieOnAggregateScoreboard": true,
+  "note": "Same-count, different-members. The disagreements are NOT errors-vs-truth in one direction: B6 is actually correct on the obstruction successes the verifier hard-FAILs, and the verifier is correct (by its center-based definition) on the near-edge successes B6's stricter full-footprint test rejects. The point of B6 is parity on the scoreboard, achieved by bolting the verifier's OWN evidence gate onto a hand-coded geometry predicate."
+}

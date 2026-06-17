@@ -51,6 +51,15 @@ from experiments.baseline_counterexamples.baseline_predicates import (  # noqa: 
 )
 from pilots.real_camera.verify_episode import verify_episode, verify_episode_both  # noqa: E402
 from pilots.real_camera.tracks_to_rollout import tracks_to_rollout  # noqa: E402
+from experiments.baseline_counterexamples.fixtures import (  # noqa: E402
+    TRACKS_FIXTURES,
+    evaluate_fixture_suite,
+    write_fixtures,
+)
+from experiments.baseline_counterexamples.cross_task import (  # noqa: E402
+    cross_task_report,
+    write_cross_task,
+)
 
 DATASET = REPO / "datasets" / "sony_object_inside_container_v0"
 TRACKS_DIR = DATASET / "tracks"
@@ -148,6 +157,7 @@ def build_row(episode_id: str, camera: str, tracks: Mapping[str, Any],
         "humanSuccess": is_success,
         **bvals,
         "overlapFrac": None if baseline is None else round(float(baseline["overlapFrac"]), 4),
+        "evidenceOk": None if baseline is None else bool(baseline["evidenceOk"]),
         "anyNaivePass": any_naive_pass,
         "wr_terminal_only_status": term.get("status"),
         "wr_terminal_only_class": term.get("cameraFailureClass") or term.get("failureClass"),
@@ -343,7 +353,8 @@ CSV_COLUMNS = [
     "episodeId", "camera", "expectedClass", "humanSuccess",
     "B1_center_in_footprint", "B2_footprint_overlap", "B3_full_inner_containment",
     "B4_full_containment_started_outside", "B5_terminal_3d_containment",
-    "overlapFrac", "anyNaivePass",
+    "B6_contained_started_outside_evidence_gated",
+    "overlapFrac", "evidenceOk", "anyNaivePass",
     "wr_terminal_only_status", "wr_terminal_only_class",
     "wr_relation_event_status", "wr_relation_event_class",
     "wr_placed_from_outside_status", "wr_placed_from_outside_class", "wrStructuredCertifies",
@@ -367,13 +378,108 @@ def per_baseline_scoreboard(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             "nonSuccessTotal": len(nons),
         }
 
-    board = [score(k["label"], "naive single/two-frame", (lambda key: lambda r: r[key] is True)(k["key"]))
+    def _kind(key: str) -> str:
+        if key == B6_KEY:
+            return "engineered (B4 + evidence gate)"
+        if key == "B4_full_containment_started_outside":
+            return "naive two-frame (+ initial state)"
+        return "naive single-frame terminal"
+
+    board = [score(k["label"], _kind(k["key"]), (lambda key: lambda r: r[key] is True)(k["key"]))
              for k in LADDER]
     board.append(score("wr terminal_only", "verifier (weak target)",
                        lambda r: r["wr_terminal_only_status"] == "PASS"))
     board.append(score("wr structured (rel OR placed)", "verifier (structured)",
                        lambda r: bool(r["wrStructuredCertifies"])))
     return board
+
+
+B6_KEY = "B6_contained_started_outside_evidence_gated"
+
+
+def b6_vs_structured_diff(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    """Clip-level comparison of B6 (the engineered steelman) against the structured
+    verifier. They TIE on the aggregate scoreboard (same success-cert, same 0
+    false-PASS) but are NOT clip-for-clip identical — this surfaces the exact
+    disagreements so the "B6 approximates the verifier" claim is stated honestly,
+    not as a false clip-level identity. Each disagreement is explained by a real,
+    nameable difference (B6's full-footprint containment vs the verifier's
+    center-based `is_inside`; the verifier's relation-extraction sensitivity to
+    terminal-pose corruption vs B6's raw-center read)."""
+    b6_only: List[Dict[str, Any]] = []   # B6 certifies, structured does not
+    struct_only: List[Dict[str, Any]] = []  # structured certifies, B6 does not
+    agree_cert = agree_reject = 0
+    for r in rows:
+        b6 = r.get(B6_KEY) is True
+        st = bool(r["wrStructuredCertifies"])
+        clip = f"{r['episodeId']}__{r['camera']}"
+        if b6 and st:
+            agree_cert += 1
+        elif not b6 and not st:
+            agree_reject += 1
+        elif b6 and not st:
+            b6_only.append({"clip": clip, "humanSuccess": r["humanSuccess"],
+                            "wr_relation_event_status": r["wr_relation_event_status"],
+                            "wr_relation_event_class": r["wr_relation_event_class"],
+                            "why": "B6 certifies via raw terminal-center geometry; the verifier's "
+                                   "relation extraction reads a corrupted terminal relation and hard-FAILs "
+                                   "(a known verifier false-negative on obstruction successes)"})
+        else:
+            struct_only.append({"clip": clip, "humanSuccess": r["humanSuccess"],
+                                "B3": r.get("B3_full_inner_containment"),
+                                "wr_placed_from_outside_status": r.get("wr_placed_from_outside_status"),
+                                "why": "the verifier certifies via the placed_from_outside (far-start) target — "
+                                       "the cube's CENTER is INSIDE by csg.is_inside — but B6's B3 requires the "
+                                       "WHOLE footprint inside the shrunk inner region, which is stricter, so B6 "
+                                       "rejects (a definitional difference in 'inside': center-in vs footprint-in)"})
+    return {
+        "kind": "B6 (engineered steelman) vs structured verifier — clip-level diff",
+        "claim": "B6 and the structured verifier TIE on the aggregate scoreboard "
+                 "(same success-cert and same 0 false-PASS) but disagree on individual clips that "
+                 "cancel out; this lists every disagreement with its cause.",
+        "agreeCertify": agree_cert,
+        "agreeReject": agree_reject,
+        "b6CertifiesVerifierDoesNot": b6_only,
+        "verifierCertifiesB6DoesNot": struct_only,
+        "nDisagreements": len(b6_only) + len(struct_only),
+        "tieOnAggregateScoreboard": (len(b6_only) == len(struct_only)),
+        "note": "Same-count, different-members. The disagreements are NOT errors-vs-truth in one direction: "
+                "B6 is actually correct on the obstruction successes the verifier hard-FAILs, and the verifier "
+                "is correct (by its center-based definition) on the near-edge successes B6's stricter "
+                "full-footprint test rejects. The point of B6 is parity on the scoreboard, achieved by "
+                "bolting the verifier's OWN evidence gate onto a hand-coded geometry predicate.",
+    }
+
+
+# What each predicate must "know" (the assumptions it bakes in), and which of the
+# verifier's components it has effectively reimplemented. The argument the table
+# makes: climbing the ladder gradually reimplements wide-robot's pieces as bespoke
+# per-task code, until B6 — which reaches parity only by importing the verifier's
+# own evidence gate. wide-robot externalises the SAME assumptions as an auditable
+# task graph (data), reused across tasks by one frozen engine.
+ENGINEERING_COST_TABLE = [
+    {"predicate": "B1 / B2", "mustKnow": "tray footprint (XY rectangle)",
+     "reimplements": "terminal containment (2D, rim-blind)", "form": "bespoke predicate code"},
+    {"predicate": "B3", "mustKnow": "cube + tray dimensions, containment margin (still 2D, rim-blind)",
+     "reimplements": "the verifier's footprint-containment geometry (2D — a cube 1 m above the tray still passes B3)",
+     "form": "bespoke predicate code"},
+    {"predicate": "B5", "mustKnow": "+ rim height (the z test B3 lacks)",
+     "reimplements": "the verifier's FULL 3D `csg.is_inside` (shrunk footprint AND rim height)",
+     "form": "bespoke predicate code"},
+    {"predicate": "B4", "mustKnow": "+ initial-state semantics (the cube must have STARTED outside)",
+     "reimplements": "the initial-state / outside->inside transition check (as a two-endpoint proxy)",
+     "form": "bespoke predicate code"},
+    {"predicate": "B6", "mustKnow": "+ evidence-quality thresholds (dropout / consecutive-missing / confidence)",
+     "reimplements": "the fail-closed evidence gate — here by IMPORTING the verifier's own "
+                     "`assess_evidence_quality` (a from-scratch baseline would have to re-derive it)",
+     "form": "bespoke predicate code + bolt-on of the verifier's gate"},
+    {"predicate": "wide-robot", "mustKnow": "the same assumptions, but DECLARED as data in the target graph "
+                                            "(objects, objectStates, events, plannerView goals)",
+     "reimplements": "nothing per-task: one frozen engine (csg.matcher / verify_external_rollout) reads the "
+                     "graph; initial-state, transition, evidence gate, and leakage discipline are reusable "
+                     "components, not task-specific code",
+     "form": "declarative task graph + frozen reusable verifier"},
+]
 
 
 def write_csv(rows: List[Dict[str, Any]], path: Path) -> None:
@@ -433,9 +539,35 @@ def write_md(rows: List[Dict[str, Any]], path: Path, aggregate: Dict[str, Any]) 
                      f"{s['falsePass']}/{s['nonSuccessTotal']} |")
     lines.append("\n_Read this honestly: **B4** (contained + started-outside, a two-frame predicate) reaches "
                  "**0 false-PASS** — matching the structured verifier — and even out-certifies it on successes, "
-                 "because it does not fail-close on occlusion. The structured verifier trades that recall for a "
-                 "fail-closed evidence gate and a real relation-transition (vs B4's brittle two-endpoint proxy). "
-                 "The single-FRAME terminal predicates (B1/B2/B3/B5) are the ones that cannot reject born-inside._\n")
+                 "because it does not fail-close on occlusion. **B6** (B4 + the verifier's own evidence gate) "
+                 "then ties the structured verifier's WHOLE scoreboard (same success-cert, same 0 false-PASS) — "
+                 "the engineered steelman: a fully built-out task-specific predicate approximates the verifier on "
+                 "this one task. The single-FRAME terminal predicates (B1/B2/B3/B5) are the ones that cannot "
+                 "reject born-inside._\n")
+
+    b6diff = b6_vs_structured_diff(rows)
+    lines.append("\n### B6 vs. the structured verifier — same scoreboard, not the same clips\n")
+    lines.append(f"- agree-certify: **{b6diff['agreeCertify']}**, agree-reject: **{b6diff['agreeReject']}**, "
+                 f"disagreements: **{b6diff['nDisagreements']}** (they cancel: "
+                 f"{len(b6diff['b6CertifiesVerifierDoesNot'])} B6-only vs "
+                 f"{len(b6diff['verifierCertifiesB6DoesNot'])} verifier-only).")
+    for d in b6diff["b6CertifiesVerifierDoesNot"]:
+        lines.append(f"  - **B6 certifies, verifier doesn't** — `{d['clip']}`: {d['why']}.")
+    for d in b6diff["verifierCertifiesB6DoesNot"]:
+        lines.append(f"  - **verifier certifies, B6 doesn't** — `{d['clip']}`: {d['why']}.")
+    lines.append("\n_So \"B6 approximates the verifier\" is true at the **aggregate scoreboard** level, not as a "
+                 "clip-for-clip identity — and the disagreements are real definitional/extraction differences, "
+                 "not one side being wrong. Full diff: `b6_vs_structured.json`._\n")
+
+    lines.append("\n## Baseline engineering cost — the ladder reimplements wide-robot\n")
+    lines.append("| predicate | what it must know | what it reimplements | form |")
+    lines.append("|---|---|---|---|")
+    for e in ENGINEERING_COST_TABLE:
+        lines.append(f"| {e['predicate']} | {e['mustKnow']} | {e['reimplements']} | {e['form']} |")
+    lines.append("\n_Climbing the ladder gradually rebuilds wide-robot's pieces as bespoke per-task code, until "
+                 "B6 reaches parity only by importing the verifier's own evidence gate. wide-robot declares the "
+                 "SAME assumptions as data in a task graph that one frozen engine reads — so they are auditable "
+                 "and reused across tasks (see the cross-task example) instead of re-derived per predicate._\n")
 
     lines.append("\n## Aggregate over all clips\n")
     lines.append(f"- clips scored: **{aggregate['nClips']}** "
@@ -451,6 +583,13 @@ def write_md(rows: List[Dict[str, Any]], path: Path, aggregate: Dict[str, Any]) 
                  f"{aggregate['b4SuccessCert']}/{aggregate['nSuccess']} successes (it does NOT fail-close on "
                  f"occlusion), vs the structured verifier's {aggregate['structuredCertifiesSuccess']}/"
                  f"{aggregate['nSuccess']}. See the scoreboard above.")
+    lines.append(f"- **B6 (B4 + the verifier's own evidence gate) false PASSes: {aggregate['b6FalsePass']}**, "
+                 f"success-cert {aggregate['b6SuccessCert']}/{aggregate['nSuccess']} — the engineered steelman "
+                 f"TIES the structured verifier's whole scoreboard (both "
+                 f"{aggregate['structuredCertifiesSuccess']}/{aggregate['nSuccess']} cert, both "
+                 f"{aggregate['structuredFalsePass']} false-PASS). It reaches parity by bolting the verifier's "
+                 f"separable evidence gate onto a hand-coded geometry predicate (clip-level it still disagrees on "
+                 f"a few successes that cancel — see the B6-vs-verifier diff).")
     lines.append(f"- wide-robot `terminal_only` PASSes on human-non-success clips: "
                  f"{aggregate['terminalOnlyFalsePass']} "
                  f"(the verifier asked the *weak* terminal question — these are the born-inside clips)")
@@ -465,6 +604,46 @@ def write_md(rows: List[Dict[str, Any]], path: Path, aggregate: Dict[str, Any]) 
     lines.append(f"- wide-robot clips rendered UNCERTAIN (fail-closed on evidence): "
                  f"{aggregate['uncertain']}")
     lines.append("\nThe full per-clip table is in `results_table.csv`.\n")
+
+    lines.append("\n## Deterministic fixtures (semantics, calibration-free)\n")
+    lines.append("Hand-authored `real_camera.tracks.v0` episodes with round-number geometry (nothing to "
+                 "calibrate), one per semantic, regenerated by `fixtures.py` into `fixtures/`:\n")
+    fres = evaluate_fixture_suite()
+    lines.append("| fixture | human | B1 | B3 | B4 | B5 | B6 | wr terminal | wr relation | occupancy-strawman |")
+    lines.append("|---|---|---|---|---|---|---|---|---|---|")
+    for fid, _b, _h in TRACKS_FIXTURES:
+        r = fres[fid]
+        L = r["ladder"]
+        lines.append(f"| `{fid}` | {r['human']} | {_md_bool(L['B1'])} | {_md_bool(L['B3'])} | "
+                     f"{_md_bool(L['B4'])} | {_md_bool(L['B5'])} | {_md_bool(L['B6'])} | "
+                     f"{r['wr'][TERMINAL_ONLY]} | {r['wr'][RELATION_EVENT]} | {_md_bool(r['occupancyStrawman'])} |")
+    leak = fres["fx_leaky_metadata"]
+    lines.append(f"\n_`fx_leaky_metadata` is rollout-only: the identical evidence is **{leak['cleanStatus']}** "
+                 f"clean but **{leak['leakyStatus']}** (`{leak['leakyFailureClass']}`) once a source role name "
+                 f"leaks into `objectIdMap` — a gate the baselines do not have. The occupancy-strawman column is "
+                 f"the identity-blind \"is anything inside?\" check `fx_wrong_object` defeats. Full asserted "
+                 f"semantics + recompute in `fixtures/fixture_results.json`._\n")
+
+    ct = cross_task_report()
+    od = ct["openDrawerDemos"]
+    lines.append("\n## Cross-task — one frozen engine, task = target graph\n")
+    lines.append(f"- engine identity: `{ct['engineIdentity']['fn']}` is the **same function object** imported by "
+                 f"the real-camera *and* RLBench pilots "
+                 f"(realCamera={ct['engineIdentity']['realCameraImportIsSameObject']}, "
+                 f"rlbench={ct['engineIdentity']['rlbenchImportIsSameObject']}).")
+    lines.append(f"- `open_drawer` articulation target on the {od['nDemos']} committed live RLBench drawer "
+                 f"rollouts via that engine: allPass={od['allPass']}, leakage-clean={od['allLeakageClean']}, "
+                 f"non-vacuous={od['allNonVacuous']}, articulation probes supported={od['allProbesSupported']}, "
+                 f"all physics-unverified (physicalValidity null)={od.get('allPhysicsUnverified')}.")
+    tdt = ct["targetDefinesTask"]
+    lines.append(f"- same engine, same drawer rollout, two targets: `open_drawer` → "
+                 f"**{tdt['open_drawer_target']['status']}**, `object_inside_container` → "
+                 f"**{tdt['object_inside_container_target']['status']}**. The target IS the task.")
+    lines.append(f"- the cube/tray baseline ladder is **inapplicable** to a drawer "
+                 f"(bodies={ct['baselineInapplicable']['drawerRolloutHas']['bodyPhysicalKinds']}, "
+                 f"container={ct['baselineInapplicable']['drawerRolloutHas']['anyContainerBody']}) — scoring "
+                 f"open_drawer means a brand-new joint-extension predicate from scratch. Detail in "
+                 f"`cross_task/cross_task_report.json`.\n")
     path.write_text("\n".join(lines) + "\n")
 
 
@@ -617,6 +796,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         "b4FalsePass": sum(1 for r in non_success if r["B4_full_containment_started_outside"] is True),
         "b4SuccessCert": sum(1 for r in success if r["B4_full_containment_started_outside"] is True),
         "b5FalsePass": sum(1 for r in non_success if r["B5_terminal_3d_containment"] is True),
+        "b6FalsePass": sum(1 for r in non_success if r[B6_KEY] is True),
+        "b6SuccessCert": sum(1 for r in success if r[B6_KEY] is True),
         "anyNaiveFalsePass": sum(1 for r in non_success if r["anyNaivePass"] is True),
         "terminalOnlyFalsePass": sum(1 for r in non_success if r["wr_terminal_only_status"] == "PASS"),
         "structuredFalsePass": sum(1 for r in non_success if r["wrStructuredCertifies"]),
@@ -641,6 +822,16 @@ def main(argv: Optional[List[str]] = None) -> int:
     # (2) GENUINE independent second-implementation cross-check of the geometry.
     indep = independent_geometry_check()
     (EXP_DIR / "independent_geometry_check.json").write_text(json.dumps(indep, indent=2) + "\n")
+    # (3) B6 (engineered steelman) vs structured verifier — clip-level diff (honest tie).
+    b6diff = b6_vs_structured_diff(rows)
+    (EXP_DIR / "b6_vs_structured.json").write_text(json.dumps(b6diff, indent=2) + "\n")
+    # (4) Baseline engineering-cost table (the assumptions each predicate bakes in).
+    (EXP_DIR / "engineering_cost.json").write_text(json.dumps(
+        {"kind": "what each predicate must know / reimplements", "rows": ENGINEERING_COST_TABLE}, indent=2) + "\n")
+    # (5) Deterministic synthetic fixture suite (calibration-free semantics).
+    fixture_files = write_fixtures()
+    # (6) Cross-task example (one frozen engine; task = target graph).
+    cross_task_file = write_cross_task()
     # Remove the previous misleadingly-named artifact if present.
     stale = EXP_DIR / "cross_validation.json"
     if stale.exists():
@@ -671,7 +862,11 @@ def main(argv: Optional[List[str]] = None) -> int:
                       "reproducibilityDisagreements": len(repro["decisionFieldDisagreements"]),
                       "independentGeometry": {"agree": indep["agree"], "clipsCompared": indep["clipsCompared"],
                                               "disagreements": len(indep["disagreements"]),
-                                              "constantsMatchCsgDefault": indep["constantsMatchCsgDefault"]}},
+                                              "constantsMatchCsgDefault": indep["constantsMatchCsgDefault"]},
+                      "b6VsStructured": {"agreeCertify": b6diff["agreeCertify"],
+                                         "nDisagreements": b6diff["nDisagreements"],
+                                         "tieOnAggregateScoreboard": b6diff["tieOnAggregateScoreboard"]},
+                      "fixtures": fixture_files, "crossTask": cross_task_file},
                      indent=2))
     return 0
 

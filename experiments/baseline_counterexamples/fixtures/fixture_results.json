@@ -1,0 +1,311 @@
+{
+  "kind": "deterministic synthetic fixtures \u2014 hand-authored round-number geometry, nothing calibrated",
+  "scene": {
+    "trayCenter": [
+      0.3,
+      0.0,
+      0.015
+    ],
+    "traySizeM": [
+      0.24,
+      0.18,
+      0.03
+    ],
+    "cubeSizeM": [
+      0.04,
+      0.04,
+      0.04
+    ],
+    "footprintX": [
+      0.18,
+      0.42
+    ],
+    "footprintY": [
+      -0.09,
+      0.09
+    ],
+    "rimTopZ": 0.03,
+    "evidenceThresholds": {
+      "max_consecutive_missing": 30,
+      "max_dropout_frac": 0.35
+    }
+  },
+  "distinctOutcomes": 6,
+  "invarianceNote": "7 fixtures, 6 distinct verifier outcomes: fx_born_inside (2cm jitter) and fx_inside_to_inside (16cm traverse) produce byte-identical records (both BORN_INSIDE_NO_TRANSITION) \u2014 kept on purpose to show the verdict is invariant to motion magnitude inside the tray (it is the transition, not the motion, that matters).",
+  "results": {
+    "fx_outside_to_inside_success": {
+      "human": "success",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": true,
+        "B5": true,
+        "B6": true
+      },
+      "evidenceOk": true,
+      "evidenceFailureClass": null,
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS",
+        "object_inside_container_placed_from_outside": "FAIL"
+      },
+      "wrClass": {
+        "object_inside_container_terminal_only": null,
+        "object_inside_container_relation_event": null,
+        "object_inside_container_placed_from_outside": "BORN_INSIDE_NO_TRANSITION"
+      },
+      "structuredCertifies": true
+    },
+    "fx_rim_partial": {
+      "human": "fail",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": false,
+        "B4": false,
+        "B5": false,
+        "B6": false
+      },
+      "evidenceOk": true,
+      "evidenceFailureClass": null,
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL",
+        "object_inside_container_placed_from_outside": "FAIL"
+      },
+      "wrClass": {
+        "object_inside_container_terminal_only": "LEFT_ON_RIM",
+        "object_inside_container_relation_event": "LEFT_ON_RIM",
+        "object_inside_container_placed_from_outside": "LEFT_ON_RIM"
+      },
+      "structuredCertifies": false
+    },
+    "fx_born_inside": {
+      "human": "fail",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": false,
+        "B5": true,
+        "B6": false
+      },
+      "evidenceOk": true,
+      "evidenceFailureClass": null,
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL",
+        "object_inside_container_placed_from_outside": "FAIL"
+      },
+      "wrClass": {
+        "object_inside_container_terminal_only": null,
+        "object_inside_container_relation_event": "BORN_INSIDE_NO_TRANSITION",
+        "object_inside_container_placed_from_outside": "BORN_INSIDE_NO_TRANSITION"
+      },
+      "structuredCertifies": false
+    },
+    "fx_inside_to_inside": {
+      "human": "fail",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": false,
+        "B5": true,
+        "B6": false
+      },
+      "evidenceOk": true,
+      "evidenceFailureClass": null,
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL",
+        "object_inside_container_placed_from_outside": "FAIL"
+      },
+      "wrClass": {
+        "object_inside_container_terminal_only": null,
+        "object_inside_container_relation_event": "BORN_INSIDE_NO_TRANSITION",
+        "object_inside_container_placed_from_outside": "BORN_INSIDE_NO_TRANSITION"
+      },
+      "structuredCertifies": false
+    },
+    "fx_occluded_uncertain": {
+      "human": "success",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": true,
+        "B5": true,
+        "B6": false
+      },
+      "evidenceOk": false,
+      "evidenceFailureClass": "extractor_uncertainty",
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "UNCERTAIN",
+        "object_inside_container_relation_event": "UNCERTAIN",
+        "object_inside_container_placed_from_outside": "UNCERTAIN"
+      },
+      "wrClass": {
+        "object_inside_container_terminal_only": "extractor_uncertainty",
+        "object_inside_container_relation_event": "extractor_uncertainty",
+        "object_inside_container_placed_from_outside": "extractor_uncertainty"
+      },
+      "structuredCertifies": false
+    },
+    "fx_wrong_object": {
+      "human": "fail",
+      "ladder": {
+        "B1": false,
+        "B2": false,
+        "B3": false,
+        "B4": false,
+        "B5": false,
+        "B6": false
+      },
+      "evidenceOk": true,
+      "evidenceFailureClass": null,
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL",
+        "object_inside_container_placed_from_outside": "FAIL"
+      },
+      "wrClass": {
+        "object_inside_container_terminal_only": "DROPPED_OUTSIDE",
+        "object_inside_container_relation_event": "DROPPED_OUTSIDE",
+        "object_inside_container_placed_from_outside": "DROPPED_OUTSIDE"
+      },
+      "structuredCertifies": false
+    },
+    "fx_leaky_metadata": {
+      "human": "success (refused on leakage)",
+      "kind": "rollout-only (baselines have no leakage notion)",
+      "cleanStatus": "PASS",
+      "leakyStatus": "UNCERTAIN",
+      "leakyFailureClass": "leakage_violation",
+      "leakyReasons": [
+        "objectIdMap carries non-neutral ids ['tray']: an external trace must not map target/source identities (emit an empty objectIdMap)"
+      ],
+      "lesson": "the SAME evidence PASSes clean but is REFUSED when a source role name leaks into objectIdMap \u2014 a leakage gate the baselines do not have."
+    }
+  },
+  "expectations": {
+    "fx_outside_to_inside_success": {
+      "human": "success",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": true,
+        "B5": true,
+        "B6": true
+      },
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "PASS"
+      },
+      "structuredCertifies": true,
+      "lesson": "the verifier is not a fail-everything oracle: a real near\u2192inside placement PASSes all."
+    },
+    "fx_rim_partial": {
+      "human": "fail",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": false,
+        "B4": false,
+        "B5": false,
+        "B6": false
+      },
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "wrClass": "LEFT_ON_RIM",
+      "structuredCertifies": false,
+      "lesson": "center-in-footprint (B1/B2) PASSes the rim; 3D containment (B3/B5/verifier) rejects it."
+    },
+    "fx_born_inside": {
+      "human": "fail",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": false,
+        "B5": true,
+        "B6": false
+      },
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "wrClass": "BORN_INSIDE_NO_TRANSITION",
+      "structuredCertifies": false,
+      "lesson": "ends inside, so terminal predicates + terminal_only PASS; only the initial-state check rejects."
+    },
+    "fx_inside_to_inside": {
+      "human": "fail",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": false,
+        "B5": true,
+        "B6": false
+      },
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "PASS",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "wrClass": "BORN_INSIDE_NO_TRANSITION",
+      "structuredCertifies": false,
+      "lesson": "motion is present but no outside\u2192inside transition \u2014 still not a placement."
+    },
+    "fx_occluded_uncertain": {
+      "human": "success",
+      "ladder": {
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": true,
+        "B5": true,
+        "B6": false
+      },
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "UNCERTAIN",
+        "object_inside_container_relation_event": "UNCERTAIN"
+      },
+      "structuredCertifies": false,
+      "lesson": "clean endpoints, 32-frame mid occlusion: B1\u2013B5 certify; B6 + the verifier refuse (fail-closed)."
+    },
+    "fx_wrong_object": {
+      "human": "fail",
+      "ladder": {
+        "B1": false,
+        "B2": false,
+        "B3": false,
+        "B4": false,
+        "B5": false,
+        "B6": false
+      },
+      "occupancyStrawman": true,
+      "wr": {
+        "object_inside_container_terminal_only": "FAIL",
+        "object_inside_container_relation_event": "FAIL"
+      },
+      "structuredCertifies": false,
+      "lesson": "a decoy in the tray fools an occupancy check; identity-bound predicates + the verifier reject."
+    }
+  }
+}

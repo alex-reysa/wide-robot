@@ -27,17 +27,35 @@
 >
 > So what does the structured verifier buy *over even B4*? Two specific things, with
 > their limits stated: (1) a **fail-closed evidence gate** — on the occluded clip
-> **every** baseline including B4 certifies a success the verifier refuses (it could
-> not see the trajectory); honest caveat: that gate is *target-blind* and
-> *separable*, so any baseline could bolt it on. (2) a **real relation-transition**
+> **every** single/two-frame baseline including B4 certifies a success the verifier
+> refuses (it could not see the trajectory); honest caveat: that gate is *target-blind*
+> and *separable*, so any baseline could bolt it on. (2) a **real relation-transition**
 > instead of B4's brittle two-endpoint "started-outside + ended-inside" proxy (more
 > robust to non-continuous / decoy transitions, though this dataset does not stress
 > that), plus leakage discipline and the *same* target running across
 > MuJoCo / RLBench / RH20T. The honest per-baseline scoreboard (below) shows the
 > full tradeoff: **B4 even out-recalls the verifier (32 vs 27 successes)** precisely
-> because it does *not* fail-close on occlusion. The defensible claim is therefore
-> "against *terminal* predicates, including the strongest single-frame one (B5)" —
-> **not** "against the strongest fair baseline."
+> because it does *not* fail-close on occlusion.
+>
+> - **B6** = B4 **+ the verifier's own evidence gate** — the *engineered steelman*. We
+>   built the strongest honest baseline we could, and it **ties the structured
+>   verifier's entire scoreboard (27/38 cert, 0/40 false-PASS, the same numbers)**. We
+>   say so plainly: **a sufficiently engineered task-specific predicate *can*
+>   approximate this one task.** It does so by *importing the verifier's own evidence
+>   gate* — i.e. by reimplementing the very structure wide-robot bundles.
+>
+> So the defensible claim is not "no predicate can match the verifier on this task" —
+> B6 does. The claim is the one the scoreboard and the **baseline engineering-cost
+> table** make: **terminal predicates fail outright; stronger task-specific predicates
+> can be built, but they accumulate hidden assumptions** (footprint → dimensions →
+> margin → rim height → initial state → evidence thresholds), each baked into bespoke
+> per-task code. **wide-robot externalizes those assumptions as an auditable task
+> graph** — initial-state, transition, evidence quality, diagnostics, and leakage
+> discipline — read by **one frozen engine reused across tasks** (see the cross-task
+> open-drawer example). The win is not "uncatchable verdicts," it is *making the
+> structure explicit, auditable, reusable, and leakage-clean instead of re-derived
+> per task*. The honest scope on terminal predicates remains "insufficient, including
+> the strongest single-frame one (B5)."
 
 All evidence below is real: 78 committed Sony/iPhone `object_inside_container`
 clips (`datasets/sony_object_inside_container_v0/`), scored by the ladder in
@@ -54,9 +72,10 @@ python3 -m pytest tests/test_baseline_counterexamples.py -q       # no video / n
 
 ## The baseline ladder
 
-Five hand-coded "did the cube end up in the tray?" checks, climbing in strictness.
-Each reads at most the **first and last** frame and uses the *same* box geometry as
-the verifier (`csg.predicates`), so the comparison is fair:
+Six hand-coded "did the cube end up in the tray?" checks, climbing in strictness.
+B1–B5 read at most the **first and last** frame and use the *same* box geometry as
+the verifier (`csg.predicates`); **B6** adds the verifier's own evidence gate, so the
+comparison runs from "naive" all the way to a fully-engineered steelman:
 
 | id | question it answers |
 |----|---------------------|
@@ -65,6 +84,7 @@ the verifier (`csg.predicates`), so the comparison is fair:
 | **B3** full-inner-containment | terminal cube footprint **fully** inside the shrunk inner region (2D, 5 mm margin) |
 | **B4** contained + started-outside | B3 **and** the cube started outside the footprint (2D + initial state) |
 | **B5** terminal-3D-containment | **`csg.is_inside` on the last frame**: shrunk footprint **and** rim height (3D) — the maximal single-frame terminal predicate |
+| **B6** + evidence-gated | B4 **and** the verifier's own fail-closed evidence gate (`assess_evidence_quality`) — the engineered steelman that ties the verifier's scoreboard |
 
 Note the dividing line: **B1/B2/B3/B5 read essentially the terminal frame**, so
 none of them can reject **born-inside** (the cube ends inside). **B4 is the
@@ -164,21 +184,112 @@ say so.
 scoreboard — success-certifications vs. false-PASSes, nothing hidden (this table is
 regenerated into [`results_table.md`](results_table.md)):
 
-| predicate | success-cert | false-PASS / 40 |
-|---|---|---|
-| B1 center-in-footprint | 35/38 | 11 |
-| B2 footprint-overlap | 35/38 | 11 |
-| B3 full-inner-containment | 32/38 | 6 |
-| **B4** contained + started-outside (2-frame) | **32/38** | **0** |
-| B5 terminal-3D-containment (max single-frame) | 33/38 | 10 |
-| wr `terminal_only` (weak target) | 27/38 | 3 |
-| **wr structured** (`relation_event` ∨ `placed_from_outside`) | **27/38** | **0** |
+| predicate | kind | success-cert | false-PASS / 40 |
+|---|---|---|---|
+| B1 center-in-footprint | naive single-frame | 35/38 | 11 |
+| B2 footprint-overlap | naive single-frame | 35/38 | 11 |
+| B3 full-inner-containment | naive single-frame | 32/38 | 6 |
+| **B4** contained + started-outside | naive two-frame | **32/38** | **0** |
+| B5 terminal-3D-containment (max single-frame) | naive single-frame | 33/38 | 10 |
+| **B6** contained + started-outside + evidence-gated | **engineered (B4 + evidence gate)** | **27/38** | **0** |
+| wr `terminal_only` (weak target) | verifier (weak) | 27/38 | 3 |
+| **wr structured** (`relation_event` ∨ `placed_from_outside`) | verifier (structured) | **27/38** | **0** |
 
 Reading it honestly:
 - **Single-frame terminal predicates** (B1/B2/B3/B5) all false-PASS born-inside; even the maximal **B5 false-PASSes 10/40**. Terminal state underspecifies the task.
 - **B4** adds a started-outside check and reaches **0/40 false-PASS — equal to the structured verifier** — and even **out-certifies it on successes (32 vs 27)** because it does not fail-close on occlusion. So the win over a *terminal* predicate is real and large; the win over a good *two-frame* baseline is narrow and specific (fail-closed evidence gate + a real transition vs a two-endpoint proxy + leakage/cross-source), and it is a recall-vs-evidence-honesty **tradeoff**, not a clean dominance.
+- **B6** is the engineered steelman: B4 with the verifier's **own** fail-closed evidence gate bolted on. It **ties the structured verifier's entire scoreboard — 27/38 cert, 0/40 false-PASS, the same numbers** — by no longer certifying the occlusion successes B4 over-certifies. **So a sufficiently engineered task-specific predicate *can* approximate this one task.** It is not a clip-for-clip identity, though: B6 and the verifier disagree on **4 successes that cancel** (B6's full-footprint containment is stricter than the verifier's center-based `is_inside`, so it rejects 2 the verifier certifies; B6's raw-center read certifies 2 obstruction successes the verifier hard-FAILs). See [`b6_vs_structured.json`](b6_vs_structured.json).
 - B4's 0 false-PASS holds on *this* dataset; with no evidence gate it would also certify an occluded *failure* (the dataset happens not to contain one), which the structured verifier's UNCERTAIN posture would refuse.
 - On the 38 successes, structured certifies **27**, UNCERTAINs **5** (occlusion), hard-FAILs **6** (obstruction — see limitation).
+
+## Baseline engineering cost — the ladder reimplements wide-robot
+
+The reason B6 has to *import* the verifier's gate is the real point. Each rung adds an
+assumption the previous one lacked; by B6 the "baseline" has re-derived (or borrowed)
+every component wide-robot already has — as bespoke, per-task code. (Generated into
+[`engineering_cost.json`](engineering_cost.json).)
+
+| predicate | what it must know | what it reimplements | form |
+|---|---|---|---|
+| B1 / B2 | tray footprint (XY rectangle) | terminal containment (2D, rim-blind) | bespoke predicate code |
+| B3 | cube + tray dimensions, containment margin (still 2D, rim-blind) | the verifier's footprint-containment geometry (a cube 1 m *above* the tray still passes B3) | bespoke predicate code |
+| B5 | + rim height (the z test B3 lacks) | the verifier's **full 3D** `csg.is_inside` (footprint **and** rim height) | bespoke predicate code |
+| B4 | + initial-state semantics (started outside) | the outside→inside transition (two-endpoint proxy) | bespoke predicate code |
+| B6 | + evidence-quality thresholds | the fail-closed evidence gate — here by **importing** `assess_evidence_quality` | bespoke code + bolt-on of the verifier's gate |
+| **wide-robot** | the same assumptions, **declared as data** in the target graph | **nothing per-task**: one frozen engine reads the graph; transition / evidence / leakage are reusable components | declarative task graph + frozen verifier |
+
+The ladder is the argument in motion: climbing it gradually rebuilds wide-robot's pieces
+as one-off code, until B6 reaches parity only by reusing the verifier's own gate.
+wide-robot declares the **same** assumptions once, as an auditable graph, and a single
+frozen engine applies them — across tasks (next section).
+
+## Deterministic fixtures — the semantics, with calibration off the table
+
+The 78 real clips prove the issue *visually*, but their geometry comes from physical
+marker calibration, so a skeptic can ask "is that just your tray corners?". The
+hand-authored fixtures in [`fixtures/`](fixtures/) remove that question: round-number
+poses, the canonical tray at `(0.30, 0, 0.015)` size `[0.24, 0.18, 0.03]`, a `0.04 m`
+cube — **nothing to calibrate**. Each isolates one semantic
+([`fixtures/fixture_results.json`](fixtures/fixture_results.json) holds the recompute +
+the asserted expectations the test pins):
+
+| fixture | human | B1 | B3 | B4 | B5 | B6 | wr terminal | wr relation | occupancy-strawman |
+|---|---|---|---|---|---|---|---|---|---|
+| `fx_outside_to_inside_success` | success | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
+| `fx_rim_partial` | fail | **PASS** | reject | reject | reject | reject | FAIL/RIM | FAIL/RIM | PASS |
+| `fx_born_inside` | fail | PASS | PASS | reject | **PASS** | reject | PASS | FAIL/BORN | PASS |
+| `fx_inside_to_inside` | fail | PASS | PASS | reject | **PASS** | reject | PASS | FAIL/BORN | PASS |
+| `fx_occluded_uncertain` | success | PASS | PASS | PASS | PASS | reject | UNCERTAIN | UNCERTAIN | PASS |
+| `fx_wrong_object` | fail | reject | reject | reject | reject | reject | FAIL | FAIL | **PASS** ❗ |
+| `fx_leaky_metadata` | (rollout) | — | — | — | — | — | — | clean **PASS** → leaky **UNCERTAIN** | — |
+
+(`fx_leaky_metadata` is rollout-only — the identical rollout is `PASS` clean and
+`UNCERTAIN`/`leakage_violation` once a source role name is injected into `objectIdMap`.)
+
+These are **7 fixtures, 6 distinct verifier outcomes**: `fx_born_inside` (a 2 cm jitter)
+and `fx_inside_to_inside` (a 16 cm traverse) produce **byte-identical records** (both
+`BORN_INSIDE_NO_TRANSITION`) — kept on purpose as an *invariance* demonstration that the
+verdict does not depend on how far the object moves *inside* the tray; it is the missing
+transition, not the motion, that decides. Each remaining row is a clean statement: the
+**rim** separates 2D-center (B1) from 3D containment (B3/B5/verifier); **born-inside /
+inside→inside** PASS every terminal predicate (incl. maximal B5) but fail the
+initial-state check (B4/B6/verifier); **occlusion** is certified by B1–B5 but refused by
+B6 and the verifier (the consecutive-missing evidence gate — sized so dropout stays under
+threshold, isolating that rule); **wrong-object** fools the identity-blind occupancy
+strawman (a decoy sits in the tray) while the cube-bound ladder and the verifier reject;
+**leaky-metadata** is the same evidence PASSing clean but refused once a source role name
+leaks into `objectIdMap` — a gate the baselines have no notion of.
+
+## Cross-task — one frozen engine, the task supplied as data
+
+The whole ladder is bespoke *cube-in-tray* code; it means nothing for another task. The
+structured verifier is different: the engine
+([`pilots.external_verify.verify_external_rollout`](../../pilots/external_verify.py) over
+the frozen `csg.matcher`) is **task-agnostic — the task is a `csg.v0` target graph**.
+Proven executably in [`cross_task/cross_task_report.json`](cross_task/cross_task_report.json):
+
+- **engine identity**: the function object imported by the real-camera pilot **is the same
+  object** imported by the RLBench pilot (`x is y` ⇒ `True`, both directions). Not "similar
+  code" — the identical function.
+- **open_drawer** (a different task class: prismatic-joint articulation, not containment)
+  PASSes on all **9 committed live RLBench drawer rollouts** through that engine —
+  leakage-clean, non-vacuous, all articulation probes supported, and (honestly)
+  **physics-unverified** (`physicalValidity` null on every demo, as for any external
+  kinematic trace — an honest kinematic PASS, not a physics-validated one).
+- **same engine, same drawer rollout, two targets**: `open_drawer` → PASS,
+  `object_inside_container` → FAIL. *The target is the task* — no engine code changes.
+- the cube/tray **baseline ladder is inapplicable** to a drawer (no cube, no tray, no
+  footprint; the success quantity is a joint extension, not XY containment). Scoring
+  open_drawer with a "baseline" means a brand-new predicate from scratch; the verifier
+  swaps a JSON target.
+
+**Honest scope of "task = data".** Both tasks live within the frozen matcher's *existing*
+probe vocabulary (containment uses `relation_transitions` / `object_carrier`; the drawer
+uses `articulation_transitions`) — which is *why* swapping only the target works. A
+genuinely novel task needing a probe family the matcher does not have would extend the
+frozen engine, not just the data. So "one engine, task = data" is demonstrated *within*
+the current probe families (relation / articulation / contact / goal / event), not as a
+claim about arbitrary task families.
 
 ### Reproducibility + independent corroboration
 - **Reproducibility** ([`reproducibility_check.json`](reproducibility_check.json)):
@@ -219,13 +330,20 @@ fraction (0.5), documented in `baseline_predicates.py`.
 
 ```
 README.md                       <- this file
-baseline_predicates.py          <- pure B1..B5 (no cv2 / no video), reused by the tests
-results_table.csv / .md         <- all 78 clips, ladder B1..B5 + 3 wide-robot targets
+baseline_predicates.py          <- B1..B6 (no cv2 / no video), reused by the tests
+fixtures.py                     <- builds the 7 deterministic synthetic fixtures + the occupancy strawman
+cross_task.py                   <- the one-frozen-engine open_drawer cross-task proof
+results_table.csv / .md         <- all 78 clips, ladder B1..B6 + 3 wide-robot targets, + fixtures/cross-task summary
 reproducibility_check.json      <- 78/78 recompute == committed dataset verdicts (SAME verifier; regression check)
 independent_geometry_check.json <- 57/57 from-scratch geometry reimpl == verifier terminal relation (genuine 2nd impl)
+b6_vs_structured.json           <- B6 vs structured: ties the scoreboard (27/0), the 4 canceling clip-level disagreements
+engineering_cost.json           <- what each predicate must know / reimplements (the ladder rebuilds wide-robot)
+fixtures/<fx>.tracks.json        <- 7 hand-authored calibration-free episodes (+ fx_leaky_metadata.rollout.json)
+fixtures/fixture_results.json   <- recompute + asserted semantics for every fixture
+cross_task/cross_task_report.json <- engine identity + open_drawer PASS x9 + target-defines-task + baseline inapplicable
 cases/<case>/
   source_info.json              <- clip identity, hashes, geometry, human label, provenance
-  naive_predicate_results.json  <- B1..B5 verdicts + the question each asks
+  naive_predicate_results.json  <- B1..B6 verdicts + the question each asks
   wide_robot_report.json        <- headline + full records for all 3 structured targets
   overlay_final_frame.png        <- terminal frame: tray footprint (red) / inner region (yellow) / cube (green)
 cases/rim_edge/robustness_perturbation.json   <- 14-perturbation table: wide-robot FAIL never flips to PASS

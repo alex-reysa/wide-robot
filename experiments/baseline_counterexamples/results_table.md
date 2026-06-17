@@ -19,15 +19,41 @@ _PASS = predicate/target certifies the put-in succeeded; reject = predicate says
 
 | predicate | kind | success-cert | false-PASS |
 |---|---|---|---|
-| B1 center-in-footprint | naive single/two-frame | 35/38 | 11/40 |
-| B2 footprint-overlap | naive single/two-frame | 35/38 | 11/40 |
-| B3 full-inner-containment | naive single/two-frame | 32/38 | 6/40 |
-| B4 contained+started-outside | naive single/two-frame | 32/38 | 0/40 |
-| B5 terminal-3D-containment | naive single/two-frame | 33/38 | 10/40 |
+| B1 center-in-footprint | naive single-frame terminal | 35/38 | 11/40 |
+| B2 footprint-overlap | naive single-frame terminal | 35/38 | 11/40 |
+| B3 full-inner-containment | naive single-frame terminal | 32/38 | 6/40 |
+| B4 contained+started-outside | naive two-frame (+ initial state) | 32/38 | 0/40 |
+| B5 terminal-3D-containment | naive single-frame terminal | 33/38 | 10/40 |
+| B6 contained+started-outside+evidence-gated | engineered (B4 + evidence gate) | 27/38 | 0/40 |
 | wr terminal_only | verifier (weak target) | 27/38 | 3/40 |
 | wr structured (rel OR placed) | verifier (structured) | 27/38 | 0/40 |
 
-_Read this honestly: **B4** (contained + started-outside, a two-frame predicate) reaches **0 false-PASS** — matching the structured verifier — and even out-certifies it on successes, because it does not fail-close on occlusion. The structured verifier trades that recall for a fail-closed evidence gate and a real relation-transition (vs B4's brittle two-endpoint proxy). The single-FRAME terminal predicates (B1/B2/B3/B5) are the ones that cannot reject born-inside._
+_Read this honestly: **B4** (contained + started-outside, a two-frame predicate) reaches **0 false-PASS** — matching the structured verifier — and even out-certifies it on successes, because it does not fail-close on occlusion. **B6** (B4 + the verifier's own evidence gate) then ties the structured verifier's WHOLE scoreboard (same success-cert, same 0 false-PASS) — the engineered steelman: a fully built-out task-specific predicate approximates the verifier on this one task. The single-FRAME terminal predicates (B1/B2/B3/B5) are the ones that cannot reject born-inside._
+
+
+### B6 vs. the structured verifier — same scoreboard, not the same clips
+
+- agree-certify: **25**, agree-reject: **49**, disagreements: **4** (they cancel: 2 B6-only vs 2 verifier-only).
+  - **B6 certifies, verifier doesn't** — `oic_success_hand_obstruction_001__sony_front`: B6 certifies via raw terminal-center geometry; the verifier's relation extraction reads a corrupted terminal relation and hard-FAILs (a known verifier false-negative on obstruction successes).
+  - **B6 certifies, verifier doesn't** — `oic_success_tag_obstruction_001__sony_front`: B6 certifies via raw terminal-center geometry; the verifier's relation extraction reads a corrupted terminal relation and hard-FAILs (a known verifier false-negative on obstruction successes).
+  - **verifier certifies, B6 doesn't** — `oic_success_016__iphone_top`: the verifier certifies via the placed_from_outside (far-start) target — the cube's CENTER is INSIDE by csg.is_inside — but B6's B3 requires the WHOLE footprint inside the shrunk inner region, which is stricter, so B6 rejects (a definitional difference in 'inside': center-in vs footprint-in).
+  - **verifier certifies, B6 doesn't** — `oic_success_016__sony_front`: the verifier certifies via the placed_from_outside (far-start) target — the cube's CENTER is INSIDE by csg.is_inside — but B6's B3 requires the WHOLE footprint inside the shrunk inner region, which is stricter, so B6 rejects (a definitional difference in 'inside': center-in vs footprint-in).
+
+_So "B6 approximates the verifier" is true at the **aggregate scoreboard** level, not as a clip-for-clip identity — and the disagreements are real definitional/extraction differences, not one side being wrong. Full diff: `b6_vs_structured.json`._
+
+
+## Baseline engineering cost — the ladder reimplements wide-robot
+
+| predicate | what it must know | what it reimplements | form |
+|---|---|---|---|
+| B1 / B2 | tray footprint (XY rectangle) | terminal containment (2D, rim-blind) | bespoke predicate code |
+| B3 | cube + tray dimensions, containment margin (still 2D, rim-blind) | the verifier's footprint-containment geometry (2D — a cube 1 m above the tray still passes B3) | bespoke predicate code |
+| B5 | + rim height (the z test B3 lacks) | the verifier's FULL 3D `csg.is_inside` (shrunk footprint AND rim height) | bespoke predicate code |
+| B4 | + initial-state semantics (the cube must have STARTED outside) | the initial-state / outside->inside transition check (as a two-endpoint proxy) | bespoke predicate code |
+| B6 | + evidence-quality thresholds (dropout / consecutive-missing / confidence) | the fail-closed evidence gate — here by IMPORTING the verifier's own `assess_evidence_quality` (a from-scratch baseline would have to re-derive it) | bespoke predicate code + bolt-on of the verifier's gate |
+| wide-robot | the same assumptions, but DECLARED as data in the target graph (objects, objectStates, events, plannerView goals) | nothing per-task: one frozen engine (csg.matcher / verify_external_rollout) reads the graph; initial-state, transition, evidence gate, and leakage discipline are reusable components, not task-specific code | declarative task graph + frozen reusable verifier |
+
+_Climbing the ladder gradually rebuilds wide-robot's pieces as bespoke per-task code, until B6 reaches parity only by importing the verifier's own evidence gate. wide-robot declares the SAME assumptions as data in a task graph that one frozen engine reads — so they are auditable and reused across tasks (see the cross-task example) instead of re-derived per predicate._
 
 
 ## Aggregate over all clips
@@ -36,10 +62,35 @@ _Read this honestly: **B4** (contained + started-outside, a two-frame predicate)
 - **naive B1 (center-in-footprint) false PASSes on human-non-success clips: 11**
 - **B5 (maximal single-frame terminal predicate = csg.is_inside on last frame) false PASSes on human-non-success clips: 10** (the born-inside clips — a single-frame terminal check cannot see the missing transition)
 - **B4 (contained + started-outside, a TWO-frame predicate) false PASSes: 0** — the started-outside clause rejects born-inside, so B4 matches the structured verifier's 0 false-PASS. Tradeoff: B4 certifies 32/38 successes (it does NOT fail-close on occlusion), vs the structured verifier's 27/38. See the scoreboard above.
+- **B6 (B4 + the verifier's own evidence gate) false PASSes: 0**, success-cert 27/38 — the engineered steelman TIES the structured verifier's whole scoreboard (both 27/38 cert, both 0 false-PASS). It reaches parity by bolting the verifier's separable evidence gate onto a hand-coded geometry predicate (clip-level it still disagrees on a few successes that cancel — see the B6-vs-verifier diff).
 - wide-robot `terminal_only` PASSes on human-non-success clips: 3 (the verifier asked the *weak* terminal question — these are the born-inside clips)
 - **wide-robot STRUCTURED (relation_event OR placed_from_outside) PASSes on human-non-success clips: 0**
 - wide-robot STRUCTURED certifies human-success clips: 27 / 38; of the rest, 5 are UNCERTAIN (fail-closed on occlusion) and 6 are hard FAILs — real false-negatives on the hand/tag-obstruction successes where brief occlusion corrupts the terminal relation without tripping the evidence gate (an honest known limitation, not part of the thesis)
 - wide-robot clips rendered UNCERTAIN (fail-closed on evidence): 14
 
 The full per-clip table is in `results_table.csv`.
+
+
+## Deterministic fixtures (semantics, calibration-free)
+
+Hand-authored `real_camera.tracks.v0` episodes with round-number geometry (nothing to calibrate), one per semantic, regenerated by `fixtures.py` into `fixtures/`:
+
+| fixture | human | B1 | B3 | B4 | B5 | B6 | wr terminal | wr relation | occupancy-strawman |
+|---|---|---|---|---|---|---|---|---|---|
+| `fx_outside_to_inside_success` | success | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |
+| `fx_rim_partial` | fail | PASS | reject | reject | reject | reject | FAIL | FAIL | PASS |
+| `fx_born_inside` | fail | PASS | PASS | reject | PASS | reject | PASS | FAIL | PASS |
+| `fx_inside_to_inside` | fail | PASS | PASS | reject | PASS | reject | PASS | FAIL | PASS |
+| `fx_occluded_uncertain` | success | PASS | PASS | PASS | PASS | reject | UNCERTAIN | UNCERTAIN | PASS |
+| `fx_wrong_object` | fail | reject | reject | reject | reject | reject | FAIL | FAIL | PASS |
+
+_`fx_leaky_metadata` is rollout-only: the identical evidence is **PASS** clean but **UNCERTAIN** (`leakage_violation`) once a source role name leaks into `objectIdMap` — a gate the baselines do not have. The occupancy-strawman column is the identity-blind "is anything inside?" check `fx_wrong_object` defeats. Full asserted semantics + recompute in `fixtures/fixture_results.json`._
+
+
+## Cross-task — one frozen engine, task = target graph
+
+- engine identity: `pilots.external_verify.verify_external_rollout` is the **same function object** imported by the real-camera *and* RLBench pilots (realCamera=True, rlbench=True).
+- `open_drawer` articulation target on the 9 committed live RLBench drawer rollouts via that engine: allPass=True, leakage-clean=True, non-vacuous=True, articulation probes supported=True, all physics-unverified (physicalValidity null)=True.
+- same engine, same drawer rollout, two targets: `open_drawer` → **PASS**, `object_inside_container` → **FAIL**. The target IS the task.
+- the cube/tray baseline ladder is **inapplicable** to a drawer (bodies=['ARTICULATED_OBJECT'], container=False) — scoring open_drawer means a brand-new joint-extension predicate from scratch. Detail in `cross_task/cross_task_report.json`.
 

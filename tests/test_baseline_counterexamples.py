@@ -25,16 +25,31 @@ import pytest
 from csg.common import load_json
 from csg.predicates import DEFAULT as PRED_DEFAULT
 from experiments.baseline_counterexamples.baseline_predicates import (
+    EVIDENCE_THRESHOLDS,
     INDEPENDENT_CONSTANTS,
     LADDER,
     evaluate_clip,
 )
+from experiments.baseline_counterexamples.fixtures import (
+    FIXTURE_EXPECTATIONS,
+    TRACKS_FIXTURES,
+    evaluate_fixture_suite,
+)
+from experiments.baseline_counterexamples.cross_task import (
+    cross_task_report,
+    engine_identity,
+    verify_open_drawer_demos,
+)
 from scripts.build_baseline_counterexamples import (
+    B6_KEY,
+    ENGINEERING_COST_TABLE,
     EXP_DIR,
     PLACED_FROM_OUTSIDE,
+    REAL_VIDEO_THRESHOLDS,
     RELATION_EVENT,
     TERMINAL_ONLY,
     TRACKS_DIR,
+    b6_vs_structured_diff,
     build_row,
     independent_geometry_check,
     load_expected_classes,
@@ -124,14 +139,21 @@ def test_born_inside_terminal_passes_but_structured_fails():
 # --------------------------------------------------------------------------- #
 
 
-def test_occlusion_uncertain_while_all_baselines_certify():
+def test_occlusion_uncertain_while_single_and_two_frame_baselines_certify():
     rec = run_all_targets(_tracks(OCCLUSION))
     for name, t in rec.items():
         assert t["status"] == "UNCERTAIN", name
         assert t["failureClass"] == "extractor_uncertainty", name
-    # Every baseline (even B4) certifies it — they only read first + last frame.
+    # Every GEOMETRY baseline (B1..B5, incl. two-frame B4) certifies it — they read
+    # only the clean first + last visible frames and never see the mid occlusion.
     b = evaluate_clip(_tracks(OCCLUSION))
-    assert all(b[k["key"]] is True for k in LADDER)
+    for k in ("B1_center_in_footprint", "B2_footprint_overlap", "B3_full_inner_containment",
+              "B4_full_containment_started_outside", "B5_terminal_3d_containment"):
+        assert b[k] is True, k
+    # B6 = B4 + the verifier's OWN evidence gate -> it refuses, exactly like the verifier.
+    assert b["evidenceOk"] is False
+    assert b["evidenceFailureClass"] == "extractor_uncertainty"
+    assert b["B6_contained_started_outside_evidence_gated"] is False
 
 
 # --------------------------------------------------------------------------- #
@@ -192,6 +214,14 @@ def test_per_baseline_scoreboard_tradeoff(all_rows):
     assert board["wr structured (rel OR placed)"]["successCert"] == 27
     assert (board["B4 contained+started-outside"]["successCert"]
             > board["wr structured (rel OR placed)"]["successCert"])
+    # B6 (the engineered steelman) TIES the structured verifier's whole scoreboard.
+    b6 = board["B6 contained+started-outside+evidence-gated"]
+    struct = board["wr structured (rel OR placed)"]
+    assert b6["falsePass"] == 0
+    assert b6["successCert"] == 27
+    assert b6["successCert"] == struct["successCert"]
+    assert b6["falsePass"] == struct["falsePass"]
+    assert b6["kind"] == "engineered (B4 + evidence gate)"
 
 
 def _csv_cell(value) -> str:
@@ -208,7 +238,8 @@ def test_committed_csv_matches_recompute(all_rows):
         "expectedClass", "humanSuccess",
         "B1_center_in_footprint", "B2_footprint_overlap",
         "B3_full_inner_containment", "B4_full_containment_started_outside",
-        "B5_terminal_3d_containment", "overlapFrac", "anyNaivePass",
+        "B5_terminal_3d_containment", "B6_contained_started_outside_evidence_gated",
+        "overlapFrac", "evidenceOk", "anyNaivePass",
         "wr_terminal_only_status", "wr_relation_event_status",
         "wr_placed_from_outside_status", "wrStructuredCertifies",
     ]
@@ -311,3 +342,155 @@ def test_independent_geometry_corroborates_verifier():
     assert committed["agree"] == committed["clipsCompared"]
     assert committed["disagreements"] == []
     assert committed["constantsMatchCsgDefault"] is True
+
+
+# --------------------------------------------------------------------------- #
+# B6 (engineered steelman) vs the structured verifier — honest tie, not identity
+# --------------------------------------------------------------------------- #
+
+
+def test_b6_ties_structured_on_scoreboard_but_disagrees_clip_level(all_rows):
+    """B6 = B4 + the verifier's own evidence gate ties the structured verifier's
+    AGGREGATE scoreboard (same success-cert, same 0 false-PASS) but is NOT
+    clip-for-clip identical — they disagree on 4 successes that cancel out. The
+    honest framing depends on stating that, so it is pinned."""
+    succ = [r for r in all_rows if r["humanSuccess"]]
+    nons = [r for r in all_rows if not r["humanSuccess"]]
+    b6_cert = sum(1 for r in succ if r[B6_KEY] is True)
+    b6_fp = sum(1 for r in nons if r[B6_KEY] is True)
+    st_cert = sum(1 for r in succ if r["wrStructuredCertifies"])
+    st_fp = sum(1 for r in nons if r["wrStructuredCertifies"])
+    assert (b6_cert, b6_fp) == (27, 0)
+    assert (st_cert, st_fp) == (27, 0)  # tie on the scoreboard
+
+    diff = b6_vs_structured_diff(all_rows)
+    assert diff["tieOnAggregateScoreboard"] is True
+    assert diff["nDisagreements"] == 4  # NOT a clip-for-clip identity
+    assert len(diff["b6CertifiesVerifierDoesNot"]) == len(diff["verifierCertifiesB6DoesNot"]) == 2
+    # the disagreements are real, nameable causes (obstruction false-neg vs stricter footprint)
+    assert all("obstruction" in d["clip"] for d in diff["b6CertifiesVerifierDoesNot"])
+    assert all("success_016" in d["clip"] for d in diff["verifierCertifiesB6DoesNot"])
+
+    committed = load_json(EXP_DIR / "b6_vs_structured.json")
+    assert committed["tieOnAggregateScoreboard"] is True
+    assert committed["nDisagreements"] == 4
+
+
+def test_b6_evidence_thresholds_pinned_to_build_thresholds():
+    """B6's evidence gate must see the SAME thresholds the structured verifier saw on
+    this dataset, or the B6-vs-verifier comparison would be rigged. baseline_predicates
+    claims a test pins this — this IS that test."""
+    assert EVIDENCE_THRESHOLDS == REAL_VIDEO_THRESHOLDS
+
+
+def test_engineering_cost_table_well_formed():
+    """The 'what each predicate must know' table escalates B1->wide-robot and ends
+    with wide-robot declaring the same assumptions as data (the thesis)."""
+    preds = [e["predicate"] for e in ENGINEERING_COST_TABLE]
+    assert preds[0].startswith("B1") and preds[-1] == "wide-robot"
+    for e in ENGINEERING_COST_TABLE:
+        assert e["mustKnow"] and e["reimplements"] and e["form"]
+    # only wide-robot reaches the "declarative graph + reusable verifier" form.
+    assert "declarative" in ENGINEERING_COST_TABLE[-1]["form"]
+    assert all("declarative" not in e["form"] for e in ENGINEERING_COST_TABLE[:-1])
+    committed = load_json(EXP_DIR / "engineering_cost.json")
+    assert [r["predicate"] for r in committed["rows"]] == preds
+
+
+# --------------------------------------------------------------------------- #
+# Deterministic fixtures — calibration-free semantics
+# --------------------------------------------------------------------------- #
+
+
+def test_fixture_suite_matches_asserted_semantics():
+    """Every hand-authored fixture produces EXACTLY its asserted ladder + verifier
+    verdicts. Calibration is not a question (round-number geometry), so any drift
+    is a real semantic regression."""
+    res = evaluate_fixture_suite()
+    for fid, _builder, _human in TRACKS_FIXTURES:
+        exp = FIXTURE_EXPECTATIONS[fid]
+        rec = res[fid]
+        assert rec["ladder"] == exp["ladder"], fid
+        assert rec["occupancyStrawman"] == exp["occupancyStrawman"], fid
+        assert rec["structuredCertifies"] == exp["structuredCertifies"], fid
+        for tgt, status in exp["wr"].items():
+            assert rec["wr"][tgt] == status, f"{fid}:{tgt}"
+        if "wrClass" in exp:
+            assert rec["wrClass"][RELATION_EVENT] == exp["wrClass"], fid
+
+
+def test_fixture_rim_separates_b1_from_3d_containment():
+    """The calibration-free rim fixture: B1 (center) certifies, 3D containment
+    (B3/B5/B6) and the verifier reject — the dimensionality lesson, no calibration."""
+    rec = evaluate_fixture_suite()["fx_rim_partial"]
+    assert rec["ladder"]["B1"] is True
+    assert rec["ladder"]["B3"] is False and rec["ladder"]["B5"] is False
+    assert rec["wr"][TERMINAL_ONLY] == "FAIL"
+    assert rec["wrClass"][RELATION_EVENT] == "LEFT_ON_RIM"
+
+
+def test_fixture_occlusion_and_leakage_are_verifier_only_gates():
+    """Occlusion: B1..B5 certify, B6 + verifier refuse (evidence). Leakage: the same
+    rollout PASSes clean but is refused once a source name leaks in."""
+    res = evaluate_fixture_suite()
+    occ = res["fx_occluded_uncertain"]
+    assert all(occ["ladder"][k] for k in ("B1", "B2", "B3", "B4", "B5"))
+    assert occ["ladder"]["B6"] is False and occ["evidenceOk"] is False
+    assert occ["wr"][TERMINAL_ONLY] == "UNCERTAIN"
+    leak = res["fx_leaky_metadata"]
+    assert leak["cleanStatus"] == "PASS"
+    assert leak["leakyStatus"] == "UNCERTAIN"
+    assert leak["leakyFailureClass"] == "leakage_violation"
+
+
+def test_fixture_wrong_object_defeats_occupancy_but_not_identity_bound():
+    """A decoy in the tray fools the identity-blind occupancy strawman; the
+    cube-bound ladder and the verifier (judging the moving cube) reject."""
+    rec = evaluate_fixture_suite()["fx_wrong_object"]
+    assert rec["occupancyStrawman"] is True            # identity-blind check fooled
+    assert all(rec["ladder"][k] is False for k in rec["ladder"])  # cube-bound: not fooled
+    assert rec["structuredCertifies"] is False
+
+
+def test_committed_fixture_results_match_recompute():
+    """The committed fixtures/fixture_results.json matches a fresh recompute."""
+    committed = load_json(EXP_DIR / "fixtures" / "fixture_results.json")["results"]
+    fresh = evaluate_fixture_suite()
+    for fid, _b, _h in TRACKS_FIXTURES:
+        assert committed[fid]["ladder"] == fresh[fid]["ladder"], fid
+        assert committed[fid]["wr"] == fresh[fid]["wr"], fid
+
+
+# --------------------------------------------------------------------------- #
+# Cross-task — one frozen engine, task = target graph
+# --------------------------------------------------------------------------- #
+
+
+def test_cross_task_engine_is_one_shared_function_object():
+    """object_inside_container and open_drawer call the IDENTICAL verify_external_rollout."""
+    ident = engine_identity()
+    assert ident["realCameraImportIsSameObject"] is True
+    assert ident["rlbenchImportIsSameObject"] is True
+    assert ident["fn"] == "pilots.external_verify.verify_external_rollout"
+
+
+def test_cross_task_open_drawer_passes_via_same_engine():
+    """The committed live RLBench drawer demos PASS the open_drawer target through
+    the shared engine — leakage-clean, non-vacuous, articulation probes supported."""
+    od = verify_open_drawer_demos()
+    assert od["nDemos"] == 9
+    assert od["allPass"] and od["allLeakageClean"] and od["allNonVacuous"] and od["allProbesSupported"]
+
+
+def test_cross_task_target_is_the_task_and_baseline_is_inapplicable():
+    """Same engine + same drawer rollout: open_drawer PASSes, object_inside_container
+    FAILs — the target defines the task. The cube/tray ladder has no inputs on a drawer."""
+    ct = cross_task_report()
+    tdt = ct["targetDefinesTask"]
+    assert tdt["open_drawer_target"]["status"] == "PASS"
+    assert tdt["object_inside_container_target"]["status"] == "FAIL"
+    bi = ct["baselineInapplicable"]
+    assert bi["ladderApplicable"] is False
+    assert bi["drawerRolloutHas"]["anyContainerBody"] is False
+    committed = load_json(EXP_DIR / "cross_task" / "cross_task_report.json")
+    assert committed["openDrawerDemos"]["allPass"] is True
