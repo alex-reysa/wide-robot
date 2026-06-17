@@ -9,7 +9,8 @@
     "B2_footprint_overlap": true,
     "B3_full_inner_containment": true,
     "B4_full_containment_started_outside": true,
-    "B5_terminal_3d_containment": true
+    "B5_terminal_3d_containment": true,
+    "B6_contained_started_outside_evidence_gated": false
   },
   "ladder": [
     {
@@ -41,6 +42,12 @@
       "label": "B5 terminal-3D-containment",
       "question": "csg.is_inside on the LAST frame: shrunk footprint AND rim height (3D, the maximal single-frame terminal predicate)",
       "verdict": "PASS"
+    },
+    {
+      "key": "B6_contained_started_outside_evidence_gated",
+      "label": "B6 contained+started-outside+evidence-gated",
+      "question": "B4 AND the verifier's fail-closed evidence gate passes (the engineered steelman: matches the structured verifier's verdict profile on this dataset)",
+      "verdict": "reject"
     }
   ],
   "overlapFrac": 1.0,

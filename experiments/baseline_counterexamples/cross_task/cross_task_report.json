@@ -1,0 +1,178 @@
+{
+  "kind": "cross-task \u2014 one frozen engine, task supplied as a target graph (data)",
+  "engineIdentity": {
+    "fn": "pilots.external_verify.verify_external_rollout",
+    "realCameraImportIsSameObject": true,
+    "rlbenchImportIsSameObject": true,
+    "note": "object_inside_container (real-camera) and open_drawer (RLBench) call the IDENTICAL verify_external_rollout; only the target graph differs."
+  },
+  "openDrawerDemos": {
+    "target": "open_drawer_rlbench_articulation_event",
+    "nDemos": 9,
+    "allPass": true,
+    "allLeakageClean": true,
+    "allNonVacuous": true,
+    "allProbesSupported": true,
+    "allPhysicsUnverified": true,
+    "physicsNote": "every PASS is physics-unverified (physicalValidity null) \u2014 an honest kinematic PASS, not a physics-validated one, as for any external trace",
+    "rows": [
+      {
+        "demo": "open_drawer_bottom_demo00",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      },
+      {
+        "demo": "open_drawer_bottom_demo01",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      },
+      {
+        "demo": "open_drawer_bottom_demo02",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      },
+      {
+        "demo": "open_drawer_middle_demo00",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      },
+      {
+        "demo": "open_drawer_middle_demo01",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      },
+      {
+        "demo": "open_drawer_middle_demo02",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      },
+      {
+        "demo": "open_drawer_top_demo00",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      },
+      {
+        "demo": "open_drawer_top_demo01",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      },
+      {
+        "demo": "open_drawer_top_demo02",
+        "status": "PASS",
+        "passed": true,
+        "leakageClean": true,
+        "physicalValidity": null,
+        "vacuous": false,
+        "probeSupport": {
+          "goal_satisfaction": 1,
+          "articulation_transitions": 1,
+          "event_presence": 1
+        }
+      }
+    ]
+  },
+  "targetDefinesTask": {
+    "drawerRollout": "open_drawer_bottom_demo00.rollout.json",
+    "open_drawer_target": {
+      "status": "PASS",
+      "passed": true
+    },
+    "object_inside_container_target": {
+      "status": "FAIL",
+      "passed": false,
+      "hardMismatches": [
+        "object_carrier",
+        "initial_state",
+        "terminal_state",
+        "relation_transitions",
+        "event_presence",
+        "event_order",
+        "goal_satisfaction"
+      ]
+    },
+    "note": "One engine call signature, two task graphs. Swapping the target re-tasks the verifier; no engine code changes."
+  },
+  "baselineInapplicable": {
+    "ladderRequires": [
+      "real_camera.tracks.v0 input",
+      "a 'cube' (mover) role",
+      "a 'tray' (container) role",
+      "XY footprint containment geometry"
+    ],
+    "drawerRolloutHas": {
+      "schemaVersion": "csg.rollout.v0",
+      "bodyPhysicalKinds": [
+        "ARTICULATED_OBJECT"
+      ],
+      "anyContainerBody": false,
+      "successQuantity": "prismatic joint EXTENSION (~0.234 m), not XY containment"
+    },
+    "ladderApplicable": false,
+    "note": "There is no cube, no tray, no footprint \u2014 the B1..B6 predicates have no inputs on a drawer. Scoring open_drawer with a 'baseline' means writing a brand-new joint-extension predicate from scratch. The verifier reuses one engine and swaps the target graph."
+  },
+  "thesis": "The structured verifier framework handles object_inside_container and open_drawer with the IDENTICAL engine; only the declarative target changes. The baseline ladder is task-bound cube/tray code with no shared core \u2014 every new task is a full rewrite."
+}

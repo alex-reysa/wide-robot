@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "real_camera.tracks.v0",
+  "episodeId": "fx_born_inside",
+  "videoSha256": null,
+  "calibrationHash": null,
+  "fps": 30.0,
+  "frameSize": [
+    1280,
+    720
+  ],
+  "objects": [
+    {
+      "sourceRole": "cube",
+      "physicalKind": "RIGID_OBJECT",
+      "mobility": "MOVABLE",
+      "isContainer": false,
+      "sizeM": [
+        0.04,
+        0.04,
+        0.04
+      ],
+      "markerIds": [
+        7
+      ]
+    },
+    {
+      "sourceRole": "tray",
+      "physicalKind": "RIGID_OBJECT",
+      "mobility": "STATIC",
+      "isContainer": true,
+      "sizeM": [
+        0.24,
+        0.18,
+        0.03
+      ],
+      "markerIds": [
+        10
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "frameIndex": 0,
+      "timeS": 0.0,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.29,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 1,
+      "timeS": 0.033333,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.2928571428571428,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 2,
+      "timeS": 0.066667,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.2957142857142857,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 3,
+      "timeS": 0.1,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.29857142857142854,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 4,
+      "timeS": 0.133333,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.30142857142857143,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 5,
+      "timeS": 0.166667,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.30428571428571427,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 6,
+      "timeS": 0.2,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.30714285714285716,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 7,
+      "timeS": 0.233333,
+      "poses": {
+        "cube": {
+          "positionM": {
+            "x": 0.31,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        },
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    }
+  ],
+  "fixtureNote": "hand-authored deterministic fixture; round-number geometry, nothing calibrated"
+}

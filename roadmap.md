@@ -104,10 +104,22 @@ needs the INITIAL state too: a two-frame "contained + started-outside" predicate
 The structured verifier's edge over even B4 is narrow and specific: a fail-closed
 evidence gate (B4 certifies the occluded successes the verifier refuses) and a real
 relation-transition vs a two-endpoint proxy — a recall/evidence-honesty tradeoff
-(B4 certifies 32/38 successes, structured 27/38), not a clean dominance. This is
-terminal predicate vs. structured leakage-clean verifier — NOT learned-vs-hand-coded
-(every predicate is hand-coded; they differ only in how much of the task they
-encode). See experiments/baseline_counterexamples/.
+(B4 certifies 32/38 successes, structured 27/38), not a clean dominance. And the
+engineered steelman B6 (= B4 + the verifier's OWN evidence gate, bolted on) TIES the
+structured verifier's whole scoreboard (27/38 cert, 0/40 false-PASS): a sufficiently
+engineered task-specific predicate CAN approximate this one task. So the honest claim
+is NOT "uncatchable verdicts" — it is that terminal predicates fail outright while
+stronger predicates accumulate hidden assumptions (footprint -> dimensions -> margin
+-> rim height -> initial state -> evidence thresholds), each as bespoke per-task code;
+wide-robot externalizes the same assumptions as an auditable task graph read by one
+frozen engine reused across tasks (the cross_task/ open_drawer proof: the IDENTICAL
+verify_external_rollout passes object_inside_container and open_drawer — only the
+target graph differs — while the cube/tray baseline ladder is inapplicable to a
+drawer). This is terminal predicate vs. structured leakage-clean verifier — NOT
+learned-vs-hand-coded (every predicate is hand-coded; they differ only in how much of
+the task they encode). Backed by 7 calibration-free deterministic fixtures
+(rim / born-inside / inside->inside / outside->inside / occlusion / wrong-object /
+leaky-metadata) that pin the semantics precisely. See experiments/baseline_counterexamples/.
 ```
 
 **Allowed after the One Task, Four Worlds report (Phase 6):**
@@ -613,16 +625,26 @@ author target CSGs from video).
 
 **Baseline-counterexamples experiment (2026-06-17, `experiments/baseline_counterexamples/`):** a
 "why the structured verifier earns its complexity" artifact built on these same 78 clips. It runs a
-hand-coded baseline ladder **B1..B5** — center-in-footprint, footprint-overlap, full-inner-containment,
-contained+started-outside, and **B5 = the verifier's own `csg.is_inside` on the last frame (the maximal
-single-frame terminal predicate)** — next to the frozen verifier's three targets. Headline over all 78
+hand-coded baseline ladder **B1..B6** — center-in-footprint, footprint-overlap, full-inner-containment,
+contained+started-outside, **B5 = the verifier's own `csg.is_inside` on the last frame (the maximal
+single-frame terminal predicate)**, and **B6 = B4 + the verifier's own fail-closed evidence gate (the
+engineered steelman)** — next to the frozen verifier's three targets. Headline over all 78
 clips (per-baseline scoreboard, nothing hidden): single-frame terminal predicates all false-PASS born-inside —
-**B1 11/40**, even the maximal **B5 10/40**; the weak `terminal_only` target 3/40. The two predicates that
-reach **0/40** false-PASS are the *two-frame* **B4** (contained + started-outside) and the **structured**
-verifier — and B4 even out-certifies the verifier on successes (**32/38 vs 27/38**) by not fail-closing on
-occlusion. So the verifier's edge over a strong two-frame baseline is narrow and specific (fail-closed evidence
-gate + a real transition vs a two-endpoint proxy + leakage/cross-source) — a recall/evidence-honesty tradeoff,
-not a dominance. Three escalating lessons:
+**B1 11/40**, even the maximal **B5 10/40**; the weak `terminal_only` target 3/40. The predicates that
+reach **0/40** false-PASS are the *two-frame* **B4** (contained + started-outside), **B6**, and the
+**structured** verifier — and B4 even out-certifies the verifier on successes (**32/38 vs 27/38**) by not
+fail-closing on occlusion. **B6 ties the structured verifier's whole scoreboard (27/38 cert, 0/40 false-PASS,
+the same numbers)** by importing the verifier's own evidence gate — so a sufficiently engineered task-specific
+predicate CAN approximate this one task (they still disagree clip-level on 4 successes that cancel — stricter
+footprint vs the verifier's center-based `is_inside`, and the verifier's obstruction false-negatives). The
+honest claim is therefore NOT "uncatchable verdicts": it is that terminal predicates fail outright while
+stronger predicates accumulate hidden assumptions (an **engineering-cost table** shows the ladder rebuilding
+wide-robot's pieces rung by rung), which wide-robot externalizes as an auditable task graph read by **one
+frozen engine reused across tasks** — proven by a **cross-task** artifact where the IDENTICAL
+`verify_external_rollout` passes `object_inside_container` and `open_drawer` (only the target graph differs;
+the cube/tray ladder is inapplicable to a drawer). Pinned by **7 calibration-free deterministic fixtures**
+(round-number geometry, nothing to calibrate) that demonstrate each semantic precisely. Three escalating
+lessons on the real clips:
 **rim** `oic_fail_on_rim_001__iphone_top` (a *dimensionality* lesson — B1 PASS, B5/verifier reject `ON_TOP_OF`;
 the rejection is calibration-robust at +26 mm above rim while B1's PASS is a +5.4 mm knife-edge, quantified in
 a 14-row perturbation table where the verifier *never* flips to PASS), **born-inside** (terminal state
@@ -631,11 +653,14 @@ predicate), and **occlusion** (the one lesson separating the verifier from even 
 UNCERTAIN; every geometric baseline including B4 certifies it; the gate is target-blind and bolt-on-able, so
 this is evidence discipline, not structure). Hardened by adversarial review: a from-scratch geometry
 reimplementation reproduces the verifier's terminal relation **57/57** (genuine second implementation), a
-reproducibility check matches the committed dataset verdicts **78/78**, and the test suite + `--no-overlays`
-build pass in a **clean room with OpenCV blocked and all raw mp4s hidden**. Reproducible with no cv2/video;
-`csg/` byte-frozen; overlay PNGs committed, raw mp4s off-repo. This is methodology/evidence, not a new source
-binding — it strengthens the Phase 4 flagship narrative by showing the verifier's safety is *not* reproducible
-by a terminal predicate.
+reproducibility check matches the committed dataset verdicts **78/78**, the 7 deterministic fixtures match
+their asserted semantics, the cross-task open_drawer demos PASS **9/9** via the shared engine, and the full
+**24-test** suite + `--no-overlays` build pass in a **clean room with OpenCV blocked and all raw mp4s hidden**.
+Reproducible with no cv2/video; `csg/` byte-frozen; overlay PNGs committed, raw mp4s off-repo. This is
+methodology/evidence, not a new source binding — it strengthens the Phase 4 flagship narrative by showing
+that terminal predicates cannot reproduce the verifier's safety, that a fully-engineered predicate matches it
+only by reimplementing its components, and that the verifier's engine generalizes across tasks while a
+baseline does not.
 
 ### Phase 3A.5 — RH20T external-source smoke test
 

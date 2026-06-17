@@ -1,0 +1,1812 @@
+{
+  "schemaVersion": "real_camera.tracks.v0",
+  "episodeId": "fx_occluded_uncertain",
+  "videoSha256": null,
+  "calibrationHash": null,
+  "fps": 30.0,
+  "frameSize": [
+    1280,
+    720
+  ],
+  "objects": [
+    {
+      "sourceRole": "cube",
+      "physicalKind": "RIGID_OBJECT",
+      "mobility": "MOVABLE",
+      "isContainer": false,
+      "sizeM": [
+        0.04,
+        0.04,
+        0.04
+      ],
+      "markerIds": [
+        7
+      ]
+    },
+    {
+      "sourceRole": "tray",
+      "physicalKind": "RIGID_OBJECT",
+      "mobility": "STATIC",
+      "isContainer": true,
+      "sizeM": [
+        0.24,
+        0.18,
+        0.03
+      ],
+      "markerIds": [
+        10
+      ]
+    }
+  ],
+  "frames": [
+    {
+      "frameIndex": 0,
+      "timeS": 0.0,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.5,
+            "y": 0.0,
+            "z": 0.04
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 1,
+      "timeS": 0.033333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4978021978021978,
+            "y": 0.0,
+            "z": 0.03978021978021978
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 2,
+      "timeS": 0.066667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4956043956043956,
+            "y": 0.0,
+            "z": 0.03956043956043956
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 3,
+      "timeS": 0.1,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.49340659340659343,
+            "y": 0.0,
+            "z": 0.03934065934065934
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 4,
+      "timeS": 0.133333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4912087912087912,
+            "y": 0.0,
+            "z": 0.03912087912087912
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 5,
+      "timeS": 0.166667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.489010989010989,
+            "y": 0.0,
+            "z": 0.0389010989010989
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 6,
+      "timeS": 0.2,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4868131868131868,
+            "y": 0.0,
+            "z": 0.03868131868131868
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 7,
+      "timeS": 0.233333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4846153846153846,
+            "y": 0.0,
+            "z": 0.038461538461538464
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 8,
+      "timeS": 0.266667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4824175824175824,
+            "y": 0.0,
+            "z": 0.03824175824175824
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 9,
+      "timeS": 0.3,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.48021978021978023,
+            "y": 0.0,
+            "z": 0.03802197802197802
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 10,
+      "timeS": 0.333333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.47802197802197804,
+            "y": 0.0,
+            "z": 0.037802197802197804
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 11,
+      "timeS": 0.366667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4758241758241758,
+            "y": 0.0,
+            "z": 0.037582417582417586
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 12,
+      "timeS": 0.4,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4736263736263736,
+            "y": 0.0,
+            "z": 0.03736263736263736
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 13,
+      "timeS": 0.433333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4714285714285714,
+            "y": 0.0,
+            "z": 0.037142857142857144
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 14,
+      "timeS": 0.466667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.46923076923076923,
+            "y": 0.0,
+            "z": 0.036923076923076927
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 15,
+      "timeS": 0.5,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.46703296703296704,
+            "y": 0.0,
+            "z": 0.0367032967032967
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 16,
+      "timeS": 0.533333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.46483516483516485,
+            "y": 0.0,
+            "z": 0.036483516483516484
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 17,
+      "timeS": 0.566667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.46263736263736266,
+            "y": 0.0,
+            "z": 0.03626373626373627
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 18,
+      "timeS": 0.6,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.46043956043956047,
+            "y": 0.0,
+            "z": 0.03604395604395604
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 19,
+      "timeS": 0.633333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4582417582417582,
+            "y": 0.0,
+            "z": 0.035824175824175825
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 20,
+      "timeS": 0.666667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.45604395604395603,
+            "y": 0.0,
+            "z": 0.03560439560439561
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 21,
+      "timeS": 0.7,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.45384615384615384,
+            "y": 0.0,
+            "z": 0.03538461538461538
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 22,
+      "timeS": 0.733333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.45164835164835165,
+            "y": 0.0,
+            "z": 0.035164835164835165
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 23,
+      "timeS": 0.766667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.44945054945054946,
+            "y": 0.0,
+            "z": 0.03494505494505495
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 24,
+      "timeS": 0.8,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.4472527472527472,
+            "y": 0.0,
+            "z": 0.03472527472527473
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 25,
+      "timeS": 0.833333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.44505494505494503,
+            "y": 0.0,
+            "z": 0.034505494505494505
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 26,
+      "timeS": 0.866667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.44285714285714284,
+            "y": 0.0,
+            "z": 0.03428571428571429
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 27,
+      "timeS": 0.9,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.44065934065934065,
+            "y": 0.0,
+            "z": 0.03406593406593407
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 28,
+      "timeS": 0.933333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.43846153846153846,
+            "y": 0.0,
+            "z": 0.033846153846153845
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 29,
+      "timeS": 0.966667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.43626373626373627,
+            "y": 0.0,
+            "z": 0.03362637362637363
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 30,
+      "timeS": 1.0,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 31,
+      "timeS": 1.033333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 32,
+      "timeS": 1.066667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 33,
+      "timeS": 1.1,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 34,
+      "timeS": 1.133333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 35,
+      "timeS": 1.166667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 36,
+      "timeS": 1.2,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 37,
+      "timeS": 1.233333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 38,
+      "timeS": 1.266667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 39,
+      "timeS": 1.3,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 40,
+      "timeS": 1.333333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 41,
+      "timeS": 1.366667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 42,
+      "timeS": 1.4,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 43,
+      "timeS": 1.433333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 44,
+      "timeS": 1.466667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 45,
+      "timeS": 1.5,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 46,
+      "timeS": 1.533333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 47,
+      "timeS": 1.566667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 48,
+      "timeS": 1.6,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 49,
+      "timeS": 1.633333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 50,
+      "timeS": 1.666667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 51,
+      "timeS": 1.7,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 52,
+      "timeS": 1.733333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 53,
+      "timeS": 1.766667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 54,
+      "timeS": 1.8,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 55,
+      "timeS": 1.833333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 56,
+      "timeS": 1.866667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 57,
+      "timeS": 1.9,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 58,
+      "timeS": 1.933333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 59,
+      "timeS": 1.966667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 60,
+      "timeS": 2.0,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 61,
+      "timeS": 2.033333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 62,
+      "timeS": 2.066667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3637362637362637,
+            "y": 0.0,
+            "z": 0.026373626373626374
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 63,
+      "timeS": 2.1,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.36153846153846153,
+            "y": 0.0,
+            "z": 0.026153846153846153
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 64,
+      "timeS": 2.133333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3593406593406593,
+            "y": 0.0,
+            "z": 0.025934065934065935
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 65,
+      "timeS": 2.166667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3571428571428571,
+            "y": 0.0,
+            "z": 0.025714285714285714
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 66,
+      "timeS": 2.2,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3549450549450549,
+            "y": 0.0,
+            "z": 0.025494505494505496
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 67,
+      "timeS": 2.233333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3527472527472527,
+            "y": 0.0,
+            "z": 0.025274725274725275
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 68,
+      "timeS": 2.266667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3505494505494505,
+            "y": 0.0,
+            "z": 0.025054945054945058
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 69,
+      "timeS": 2.3,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.34835164835164834,
+            "y": 0.0,
+            "z": 0.024835164835164836
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 70,
+      "timeS": 2.333333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.34615384615384615,
+            "y": 0.0,
+            "z": 0.024615384615384615
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 71,
+      "timeS": 2.366667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.34395604395604396,
+            "y": 0.0,
+            "z": 0.024395604395604398
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 72,
+      "timeS": 2.4,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.34175824175824177,
+            "y": 0.0,
+            "z": 0.024175824175824177
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 73,
+      "timeS": 2.433333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3395604395604396,
+            "y": 0.0,
+            "z": 0.023956043956043956
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 74,
+      "timeS": 2.466667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3373626373626374,
+            "y": 0.0,
+            "z": 0.023736263736263738
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 75,
+      "timeS": 2.5,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3351648351648352,
+            "y": 0.0,
+            "z": 0.023516483516483517
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 76,
+      "timeS": 2.533333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.33296703296703295,
+            "y": 0.0,
+            "z": 0.023296703296703296
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 77,
+      "timeS": 2.566667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.33076923076923076,
+            "y": 0.0,
+            "z": 0.023076923076923078
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 78,
+      "timeS": 2.6,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.32857142857142857,
+            "y": 0.0,
+            "z": 0.022857142857142857
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 79,
+      "timeS": 2.633333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3263736263736263,
+            "y": 0.0,
+            "z": 0.022637362637362636
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 80,
+      "timeS": 2.666667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.32417582417582413,
+            "y": 0.0,
+            "z": 0.02241758241758242
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 81,
+      "timeS": 2.7,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.32197802197802194,
+            "y": 0.0,
+            "z": 0.0221978021978022
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 82,
+      "timeS": 2.733333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.31978021978021975,
+            "y": 0.0,
+            "z": 0.02197802197802198
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 83,
+      "timeS": 2.766667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.31758241758241756,
+            "y": 0.0,
+            "z": 0.02175824175824176
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 84,
+      "timeS": 2.8,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3153846153846154,
+            "y": 0.0,
+            "z": 0.021538461538461538
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 85,
+      "timeS": 2.833333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3131868131868132,
+            "y": 0.0,
+            "z": 0.02131868131868132
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 86,
+      "timeS": 2.866667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.310989010989011,
+            "y": 0.0,
+            "z": 0.0210989010989011
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 87,
+      "timeS": 2.9,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3087912087912088,
+            "y": 0.0,
+            "z": 0.020879120879120878
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 88,
+      "timeS": 2.933333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3065934065934066,
+            "y": 0.0,
+            "z": 0.02065934065934066
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 89,
+      "timeS": 2.966667,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3043956043956044,
+            "y": 0.0,
+            "z": 0.02043956043956044
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 90,
+      "timeS": 3.0,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3021978021978022,
+            "y": 0.0,
+            "z": 0.020219780219780218
+          },
+          "confidence": 0.99
+        }
+      }
+    },
+    {
+      "frameIndex": 91,
+      "timeS": 3.033333,
+      "poses": {
+        "tray": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.015
+          },
+          "confidence": 0.99
+        },
+        "cube": {
+          "positionM": {
+            "x": 0.3,
+            "y": 0.0,
+            "z": 0.02
+          },
+          "confidence": 0.99
+        }
+      }
+    }
+  ],
+  "fixtureNote": "hand-authored deterministic fixture; round-number geometry, nothing calibrated"
+}
