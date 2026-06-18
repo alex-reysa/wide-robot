@@ -1,0 +1,126 @@
+{
+  "acceptanceCorpus": [
+    {
+      "expectMismatch": null,
+      "expectPass": false,
+      "fixture": "robot_missing_contact",
+      "hardMismatches": [
+        "event_presence",
+        "event_order"
+      ],
+      "matcherPassed": false,
+      "verdictMatchesExpected": true
+    },
+    {
+      "expectMismatch": [
+        "terminal_state",
+        "goal_satisfaction"
+      ],
+      "expectPass": false,
+      "fixture": "robot_removed_at_end",
+      "hardMismatches": [
+        "terminal_state",
+        "goal_satisfaction"
+      ],
+      "matcherPassed": false,
+      "verdictMatchesExpected": true
+    },
+    {
+      "expectMismatch": null,
+      "expectPass": true,
+      "fixture": "robot_success",
+      "hardMismatches": [],
+      "matcherPassed": true,
+      "verdictMatchesExpected": true
+    },
+    {
+      "expectMismatch": [
+        "event_order"
+      ],
+      "expectPass": false,
+      "fixture": "robot_wrong_order",
+      "hardMismatches": [
+        "event_order"
+      ],
+      "matcherPassed": false,
+      "verdictMatchesExpected": true
+    },
+    {
+      "expectMismatch": [
+        "terminal_state",
+        "relation_transitions",
+        "goal_satisfaction"
+      ],
+      "expectPass": false,
+      "fixture": "robot_wrong_relation",
+      "hardMismatches": [
+        "terminal_state",
+        "relation_transitions",
+        "event_presence",
+        "event_order",
+        "goal_satisfaction"
+      ],
+      "matcherPassed": false,
+      "verdictMatchesExpected": true
+    }
+  ],
+  "aggregate": {
+    "acceptanceCorpus": {
+      "allMatchExpected": true,
+      "nFixtures": 5,
+      "sabotagesFailed": 4,
+      "successPass": 1
+    },
+    "failureCorrectlyRejected": 0,
+    "failureStructuredFalsePass": 0,
+    "failureTerminalPass": 0,
+    "leakageCleanCount": 1,
+    "nClips": 1,
+    "nFailure": 0,
+    "nSuccess": 1,
+    "nativeGoldPass": true,
+    "noLeakageViolation": true,
+    "physicalValidity": true,
+    "successStructuredCertify": 1,
+    "successTerminalPass": 1,
+    "successUncertain": 0
+  },
+  "clips": [
+    {
+      "anyUncertain": false,
+      "clipId": "put_cube_in_tray__mujoco_solver",
+      "expectedClass": "success",
+      "groundTruth": "PASS",
+      "kind": "success",
+      "leakageClean": true,
+      "physicalValidity": true,
+      "placed": "FAIL",
+      "relationEvent": "PASS",
+      "structuredCertifies": true,
+      "structuredClass": null,
+      "terminal": "PASS",
+      "terminalClass": null,
+      "terminalHardMismatches": []
+    }
+  ],
+  "nativeGold": {
+    "graphId": "human_put_cube_in_tray",
+    "hardMismatches": [],
+    "leakageClean": true,
+    "matcherPassed": true,
+    "passed": true,
+    "physicalValidity": true,
+    "status": "PASS",
+    "vacuous": false
+  },
+  "physicalValidityMode": "physics re-checked at capture (true)",
+  "source": "Genuine MuJoCo backend solver run of put_cube_in_tray (committed fixture; experiments/cross_source_oic/mujoco_fixture/).",
+  "tiersRun": [
+    "terminal_only",
+    "relation_event",
+    "placed_from_outside"
+  ],
+  "verifierPath": "extract_robot_csg -> csg.matcher.match -> leakage_report (== csg.benchmark.run_one)",
+  "world": "MuJoCo internal sim",
+  "worldKey": "mujoco"
+}

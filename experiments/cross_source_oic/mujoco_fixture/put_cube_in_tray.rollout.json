@@ -1,0 +1,3444 @@
+{
+  "backend": "mujoco",
+  "diagnostics": {
+    "hiddenVariablesNotUsed": [
+      "force",
+      "torque",
+      "mass",
+      "friction",
+      "stable_grasp_quality"
+    ],
+    "note": "MuJoCo physics backend: fixed-base arm + parallel-jaw gripper, scripted pick-place; physical validity checked (see csg/validity.md).",
+    "numFrames": 62,
+    "physicalValidity": true,
+    "physicalValidityReason": "all applicable physical-validity checks passed",
+    "planProduced": true,
+    "selectedProgramId": "candidate_000_pick_place_body_000_inside",
+    "skill": "pick_place"
+  },
+  "failures": [],
+  "frames": [
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999999999,
+          "x": 0.0,
+          "y": -2.1368813431243428e-18,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.4000370519620506,
+          "y": 0.0,
+          "z": 0.2799961962072487
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 3.983598260184239e-17,
+            "y": -3.306731778140663e-20,
+            "z": -2.2419052294456332e-23
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.5228499338483153e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "approach",
+      "timeNs": "502000000",
+      "timeS": 0.5020000000000003
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999980352738623,
+          "x": -1.1041384946569095e-15,
+          "y": -0.0019822836363831992,
+          "z": 2.0822662514002767e-15
+        },
+        "positionM": {
+          "x": 0.39087332237912414,
+          "y": 2.916062450317074e-15,
+          "z": 0.26903778485362556
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 3.898531338252931e-17,
+            "y": 2.4492973281351344e-19,
+            "z": -2.321637332624662e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.5228569093719703e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "approach",
+      "timeNs": "602000000",
+      "timeS": 0.6020000000000004
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999979530651402,
+          "x": -3.2280581359947897e-15,
+          "y": -0.0020233303066077186,
+          "z": 6.353059568344326e-15
+        },
+        "positionM": {
+          "x": 0.3722941158229918,
+          "y": 7.83788034014903e-15,
+          "z": 0.2496707458340401
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.068197396962575e-17,
+            "y": 2.7567495476341966e-18,
+            "z": -1.3128695649659436e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.522861796243752e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "approach",
+      "timeNs": "702000000",
+      "timeS": 0.7020000000000005
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999980381806107,
+          "x": -5.805520505283878e-15,
+          "y": -0.0019808167329765205,
+          "z": 1.116639236611259e-14
+        },
+        "positionM": {
+          "x": 0.35151874325365834,
+          "y": 1.2369214231137518e-14,
+          "z": 0.23096867711284186
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.0994091352706705e-17,
+            "y": 1.4204429442301e-18,
+            "z": -2.888060795949766e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.5228667068345605e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "approach",
+      "timeNs": "802000000",
+      "timeS": 0.8020000000000006
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999998060986531,
+          "x": -8.728274105757995e-15,
+          "y": -0.0019692697067831993,
+          "z": 1.628980478996579e-14
+        },
+        "positionM": {
+          "x": 0.32967046547849277,
+          "y": 1.615156594309249e-14,
+          "z": 0.21411883186626005
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.287414534062261e-17,
+            "y": -5.909208081191894e-19,
+            "z": -2.849200963291598e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.5228720091897517e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "approach",
+      "timeNs": "902000000",
+      "timeS": 0.9020000000000007
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999980658680633,
+          "x": -1.1961251756143185e-14,
+          "y": -0.0019667892954394884,
+          "z": 2.171063755733991e-14
+        },
+        "positionM": {
+          "x": 0.30704446184490486,
+          "y": 1.9116795826744503e-14,
+          "z": 0.19929148954110534
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 3.992372986852787e-17,
+            "y": 1.962351355788121e-19,
+            "z": -3.578493560153117e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.522878668583551e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "approach",
+      "timeNs": "1002000000",
+      "timeS": 1.0020000000000007
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999998067178664,
+          "x": -1.5479680901847643e-14,
+          "y": -0.001966122818156246,
+          "z": 2.7447036611724202e-14
+        },
+        "positionM": {
+          "x": 0.28383599877762833,
+          "y": 2.124393128229475e-14,
+          "z": 0.18652923234879148
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.064357247414836e-17,
+            "y": -2.4746881293359726e-19,
+            "z": -1.6072343946846154e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.5228855506514e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "pregrasp",
+      "timeNs": "1102000000",
+      "timeS": 1.1020000000000008
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999993184225558,
+          "x": -1.692266846134062e-14,
+          "y": -0.0011675420436572438,
+          "z": 3.054771209045748e-14
+        },
+        "positionM": {
+          "x": 0.27601808066963707,
+          "y": 2.2226008075241537e-14,
+          "z": 0.167541112560824
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.076838533203023e-17,
+            "y": 6.236151300707943e-19,
+            "z": -5.272031795844813e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.522892329891685e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "pregrasp",
+      "timeNs": "1202000000",
+      "timeS": 1.2020000000000008
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999992520832154,
+          "x": -1.6691917288858133e-14,
+          "y": -0.0012230425216610238,
+          "z": 3.109451476942671e-14
+        },
+        "positionM": {
+          "x": 0.27892331306956836,
+          "y": 2.2518655163425888e-14,
+          "z": 0.14229646663644724
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.0483156294059686e-17,
+            "y": 2.472001048304239e-18,
+            "z": -5.41272030076346e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.522896732478011e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "pregrasp",
+      "timeNs": "1302000000",
+      "timeS": 1.302000000000001
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999999204460771,
+          "x": -1.6224634176557008e-14,
+          "y": -0.001261379334459523,
+          "z": 3.1218246272693455e-14
+        },
+        "positionM": {
+          "x": 0.28121776542792976,
+          "y": 2.2492533512516353e-14,
+          "z": 0.1156844550123103
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 3.969245514637296e-17,
+            "y": 3.2017139257119765e-18,
+            "z": -5.538972639859592e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.5229037114508807e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "pregrasp",
+      "timeNs": "1402000000",
+      "timeS": 1.402000000000001
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999991913941306,
+          "x": -1.5715723021310464e-14,
+          "y": -0.0012716961448492195,
+          "z": 3.1267044462043106e-14
+        },
+        "positionM": {
+          "x": 0.28138464299440513,
+          "y": 2.2228278613903772e-14,
+          "z": 0.08875454719109753
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.1859706186360256e-17,
+            "y": 9.202894128151545e-19,
+            "z": -3.9297444079374685e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.522909253986855e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "pregrasp",
+      "timeNs": "1502000000",
+      "timeS": 1.5020000000000011
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999991881700402,
+          "x": -1.519066111071664e-14,
+          "y": -0.0012742288886945666,
+          "z": 3.129508732085847e-14
+        },
+        "positionM": {
+          "x": 0.2792320370174891,
+          "y": 2.1751509952803915e-14,
+          "z": 0.06185556339774785
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.2155676823351797e-17,
+            "y": 1.2082727541835793e-18,
+            "z": -2.5622517656758313e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.5229162197008125e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "pregrasp",
+      "timeNs": "1602000000",
+      "timeS": 1.6020000000000012
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999991877421416,
+          "x": -1.4652899338764692e-14,
+          "y": -0.0012745646539984814,
+          "z": 3.131059541729968e-14
+        },
+        "positionM": {
+          "x": 0.2747509470746098,
+          "y": 2.1076543512058478e-14,
+          "z": 0.0352172396324095
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 4.2220154555152943e-17,
+            "y": -2.387016797066351e-19,
+            "z": -2.8959516634034878e-18
+          },
+          "positionM": {
+            "x": 0.2700000000001232,
+            "y": 2.5229248061830684e-13,
+            "z": 0.019986687302375534
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "grasp",
+      "timeNs": "1702000000",
+      "timeS": 1.7020000000000013
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999990072141266,
+          "x": -1.0116205663222368e-14,
+          "y": -0.001409102821381719,
+          "z": 4.8124980917164254e-14
+        },
+        "positionM": {
+          "x": 0.2718445607288966,
+          "y": 2.875527166160828e-14,
+          "z": 0.022847365372469466
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999140385037,
+            "x": -1.234974966724409e-14,
+            "y": -0.0004146359657978567,
+            "z": 1.4403619127938223e-15
+          },
+          "positionM": {
+            "x": 0.2699745372056967,
+            "y": 2.51936543538278e-13,
+            "z": 0.019863576718727422
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "grasp",
+      "timeNs": "1802000000",
+      "timeS": 1.8020000000000014
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999986914834282,
+          "x": -7.379776591289155e-15,
+          "y": -0.0016177241517137562,
+          "z": 5.980719198962936e-14
+        },
+        "positionM": {
+          "x": 0.2715559934543153,
+          "y": 3.4376502979878247e-14,
+          "z": 0.021030936916388993
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999336748412,
+            "x": -2.7124371371257175e-14,
+            "y": -0.00036421190644210977,
+            "z": 3.193245659365573e-15
+          },
+          "positionM": {
+            "x": 0.2699687729613114,
+            "y": 2.510931402467877e-13,
+            "z": 0.01986107556830675
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "grasp",
+      "timeNs": "1902000000",
+      "timeS": 1.9020000000000015
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999986516813681,
+          "x": -6.311550683464044e-15,
+          "y": -0.0016421435521525457,
+          "z": 6.456700115806439e-14
+        },
+        "positionM": {
+          "x": 0.27151337115978763,
+          "y": 3.668624579824299e-14,
+          "z": 0.020761299487332033
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999489824543,
+            "x": -3.244188748860133e-14,
+            "y": -0.00031942931511930026,
+            "z": 5.0508744371177215e-15
+          },
+          "positionM": {
+            "x": 0.26996401893334654,
+            "y": 2.4969936260425805e-13,
+            "z": 0.019858361717133625
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "grasp",
+      "timeNs": "2002000000",
+      "timeS": 2.002000000000001
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999986458927987,
+          "x": -6.438777767262806e-15,
+          "y": -0.0016456647801616378,
+          "z": 6.538000890843693e-14
+        },
+        "positionM": {
+          "x": 0.2715018268073182,
+          "y": 3.715776016589607e-14,
+          "z": 0.02071031574192342
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999515260742,
+            "x": 1.0095494324966015e-14,
+            "y": -0.00031136449546695827,
+            "z": 6.08241434111294e-15
+          },
+          "positionM": {
+            "x": 0.2699577241713328,
+            "y": 2.4636895451133895e-13,
+            "z": 0.019866606826362324
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "grasp",
+      "timeNs": "2102000000",
+      "timeS": 2.10199999999999
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999986458686388,
+          "x": -7.076147433713087e-15,
+          "y": -0.0016456794610931243,
+          "z": 6.459334181897337e-14
+        },
+        "positionM": {
+          "x": 0.27148544124146046,
+          "y": 3.68880923086207e-14,
+          "z": 0.020673320027619
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999459013115,
+            "x": 4.4755230028251227e-14,
+            "y": -0.0003289336924838259,
+            "z": 6.850210521686056e-15
+          },
+          "positionM": {
+            "x": 0.26994898026425673,
+            "y": 2.4337386450089614e-13,
+            "z": 0.019879333021937753
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lift",
+      "timeNs": "2202000000",
+      "timeS": 2.201999999999979
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999992924044836,
+          "x": -1.3734817141506389e-14,
+          "y": 0.0011896178093494662,
+          "z": 3.711331006271805e-14
+        },
+        "positionM": {
+          "x": 0.2721833288054067,
+          "y": 2.3712083210661523e-14,
+          "z": 0.03339423555745093
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999958959294014,
+            "x": -8.749254889459689e-13,
+            "y": 0.0028649824351396603,
+            "z": -1.244815006548531e-12
+          },
+          "positionM": {
+            "x": 0.2703720855039322,
+            "y": 2.1253250750656324e-13,
+            "z": 0.0330550533815011
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lift",
+      "timeNs": "2302000000",
+      "timeS": 2.301999999999968
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999992261223213,
+          "x": -1.5209190469038036e-14,
+          "y": 0.001244087922434291,
+          "z": 3.20841203893746e-14
+        },
+        "positionM": {
+          "x": 0.2765344322310521,
+          "y": 2.188016567476174e-14,
+          "z": 0.057974031495019354
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999960129652259,
+            "x": -7.50967715265689e-13,
+            "y": 0.002823836689860555,
+            "z": -1.0354497213960787e-12
+          },
+          "positionM": {
+            "x": 0.27477528257629985,
+            "y": 2.112363980498193e-13,
+            "z": 0.05766693642970648
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lift",
+      "timeNs": "2402000000",
+      "timeS": 2.401999999999957
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999993174003723,
+          "x": -1.5871777298048748e-14,
+          "y": 0.001168417215586652,
+          "z": 3.130680640194054e-14
+        },
+        "positionM": {
+          "x": 0.2790907338396904,
+          "y": 2.2015717519027557e-14,
+          "z": 0.08455738438721969
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999964868216364,
+            "x": -6.436846430216941e-13,
+            "y": 0.0026507252562369744,
+            "z": -8.597464770838301e-13
+          },
+          "positionM": {
+            "x": 0.2774256945382798,
+            "y": 2.090332338470198e-13,
+            "z": 0.08421500027806217
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lift",
+      "timeNs": "2502000000",
+      "timeS": 2.501999999999946
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999999336535131,
+          "x": -1.6417463840668872e-14,
+          "y": 0.0011519241720008859,
+          "z": 3.115917450264434e-14
+        },
+        "positionM": {
+          "x": 0.27929362006836733,
+          "y": 2.2268709081660005e-14,
+          "z": 0.11147508767521311
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999966708647894,
+            "x": -5.514030453743046e-13,
+            "y": 0.002580360311385024,
+            "z": -7.139876537153603e-13
+          },
+          "positionM": {
+            "x": 0.2777240722342253,
+            "y": 2.0756473051472694e-13,
+            "z": 0.11110047492287792
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lift",
+      "timeNs": "2602000000",
+      "timeS": 2.601999999999935
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.99999933792119,
+          "x": -1.693655262946604e-14,
+          "y": 0.001150720288315018,
+          "z": 3.1097217353280524e-14
+        },
+        "positionM": {
+          "x": 0.2771469199106848,
+          "y": 2.2354293364021743e-14,
+          "z": 0.13831468415282447
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999967124541912,
+            "x": -4.711473830508282e-13,
+            "y": 0.0025641920381668506,
+            "z": -5.927166876826572e-13
+          },
+          "positionM": {
+            "x": 0.2756672896548092,
+            "y": 2.070713727680216e-13,
+            "z": 0.137917621451842
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lift",
+      "timeNs": "2702000000",
+      "timeS": 2.701999999999924
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999993361219763,
+          "x": -1.744093001040526e-14,
+          "y": 0.001152282780760139,
+          "z": 3.1037704903507736e-14
+        },
+        "positionM": {
+          "x": 0.27267839026145185,
+          "y": 2.222194178361804e-14,
+          "z": 0.16484068973362245
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.999996659139905,
+            "x": -4.008484545787094e-13,
+            "y": 0.0025849001968188392,
+            "z": -4.916101610184288e-13
+          },
+          "positionM": {
+            "x": 0.27128175501129387,
+            "y": 2.0720209478390275e-13,
+            "z": 0.16443028722992248
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "2802000000",
+      "timeS": 2.801999999999913
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999992378960207,
+          "x": -1.6253999104791894e-14,
+          "y": 0.001234587938363865,
+          "z": 2.902547571500034e-14
+        },
+        "positionM": {
+          "x": 0.28130852421924957,
+          "y": 2.1958740715780328e-14,
+          "z": 0.17511594503649705
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999927440185234,
+            "x": -2.7698203047225126e-13,
+            "y": 0.003809450131277992,
+            "z": -3.054023096534758e-13
+          },
+          "positionM": {
+            "x": 0.2802809299405338,
+            "y": 2.160235580241771e-13,
+            "z": 0.1740924065851721
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "2902000000",
+      "timeS": 2.901999999999902
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999993579173331,
+          "x": -1.3981101922883539e-14,
+          "y": 0.0011332100077541343,
+          "z": 2.5495709688638508e-14
+        },
+        "positionM": {
+          "x": 0.3009581971456476,
+          "y": 2.1332216757191782e-14,
+          "z": 0.17373394566846517
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999903639352625,
+            "x": -2.593371154374221e-13,
+            "y": 0.004389992781341469,
+            "z": -2.9413806590974783e-13
+          },
+          "positionM": {
+            "x": 0.299840516482591,
+            "y": 2.1552273072443114e-13,
+            "z": 0.17263821652004568
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "3002000000",
+      "timeS": 3.001999999999891
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999999377313378,
+          "x": -1.1682138521681775e-14,
+          "y": 0.001115962748767982,
+          "z": 2.1752629147582716e-14
+        },
+        "positionM": {
+          "x": 0.32223898751510693,
+          "y": 2.0146991455079376e-14,
+          "z": 0.17167387790504612
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999889201717936,
+            "x": -2.7079492540478865e-13,
+            "y": 0.0047073913848088515,
+            "z": -3.0320289994860077e-13
+          },
+          "positionM": {
+            "x": 0.32107875817839954,
+            "y": 2.14220240995588e-13,
+            "z": 0.17054731853457544
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "3102000000",
+      "timeS": 3.10199999999988
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999993649174621,
+          "x": -9.48904439606253e-15,
+          "y": 0.0011270158262317756,
+          "z": 1.8126106796015518e-14
+        },
+        "positionM": {
+          "x": 0.3437339304906546,
+          "y": 1.84673836493369e-14,
+          "z": 0.17061495637182764
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.999987610841592,
+            "x": -2.338448509283347e-13,
+            "y": 0.004977766901432407,
+            "z": -2.6906161223685947e-13
+          },
+          "positionM": {
+            "x": 0.3425315511831786,
+            "y": 2.1254199347504016e-13,
+            "z": 0.16947036090682932
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "3202000000",
+      "timeS": 3.201999999999869
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999993466364682,
+          "x": -7.430350790846594e-15,
+          "y": 0.001143121444558336,
+          "z": 1.4630320513574216e-14
+        },
+        "positionM": {
+          "x": 0.36517753564610833,
+          "y": 1.6290234693346035e-14,
+          "z": 0.1708107954057938
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.999986386692491,
+            "x": -1.9584141719819386e-13,
+            "y": 0.00521789514029274,
+            "z": -2.3580506916164147e-13
+          },
+          "positionM": {
+            "x": 0.3639397190379874,
+            "y": 2.1041438442290038e-13,
+            "z": 0.16965147148568896
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "3302000000",
+      "timeS": 3.301999999999858
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999999327553172,
+          "x": -5.515499671574009e-15,
+          "y": 0.0011596953065840254,
+          "z": 1.1264036994017695e-14
+        },
+        "positionM": {
+          "x": 0.3864617359488232,
+          "y": 1.361689443721221e-14,
+          "z": 0.17229506102902914
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999852333587723,
+            "x": -1.543809964106262e-13,
+            "y": 0.005434433217906741,
+            "z": -1.9897477336078918e-13
+          },
+          "positionM": {
+            "x": 0.3851955377311683,
+            "y": 2.077873037318002e-13,
+            "z": 0.17112288998398364
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "3402000000",
+      "timeS": 3.401999999999847
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999993084827301,
+          "x": -3.751601043574997e-15,
+          "y": 0.0011760246858733229,
+          "z": 8.016247706906258e-15
+        },
+        "positionM": {
+          "x": 0.40750073885441007,
+          "y": 1.0446948156603537e-14,
+          "z": 0.17506371611529872
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999841292904521,
+            "x": -1.1767296869791472e-13,
+            "y": 0.005633929997364128,
+            "z": -1.689664975058864e-13
+          },
+          "positionM": {
+            "x": 0.40621241423108895,
+            "y": 2.0466944432252158e-13,
+            "z": 0.17388051123192375
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "3502000000",
+      "timeS": 3.501999999999836
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999992895964238,
+          "x": -2.144575471716804e-15,
+          "y": 0.0011919759425133964,
+          "z": 4.87989423269212e-15
+        },
+        "positionM": {
+          "x": 0.42821263073283206,
+          "y": 6.786409398962791e-15,
+          "z": 0.17910262417915235
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999830629712138,
+            "x": -8.523520301362046e-14,
+            "y": 0.005820117757315646,
+            "z": -1.4463928433822984e-13
+          },
+          "positionM": {
+            "x": 0.42690770965362,
+            "y": 2.010564406696615e-13,
+            "z": 0.17791017075525928
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "transport",
+      "timeNs": "3602000000",
+      "timeS": 3.601999999999825
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999992709926657,
+          "x": -7.000206925428508e-16,
+          "y": 0.0012074825618764043,
+          "z": 1.8462559568592518e-15
+        },
+        "positionM": {
+          "x": 0.4485170319600265,
+          "y": 2.643917629027276e-15,
+          "z": 0.1843917570899602
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.999982022145484,
+            "x": -5.655603981311913e-14,
+            "y": 0.005996280999818287,
+            "z": -1.2498354509728614e-13
+          },
+          "positionM": {
+            "x": 0.447200359275883,
+            "y": 1.969569373929424e-13,
+            "z": 0.1831918411207766
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lower",
+      "timeNs": "3702000000",
+      "timeS": 3.701999999999814
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999993065430567,
+          "x": -1.0609448075040994e-16,
+          "y": -0.001177672877087706,
+          "z": 1.8604357253852396e-16
+        },
+        "positionM": {
+          "x": 0.4625395948229565,
+          "y": 3.3515787707830084e-16,
+          "z": 0.17652883823647542
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999952696361627,
+            "x": -3.190261338597522e-13,
+            "y": 0.0030758259537351203,
+            "z": -2.695287041153246e-13
+          },
+          "positionM": {
+            "x": 0.4613321782763725,
+            "y": 1.9481481271694057e-13,
+            "z": 0.1752683952411773
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lower",
+      "timeNs": "3802000000",
+      "timeS": 3.801999999999803
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999995426095333,
+          "x": -2.926687471739771e-17,
+          "y": -0.0009564416993383653,
+          "z": -3.4916190028347597e-19
+        },
+        "positionM": {
+          "x": 0.4679827907390041,
+          "y": 4.470329585732453e-17,
+          "z": 0.1553013967631071
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999933417905388,
+            "x": -3.7543116897500344e-13,
+            "y": 0.003649160806500775,
+            "z": -2.943093668655867e-13
+          },
+          "positionM": {
+            "x": 0.4667887063873109,
+            "y": 1.9407139987403812e-13,
+            "z": 0.1540958267382332
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lower",
+      "timeNs": "3902000000",
+      "timeS": 3.901999999999792
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999996758997194,
+          "x": -1.9598739030939755e-17,
+          "y": -0.000805108971681752,
+          "z": -3.022810902413374e-17
+        },
+        "positionM": {
+          "x": 0.4708959708857961,
+          "y": 1.3880776018683664e-18,
+          "z": 0.13224980583328594
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.999991660633902,
+            "x": -3.6089876885946436e-13,
+            "y": 0.004083951842429291,
+            "z": -2.741256589366303e-13
+          },
+          "positionM": {
+            "x": 0.46972795061660244,
+            "y": 1.9396778744515396e-13,
+            "z": 0.13108777472981725
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lower",
+      "timeNs": "4002000000",
+      "timeS": 4.001999999999781
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999997053943439,
+          "x": -1.8760272461048457e-17,
+          "y": -0.0007676009543513988,
+          "z": -3.597124257820204e-17
+        },
+        "positionM": {
+          "x": 0.47191984896089173,
+          "y": -5.762531240610324e-18,
+          "z": 0.10900682049178805
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999902382519391,
+            "x": -3.319064525651548e-13,
+            "y": 0.004418529260984064,
+            "z": -2.471407186927159e-13
+          },
+          "positionM": {
+            "x": 0.47077251175336066,
+            "y": 1.9399820874890097e-13,
+            "z": 0.1078796694026046
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lower",
+      "timeNs": "4102000000",
+      "timeS": 4.10199999999977
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999997133617458,
+          "x": -1.904458142188531e-17,
+          "y": -0.0007571502007003837,
+          "z": -3.713937827803928e-17
+        },
+        "positionM": {
+          "x": 0.4710873459579502,
+          "y": -6.8855160598199934e-18,
+          "z": 0.085873868692284
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999887852095591,
+            "x": -3.08672846651314e-13,
+            "y": 0.004735974568133491,
+            "z": -2.331059834702314e-13
+          },
+          "positionM": {
+            "x": 0.4699570560824636,
+            "y": 1.9403430353106929e-13,
+            "z": 0.0847726456103151
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lower",
+      "timeNs": "4202000000",
+      "timeS": 4.201999999999759
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999999717472542,
+          "x": -1.945483521621888e-17,
+          "y": -0.0007517012946212677,
+          "z": -3.744278337672929e-17
+        },
+        "positionM": {
+          "x": 0.46841076270208243,
+          "y": -7.000913944672335e-18,
+          "z": 0.06301250088337677
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999871995410271,
+            "x": -2.899824790472808e-13,
+            "y": 0.005059718776107247,
+            "z": -2.2909636261054804e-13
+          },
+          "positionM": {
+            "x": 0.46729395669619883,
+            "y": 1.940658371768343e-13,
+            "z": 0.061929369857453245
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "lower",
+      "timeNs": "4302000000",
+      "timeS": 4.301999999999748
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999997241934054,
+          "x": -2.0226264301209503e-17,
+          "y": -0.0007427066129176724,
+          "z": -4.2290069222360825e-17
+        },
+        "positionM": {
+          "x": 0.46391224287242405,
+          "y": -1.0827255487673257e-17,
+          "z": 0.040570920401311994
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.999985366536948,
+            "x": -3.2194838042867956e-13,
+            "y": 0.005409871714433701,
+            "z": -3.101987245560347e-13
+          },
+          "positionM": {
+            "x": 0.46280020838797165,
+            "y": 1.9413129585955266e-13,
+            "z": 0.03950102798846798
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "settle_in",
+      "timeNs": "4402000000",
+      "timeS": 4.401999999999737
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999995613936092,
+          "x": -2.0397878714055817e-17,
+          "y": 0.0009365962785233096,
+          "z": -2.735719762947532e-17
+        },
+        "positionM": {
+          "x": 0.459639028364403,
+          "y": 2.872641611673075e-18,
+          "z": 0.029273496816956873
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999701542209617,
+            "x": -2.6748096250909933e-13,
+            "y": 0.0077259735507889515,
+            "z": -2.6011757055783233e-13
+          },
+          "positionM": {
+            "x": 0.4581410025961992,
+            "y": 1.9408137065358278e-13,
+            "z": 0.028435227121082797
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "settle_in",
+      "timeNs": "4502000000",
+      "timeS": 4.501999999999726
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999997859823548,
+          "x": 2.824669083544758e-16,
+          "y": 0.0006542440252946964,
+          "z": -5.514106196576236e-15
+        },
+        "positionM": {
+          "x": 0.45982120352101796,
+          "y": -5.454075372045694e-15,
+          "z": 0.028411370527757482
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999836203733584,
+            "x": -9.034184836176741e-14,
+            "y": 0.005723546539626487,
+            "z": -2.532533377181092e-13
+          },
+          "positionM": {
+            "x": 0.45806423888111786,
+            "y": 1.8753273940610358e-13,
+            "z": 0.027903221439955134
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "settle_in",
+      "timeNs": "4602000000",
+      "timeS": 4.601999999999715
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999998520085318,
+          "x": -2.7700430706090195e-16,
+          "y": 0.000544043118031151,
+          "z": -7.808385569617187e-15
+        },
+        "positionM": {
+          "x": 0.45994002877024276,
+          "y": -6.796480107099286e-15,
+          "z": 0.02836179731507013
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999853172303768,
+            "x": -4.484341672143404e-14,
+            "y": 0.005418978101253357,
+            "z": -2.4627412770634703e-13
+          },
+          "positionM": {
+            "x": 0.45815153372767525,
+            "y": 1.8582332350678063e-13,
+            "z": 0.02790386689131897
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "settle_in",
+      "timeNs": "4702000000",
+      "timeS": 4.701999999999704
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999293548281,
+          "x": -6.277901726846321e-16,
+          "y": 0.00037588607178697147,
+          "z": -9.212977822484771e-15
+        },
+        "positionM": {
+          "x": 0.4600229814681198,
+          "y": -7.609772774106308e-15,
+          "z": 0.028353562550799946
+        }
+      },
+      "gripperClosed": true,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999873455845363,
+            "x": -1.8986664087005982e-14,
+            "y": 0.005030772385377079,
+            "z": -2.3880541797523126e-13
+          },
+          "positionM": {
+            "x": 0.4582220971043976,
+            "y": 1.8492292197506624e-13,
+            "z": 0.02792260944276444
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "settle_in",
+      "timeNs": "4802000000",
+      "timeS": 4.801999999999693
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999999974041628,
+          "x": -7.878732708608893e-16,
+          "y": 0.00022785246002240037,
+          "z": -9.71611429521971e-15
+        },
+        "positionM": {
+          "x": 0.4600868107257001,
+          "y": -7.856580900353305e-15,
+          "z": 0.028349018847670493
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999912067057698,
+            "x": -2.7327526945373504e-15,
+            "y": 0.004193627443928475,
+            "z": -2.3171525975309095e-13
+          },
+          "positionM": {
+            "x": 0.45826229733231444,
+            "y": 1.8445410933039736e-13,
+            "z": 0.027925619866172924
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "4902000000",
+      "timeS": 4.901999999999682
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999994988618,
+          "x": -1.1838795161124188e-16,
+          "y": 3.16587510876857e-05,
+          "z": -1.7063513461848235e-15
+        },
+        "positionM": {
+          "x": 0.45998247072197235,
+          "y": -1.4074718808586185e-15,
+          "z": 0.028083646111994542
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999997318112469,
+            "x": -0.0005169636417368147,
+            "y": -0.0005187735805706434,
+            "z": 1.865750138398786e-09
+          },
+          "positionM": {
+            "x": 0.4580749937088997,
+            "y": 2.0573417966729567e-05,
+            "z": 0.02794426984556489
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5002000000",
+      "timeS": 5.001999999999671
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999752845,
+          "x": -1.5881782829697607e-17,
+          "y": 7.03072139867331e-06,
+          "z": -2.21447436749507e-16
+        },
+        "positionM": {
+          "x": 0.4599630218456798,
+          "y": -1.819528154284144e-16,
+          "z": 0.028039254428255306
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999984319,
+            "x": -1.2509193365493697e-06,
+            "y": -1.253548208621668e-06,
+            "z": 2.15169040770135e-09
+          },
+          "positionM": {
+            "x": 0.4580956750894904,
+            "y": -3.569803018028899e-08,
+            "z": 0.02798658357194628
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5102000000",
+      "timeS": 5.10199999999966
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999998287,
+          "x": -2.128254212437393e-18,
+          "y": -5.854079136934864e-07,
+          "z": -2.8675063556609584e-17
+        },
+        "positionM": {
+          "x": 0.4599641345852415,
+          "y": -2.346300437759168e-17,
+          "z": 0.028035515514213974
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": -1.893712933117755e-09,
+            "y": -1.8976926599086794e-09,
+            "z": 2.151690407710157e-09
+          },
+          "positionM": {
+            "x": 0.45809572516717195,
+            "y": -8.567069142223713e-08,
+            "z": 0.027986687140384898
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5202000000",
+      "timeS": 5.201999999999649
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999980432,
+          "x": -2.8537404210861283e-19,
+          "y": -1.97812713157059e-06,
+          "z": -3.714635326327004e-18
+        },
+        "positionM": {
+          "x": 0.4599645853607658,
+          "y": -3.026206200075193e-18,
+          "z": 0.02803515424641527
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": -2.8668542671551254e-12,
+            "y": -2.872879141650552e-12,
+            "z": 2.1516904077101556e-09
+          },
+          "positionM": {
+            "x": 0.45809572524298264,
+            "y": -8.574634302814485e-08,
+            "z": 0.02798668730212256
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5302000000",
+      "timeS": 5.301999999999638
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999975889,
+          "x": -3.8271332825015115e-20,
+          "y": -2.195893200030622e-06,
+          "z": -4.812405786625364e-19
+        },
+        "positionM": {
+          "x": 0.45996466788572343,
+          "y": -3.9027127743273175e-19,
+          "z": 0.02803510918278236
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": -4.33989920598398e-15,
+            "y": -4.349657651419655e-15,
+            "z": 2.1516904077101556e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645755559547e-08,
+            "z": 0.027986687302375135
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5402000000",
+      "timeS": 5.401999999999627
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999975169,
+          "x": -5.16876649391084e-21,
+          "y": -2.228443054834775e-06,
+          "z": -6.241553448477968e-20
+        },
+        "positionM": {
+          "x": 0.4599646810290355,
+          "y": -5.033608335689228e-20,
+          "z": 0.02803510265159599
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": -4.652335087606274e-18,
+            "y": -6.5165842703101084e-18,
+            "z": 2.1516904077094984e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645772895969e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5502000000",
+      "timeS": 5.501999999999616
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999975063,
+          "x": -6.991633918276955e-22,
+          "y": -2.2332594807040943e-06,
+          "z": -8.099767044092733e-21
+        },
+        "positionM": {
+          "x": 0.4599646830526969,
+          "y": -6.493278986432372e-21,
+          "z": 0.02803510165235186
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 8.81413596448722e-18,
+            "y": -9.404489143631781e-19,
+            "z": 2.1516904054120692e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645772759902e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5602000000",
+      "timeS": 5.601999999999605
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999975048,
+          "x": -9.461688114318523e-23,
+          "y": -2.2339725540614466e-06,
+          "z": -1.0514220668556568e-21
+        },
+        "positionM": {
+          "x": 0.4599646833622155,
+          "y": -8.375978479047435e-22,
+          "z": 0.028035101497048007
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 8.297683003722806e-18,
+            "y": 3.336013727594929e-19,
+            "z": 2.1516904033132403e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645772580503e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5702000000",
+      "timeS": 5.701999999999594
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999975046,
+          "x": -1.2806428733894739e-23,
+          "y": -2.2340784959361183e-06,
+          "z": -1.3649967826804765e-22
+        },
+        "positionM": {
+          "x": 0.45996468340957847,
+          "y": -1.080237403451997e-22,
+          "z": 0.0280351014728053
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 9.945027596612875e-18,
+            "y": 5.858150920894292e-19,
+            "z": 2.1516904083329953e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645772403667e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5802000000",
+      "timeS": 5.801999999999583
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999975046,
+          "x": -1.7341169204368124e-24,
+          "y": -2.234094302208827e-06,
+          "z": -1.77290332503339e-23
+        },
+        "positionM": {
+          "x": 0.4599646834168415,
+          "y": -1.3933510711654885e-23,
+          "z": 0.02803510146901593
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 1.0676332469519148e-17,
+            "y": 3.899488301917441e-19,
+            "z": 2.1516904087901818e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645772214024e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "5902000000",
+      "timeS": 5.901999999999572
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999975044,
+          "x": -2.34893539467254e-25,
+          "y": -2.2340966702690654e-06,
+          "z": -2.303634986134302e-24
+        },
+        "positionM": {
+          "x": 0.4599646834179577,
+          "y": -1.7973489270425065e-24,
+          "z": 0.028035101468423307
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 1.2109318124238078e-17,
+            "y": 3.7934948387414754e-19,
+            "z": 2.151690404470136e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645772025665e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "release",
+      "timeNs": "6002000000",
+      "timeS": 6.001999999999561
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999999999936182,
+          "x": -3.1826772216578894e-26,
+          "y": 3.5726006744098238e-06,
+          "z": -2.994427001894636e-25
+        },
+        "positionM": {
+          "x": 0.45996101555733304,
+          "y": -2.318561569577789e-25,
+          "z": 0.02803805903768304
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 8.813277734537672e-18,
+            "y": 4.487109059497789e-19,
+            "z": 2.1516904053090104e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645771847882e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "retreat",
+      "timeNs": "6102000000",
+      "timeS": 6.10199999999955
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999998396473866,
+          "x": -4.23811413894324e-27,
+          "y": 0.0017908237480111643,
+          "z": -3.8969920683273405e-26
+        },
+        "positionM": {
+          "x": 0.4619167086090158,
+          "y": -3.004663354762937e-26,
+          "z": 0.04064983636450578
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 6.684671861564057e-18,
+            "y": -2.3280789685492293e-19,
+            "z": 2.1516904034344053e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645771664417e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "retreat",
+      "timeNs": "6202000000",
+      "timeS": 6.201999999999539
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999992167659273,
+          "x": -5.686124641399062e-28,
+          "y": 0.0012515860065605872,
+          "z": -5.048116304528186e-27
+        },
+        "positionM": {
+          "x": 0.4670596395035713,
+          "y": -3.8934578046350945e-27,
+          "z": 0.0652808446778191
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 7.329624966427822e-18,
+            "y": -2.736141093177372e-19,
+            "z": 2.151690400328764e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645771481015e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "retreat",
+      "timeNs": "6302000000",
+      "timeS": 6.301999999999528
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999994594998967,
+          "x": -7.634154255462612e-29,
+          "y": 0.001039711457379673,
+          "z": -6.481357574237536e-28
+        },
+        "positionM": {
+          "x": 0.4698755222102242,
+          "y": -4.9586907901106975e-28,
+          "z": 0.0917971450586554
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 1.0571098012269311e-17,
+            "y": -1.326983137927345e-19,
+            "z": 2.1516904004165865e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645771278488e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "retreat",
+      "timeNs": "6402000000",
+      "timeS": 6.401999999999517
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.999999504899428,
+          "x": -1.0371542335982134e-29,
+          "y": 0.0009950883874205844,
+          "z": -8.277745371732103e-29
+        },
+        "positionM": {
+          "x": 0.4700902363527224,
+          "y": -6.213358569324665e-29,
+          "z": 0.11876333702492196
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 1.1101547267125504e-17,
+            "y": 7.313458809278639e-19,
+            "z": 2.1516903955445295e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645771094838e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "retreat",
+      "timeNs": "6502000000",
+      "timeS": 6.501999999999506
+    },
+    {
+      "articulation": {},
+      "effectorPose": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 0.9999995159652281,
+          "x": -1.4744109501415078e-30,
+          "y": 0.0009839051324302594,
+          "z": -1.0560060059877455e-29
+        },
+        "positionM": {
+          "x": 0.4677654896315679,
+          "y": -7.617433052284996e-30,
+          "z": 0.1458317522816565
+        }
+      },
+      "gripperClosed": false,
+      "objectPoses": {
+        "body_000": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 0.9999999999999997,
+            "x": 1.1298235783806886e-17,
+            "y": 9.346044840166667e-20,
+            "z": 2.151690392490872e-09
+          },
+          "positionM": {
+            "x": 0.45809572524309744,
+            "y": -8.574645770909606e-08,
+            "z": 0.027986687302375524
+          }
+        },
+        "body_001": {
+          "confidence": 1.0,
+          "frameId": "world",
+          "orientationWxyz": {
+            "w": 1.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "positionM": {
+            "x": 0.46,
+            "y": 0.0,
+            "z": 0.015
+          }
+        }
+      },
+      "phase": "retreat",
+      "timeNs": "6602000000",
+      "timeS": 6.601999999999495
+    }
+  ],
+  "objectIdMap": {
+    "h_cube": "body_000",
+    "h_tray": "body_001"
+  },
+  "robotEffectorId": "robot_gripper",
+  "sceneBodies": [
+    {
+      "articulation": {},
+      "bodyId": "body_000",
+      "isContainer": false,
+      "mobility": "MOVABLE",
+      "objectId": "body_000",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeApproximate": false,
+      "sizeM": [
+        0.04,
+        0.04,
+        0.04
+      ]
+    },
+    {
+      "articulation": {},
+      "bodyId": "body_001",
+      "containerCavity": {
+        "floorThicknessM": 0.008,
+        "wallThicknessM": 0.008
+      },
+      "isContainer": true,
+      "mobility": "STATIC",
+      "objectId": "body_001",
+      "physicalKind": "RIGID_OBJECT",
+      "sizeApproximate": false,
+      "sizeM": [
+        0.24,
+        0.18,
+        0.03
+      ]
+    }
+  ],
+  "schemaVersion": "csg.rollout.v0",
+  "skillProgram": {
+    "manipulatedObjectId": "body_000",
+    "programId": "candidate_000_pick_place_body_000_inside",
+    "relationGoal": "INSIDE",
+    "score": 1.2,
+    "skillType": "pick_place",
+    "steps": [
+      {
+        "objectId": "body_000",
+        "op": "move_effector_to_pregrasp"
+      },
+      {
+        "contactMode": "GRASP_LIKELY",
+        "objectId": "body_000",
+        "op": "close_gripper_until_contact"
+      },
+      {
+        "objectId": "body_000",
+        "op": "lift_object"
+      },
+      {
+        "objectId": "body_000",
+        "op": "move_object_to_relation_target",
+        "relation": "INSIDE",
+        "targetObjectId": "body_001"
+      },
+      {
+        "objectId": "body_000",
+        "op": "open_gripper_release"
+      }
+    ],
+    "targetObjectId": "body_001"
+  },
+  "success": true
+}

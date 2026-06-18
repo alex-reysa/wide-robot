@@ -1,0 +1,2041 @@
+{
+  "claim": "The same semantic task, instantiated per source as a target card and judged by the same frozen verifier core, PASSes genuine successes, rejects non-successes (0 false PASSes in every world), stays leakage-clean, and reports physical validity honestly (true only for the internal sim, where physics was actually re-checked; null for the three external worlds).",
+  "frozenCore": "csg.matcher.match + csg.rollout_extract.extract_robot_csg (the SAME functions verify_external_rollout and csg.benchmark.run_one call). csg/ is byte-frozen.",
+  "question": "Did the object end up inside the container, having been put there (a real outside\u2192inside transition), not merely born inside?",
+  "targetEquivalence": {
+    "allExternalTiersIdentical": true,
+    "claim": "Each world is verified against its OWN target card (different graphId, object labels, geometry provenance) \u2014 but every card reduces to the SAME verifier-enforced semantic core per tier. This proves 'same semantic task, instantiated per source', NOT 'one identical target file'.",
+    "internalSim": {
+      "goalCoreMatchesSharedCore": true,
+      "goldGoalCore": {
+        "goal": {
+          "desiredRelation": "INSIDE",
+          "hard": true,
+          "kind": "OBJECT_RELATION_GOAL",
+          "object": "__OBJECT__",
+          "subject": "__SUBJECT__"
+        },
+        "objects": {
+          "__OBJECT__": {
+            "mobility": "STATIC",
+            "physicalKind": "RIGID_OBJECT"
+          },
+          "__SUBJECT__": {
+            "mobility": "MOVABLE",
+            "physicalKind": "RIGID_OBJECT"
+          }
+        }
+      },
+      "mujocoGoldGraphId": "human_put_cube_in_tray",
+      "note": "The MuJoCo internal-sim world is judged against its native gold pick-place target, a SUPERSET of the relation tiers (it additionally enforces contact / object-carrier / temporal-order probes). Only its INSIDE goal core is claimed equivalent to the shared core \u2014 the internal world is judged at a STRONGER tier.",
+      "sharedGoalCore": {
+        "goal": {
+          "desiredRelation": "INSIDE",
+          "hard": true,
+          "kind": "OBJECT_RELATION_GOAL",
+          "object": "__OBJECT__",
+          "subject": "__SUBJECT__"
+        },
+        "objects": {
+          "__OBJECT__": {
+            "mobility": "STATIC",
+            "physicalKind": "RIGID_OBJECT"
+          },
+          "__SUBJECT__": {
+            "mobility": "MOVABLE",
+            "physicalKind": "RIGID_OBJECT"
+          }
+        }
+      }
+    },
+    "kind": "structural equivalence of the per-source object_inside_container target cards",
+    "perTier": {
+      "placed_from_outside": {
+        "allIdentical": true,
+        "distinctSignatureCount": 1,
+        "pairwiseDiffs": [],
+        "sharedSignature": {
+          "contacts": [],
+          "events": [
+            {
+              "eventKind": "CONTAINMENT_CHANGE",
+              "transitions": [
+                {
+                  "from": "NEAR",
+                  "object": "__OBJECT__",
+                  "subject": "__SUBJECT__",
+                  "to": "INSIDE"
+                }
+              ]
+            }
+          ],
+          "goal": {
+            "desiredRelation": "INSIDE",
+            "hard": true,
+            "kind": "OBJECT_RELATION_GOAL",
+            "object": "__OBJECT__",
+            "subject": "__SUBJECT__"
+          },
+          "goals": [
+            {
+              "articulation": null,
+              "desiredRelation": "INSIDE",
+              "hard": true,
+              "kind": "OBJECT_RELATION_GOAL",
+              "object": "__OBJECT__",
+              "stage": 0,
+              "subject": "__SUBJECT__"
+            }
+          ],
+          "objects": {
+            "__OBJECT__": {
+              "mobility": "STATIC",
+              "physicalKind": "RIGID_OBJECT"
+            },
+            "__SUBJECT__": {
+              "mobility": "MOVABLE",
+              "physicalKind": "RIGID_OBJECT"
+            }
+          },
+          "relations": [
+            {
+              "object": "__OBJECT__",
+              "order": 0,
+              "relation": "FAR_FROM",
+              "subject": "__SUBJECT__"
+            },
+            {
+              "object": "__OBJECT__",
+              "order": 1,
+              "relation": "INSIDE",
+              "subject": "__SUBJECT__"
+            }
+          ],
+          "requiresContactWord": false,
+          "stageCount": 1
+        },
+        "sources": [
+          "real_camera",
+          "rlbench"
+        ],
+        "tier": "placed_from_outside"
+      },
+      "relation_event": {
+        "allIdentical": true,
+        "distinctSignatureCount": 1,
+        "pairwiseDiffs": [],
+        "sharedSignature": {
+          "contacts": [],
+          "events": [
+            {
+              "eventKind": "CONTAINMENT_CHANGE",
+              "transitions": [
+                {
+                  "from": "NEAR",
+                  "object": "__OBJECT__",
+                  "subject": "__SUBJECT__",
+                  "to": "INSIDE"
+                }
+              ]
+            }
+          ],
+          "goal": {
+            "desiredRelation": "INSIDE",
+            "hard": true,
+            "kind": "OBJECT_RELATION_GOAL",
+            "object": "__OBJECT__",
+            "subject": "__SUBJECT__"
+          },
+          "goals": [
+            {
+              "articulation": null,
+              "desiredRelation": "INSIDE",
+              "hard": true,
+              "kind": "OBJECT_RELATION_GOAL",
+              "object": "__OBJECT__",
+              "stage": 0,
+              "subject": "__SUBJECT__"
+            }
+          ],
+          "objects": {
+            "__OBJECT__": {
+              "mobility": "STATIC",
+              "physicalKind": "RIGID_OBJECT"
+            },
+            "__SUBJECT__": {
+              "mobility": "MOVABLE",
+              "physicalKind": "RIGID_OBJECT"
+            }
+          },
+          "relations": [
+            {
+              "object": "__OBJECT__",
+              "order": 0,
+              "relation": "NEAR",
+              "subject": "__SUBJECT__"
+            },
+            {
+              "object": "__OBJECT__",
+              "order": 1,
+              "relation": "INSIDE",
+              "subject": "__SUBJECT__"
+            }
+          ],
+          "requiresContactWord": false,
+          "stageCount": 1
+        },
+        "sources": [
+          "real_camera",
+          "rh20t",
+          "rlbench"
+        ],
+        "tier": "relation_event"
+      },
+      "terminal_only": {
+        "allIdentical": true,
+        "distinctSignatureCount": 1,
+        "pairwiseDiffs": [],
+        "sharedSignature": {
+          "contacts": [],
+          "events": [],
+          "goal": {
+            "desiredRelation": "INSIDE",
+            "hard": true,
+            "kind": "OBJECT_RELATION_GOAL",
+            "object": "__OBJECT__",
+            "subject": "__SUBJECT__"
+          },
+          "goals": [
+            {
+              "articulation": null,
+              "desiredRelation": "INSIDE",
+              "hard": true,
+              "kind": "OBJECT_RELATION_GOAL",
+              "object": "__OBJECT__",
+              "stage": 0,
+              "subject": "__SUBJECT__"
+            }
+          ],
+          "objects": {
+            "__OBJECT__": {
+              "mobility": "STATIC",
+              "physicalKind": "RIGID_OBJECT"
+            },
+            "__SUBJECT__": {
+              "mobility": "MOVABLE",
+              "physicalKind": "RIGID_OBJECT"
+            }
+          },
+          "relations": [],
+          "requiresContactWord": false,
+          "stageCount": 1
+        },
+        "sources": [
+          "real_camera",
+          "rh20t",
+          "rlbench"
+        ],
+        "tier": "terminal_only"
+      }
+    },
+    "signatureStricterThanVerifierNote": "The signature reads everything the matcher hard-gates on (all hard goal constraints, relation endpoints, events, contacts, stage count) PLUS object mobility, which the matcher's hard_signature treats only as a soft diagnostic (it gates on physicalKind). A stricter signature can only yield a false NON-equivalence, never a false equivalence \u2014 the safe direction.",
+    "simplifyingAssumptionScopes": {
+      "real_camera/placed_from_outside": {
+        "nContacts": 0,
+        "nHardArticulationGoals": 0,
+        "nHardGoals": 1,
+        "nHardRelationGoals": 1,
+        "stageCount": 1
+      },
+      "real_camera/relation_event": {
+        "nContacts": 0,
+        "nHardArticulationGoals": 0,
+        "nHardGoals": 1,
+        "nHardRelationGoals": 1,
+        "stageCount": 1
+      },
+      "real_camera/terminal_only": {
+        "nContacts": 0,
+        "nHardArticulationGoals": 0,
+        "nHardGoals": 1,
+        "nHardRelationGoals": 1,
+        "stageCount": 1
+      },
+      "rh20t/relation_event": {
+        "nContacts": 0,
+        "nHardArticulationGoals": 0,
+        "nHardGoals": 1,
+        "nHardRelationGoals": 1,
+        "stageCount": 1
+      },
+      "rh20t/terminal_only": {
+        "nContacts": 0,
+        "nHardArticulationGoals": 0,
+        "nHardGoals": 1,
+        "nHardRelationGoals": 1,
+        "stageCount": 1
+      },
+      "rlbench/placed_from_outside": {
+        "nContacts": 0,
+        "nHardArticulationGoals": 0,
+        "nHardGoals": 1,
+        "nHardRelationGoals": 1,
+        "stageCount": 1
+      },
+      "rlbench/relation_event": {
+        "nContacts": 0,
+        "nHardArticulationGoals": 0,
+        "nHardGoals": 1,
+        "nHardRelationGoals": 1,
+        "stageCount": 1
+      },
+      "rlbench/terminal_only": {
+        "nContacts": 0,
+        "nHardArticulationGoals": 0,
+        "nHardGoals": 1,
+        "nHardRelationGoals": 1,
+        "stageCount": 1
+      }
+    },
+    "strippedAuthoringFields": [
+      "graphId",
+      "taskCaption",
+      "categoryLabel",
+      "categoryConfidence",
+      "geometry(source+sizeM)",
+      "confidence(s)",
+      "timeNs/timeSpan magnitudes",
+      "object/relation/event/constraint/stage ids (canonicalised to roles)",
+      "pilotMetadata"
+    ],
+    "tierStrengthening": {
+      "placedDiffersFromRelationEventOnlyInStartEndpoint": true,
+      "relationEventAddsEndpointsAndEvent": true,
+      "terminalGoalUnchangedAcrossTiers": true,
+      "terminalOnlyHasNoRelationsOrEvents": true
+    }
+  },
+  "task": "object_inside_container",
+  "totals": {
+    "nClips": 90,
+    "nNonSuccess": 41,
+    "nSuccess": 49,
+    "noLeakageViolationAnyWorld": true,
+    "nonSuccessStructuredFalsePass": 0,
+    "successHardFail": 6,
+    "successStructuredCertify": 38,
+    "successUncertain": 5
+  },
+  "worlds": [
+    {
+      "acceptanceCorpus": [
+        {
+          "expectMismatch": null,
+          "expectPass": false,
+          "fixture": "robot_missing_contact",
+          "hardMismatches": [
+            "event_presence",
+            "event_order"
+          ],
+          "matcherPassed": false,
+          "verdictMatchesExpected": true
+        },
+        {
+          "expectMismatch": [
+            "terminal_state",
+            "goal_satisfaction"
+          ],
+          "expectPass": false,
+          "fixture": "robot_removed_at_end",
+          "hardMismatches": [
+            "terminal_state",
+            "goal_satisfaction"
+          ],
+          "matcherPassed": false,
+          "verdictMatchesExpected": true
+        },
+        {
+          "expectMismatch": null,
+          "expectPass": true,
+          "fixture": "robot_success",
+          "hardMismatches": [],
+          "matcherPassed": true,
+          "verdictMatchesExpected": true
+        },
+        {
+          "expectMismatch": [
+            "event_order"
+          ],
+          "expectPass": false,
+          "fixture": "robot_wrong_order",
+          "hardMismatches": [
+            "event_order"
+          ],
+          "matcherPassed": false,
+          "verdictMatchesExpected": true
+        },
+        {
+          "expectMismatch": [
+            "terminal_state",
+            "relation_transitions",
+            "goal_satisfaction"
+          ],
+          "expectPass": false,
+          "fixture": "robot_wrong_relation",
+          "hardMismatches": [
+            "terminal_state",
+            "relation_transitions",
+            "event_presence",
+            "event_order",
+            "goal_satisfaction"
+          ],
+          "matcherPassed": false,
+          "verdictMatchesExpected": true
+        }
+      ],
+      "aggregate": {
+        "acceptanceCorpus": {
+          "allMatchExpected": true,
+          "nFixtures": 5,
+          "sabotagesFailed": 4,
+          "successPass": 1
+        },
+        "failureCorrectlyRejected": 0,
+        "failureStructuredFalsePass": 0,
+        "failureTerminalPass": 0,
+        "leakageCleanCount": 1,
+        "nClips": 1,
+        "nFailure": 0,
+        "nSuccess": 1,
+        "nativeGoldPass": true,
+        "noLeakageViolation": true,
+        "physicalValidity": true,
+        "successStructuredCertify": 1,
+        "successTerminalPass": 1,
+        "successUncertain": 0
+      },
+      "clips": [
+        {
+          "anyUncertain": false,
+          "clipId": "put_cube_in_tray__mujoco_solver",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": true,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        }
+      ],
+      "nativeGold": {
+        "graphId": "human_put_cube_in_tray",
+        "hardMismatches": [],
+        "leakageClean": true,
+        "matcherPassed": true,
+        "passed": true,
+        "physicalValidity": true,
+        "status": "PASS",
+        "vacuous": false
+      },
+      "physicalValidityMode": "physics re-checked at capture (true)",
+      "source": "Genuine MuJoCo backend solver run of put_cube_in_tray (committed fixture; experiments/cross_source_oic/mujoco_fixture/).",
+      "tiersRun": [
+        "terminal_only",
+        "relation_event",
+        "placed_from_outside"
+      ],
+      "verifierPath": "extract_robot_csg -> csg.matcher.match -> leakage_report (== csg.benchmark.run_one)",
+      "world": "MuJoCo internal sim",
+      "worldKey": "mujoco"
+    },
+    {
+      "aggregate": {
+        "failureCorrectlyRejected": 0,
+        "failureStructuredFalsePass": 0,
+        "failureTerminalPass": 0,
+        "leakageCleanCount": 9,
+        "nClips": 9,
+        "nFailure": 0,
+        "nSuccess": 9,
+        "noLeakageViolation": true,
+        "physicalValidity": null,
+        "placedFromOutsidePass": 6,
+        "relationEventPass": 3,
+        "successStructuredCertify": 9,
+        "successTerminalPass": 9,
+        "successUncertain": 0,
+        "wrongTierRejections": 9
+      },
+      "clips": [
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_bottom_demo00",
+          "expectedClass": "success/bottom_demo00",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_bottom_demo01",
+          "expectedClass": "success/bottom_demo01",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_bottom_demo02",
+          "expectedClass": "success/bottom_demo02",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_middle_demo00",
+          "expectedClass": "success/middle_demo00",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_middle_demo01",
+          "expectedClass": "success/middle_demo01",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_middle_demo02",
+          "expectedClass": "success/middle_demo02",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_top_demo00",
+          "expectedClass": "success/top_demo00",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_top_demo01",
+          "expectedClass": "success/top_demo01",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "put_item_in_drawer_top_demo02",
+          "expectedClass": "success/top_demo02",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        }
+      ],
+      "physicalValidityMode": "external trace (null = physics-unverified)",
+      "source": "9 live RLBench PutItemInDrawer demos recorded on CoppeliaSim (pilots/rlbench/fixtures/live_runpod_20260616_put_item/).",
+      "tiersRun": [
+        "terminal_only",
+        "relation_event",
+        "placed_from_outside"
+      ],
+      "verifierPath": "verify_external_rollout (leakage door -> extract_robot_csg -> match -> leakage_report)",
+      "world": "RLBench external sim",
+      "worldKey": "rlbench"
+    },
+    {
+      "aggregate": {
+        "failureCorrectlyRejected": 40,
+        "failureStructuredFalsePass": 0,
+        "failureTerminalPass": 3,
+        "leakageCleanCount": 64,
+        "nClips": 78,
+        "nFailure": 40,
+        "nSuccess": 38,
+        "noLeakageViolation": true,
+        "physicalValidity": null,
+        "successStructuredCertify": 27,
+        "successTerminalPass": 27,
+        "successUncertain": 5
+      },
+      "clips": [
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_born_inside_001__iphone_top",
+          "expectedClass": "born_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_born_inside_001__sony_front",
+          "expectedClass": "born_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_born_inside_002__iphone_top",
+          "expectedClass": "born_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_born_inside_002__sony_front",
+          "expectedClass": "born_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_born_inside_hand_motion_001__iphone_top",
+          "expectedClass": "born_inside_with_hand_motion",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_born_inside_hand_motion_001__sony_front",
+          "expectedClass": "born_inside_with_hand_motion",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_born_inside_hand_motion_002__iphone_top",
+          "expectedClass": "born_inside_with_hand_motion",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_born_inside_hand_motion_002__sony_front",
+          "expectedClass": "born_inside_with_hand_motion",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_control_inside_to_inside_001__iphone_top",
+          "expectedClass": "inside_to_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_inside_to_inside_001__sony_front",
+          "expectedClass": "inside_to_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_inside_to_outside_001__iphone_top",
+          "expectedClass": "inside_to_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_inside_to_outside_001__sony_front",
+          "expectedClass": "inside_to_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_control_inside_to_outside_002__iphone_top",
+          "expectedClass": "inside_to_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_inside_to_outside_002__sony_front",
+          "expectedClass": "inside_to_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_static_001__iphone_top",
+          "expectedClass": "static_no_task",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_control_static_001__sony_front",
+          "expectedClass": "static_no_task",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_near_not_inside_001__iphone_top",
+          "expectedClass": "near_not_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_near_not_inside_001__sony_front",
+          "expectedClass": "near_not_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_fail_near_not_inside_002__iphone_top",
+          "expectedClass": "near_not_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_near_not_inside_002__sony_front",
+          "expectedClass": "near_not_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_fail_near_not_inside_003__iphone_top",
+          "expectedClass": "near_not_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_fail_near_not_inside_003__sony_front",
+          "expectedClass": "near_not_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_near_not_inside_004__iphone_top",
+          "expectedClass": "near_not_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_near_not_inside_004__sony_front",
+          "expectedClass": "near_not_inside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_on_rim_001__iphone_top",
+          "expectedClass": "left_on_rim",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "LEFT_ON_RIM",
+          "terminal": "FAIL",
+          "terminalClass": "LEFT_ON_RIM",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_on_rim_001__sony_front",
+          "expectedClass": "left_on_rim",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_fail_on_rim_002__iphone_top",
+          "expectedClass": "left_on_rim",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_on_rim_002__sony_front",
+          "expectedClass": "left_on_rim",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_on_rim_003__iphone_top",
+          "expectedClass": "left_on_rim",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_on_rim_003__sony_front",
+          "expectedClass": "left_on_rim",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_fail_outside_001__iphone_top",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_outside_001__sony_front",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_fail_outside_002__iphone_top",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_outside_002__sony_front",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_outside_003__iphone_top",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_outside_003__sony_front",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_fail_outside_004__iphone_top",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_outside_004__sony_front",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_outside_005__iphone_top",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_fail_outside_005__sony_front",
+          "expectedClass": "dropped_or_left_outside",
+          "groundTruth": "FAIL",
+          "kind": "non_success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_001__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_001__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_002__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_002__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_003__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_003__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_004__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_004__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_success_005__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_success_005__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_006__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_006__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_007__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_007__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_success_008__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_008__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_success_009__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_009__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_010__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_010__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_011__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_011__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": true,
+          "clipId": "oic_success_012__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": null,
+          "physicalValidity": null,
+          "placed": "UNCERTAIN",
+          "relationEvent": "UNCERTAIN",
+          "structuredCertifies": false,
+          "structuredClass": "extractor_uncertainty",
+          "terminal": "UNCERTAIN",
+          "terminalClass": "extractor_uncertainty",
+          "terminalHardMismatches": null
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_012__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_013__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_013__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_014__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_014__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_015__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_015__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_016__iphone_top",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_016__sony_front",
+          "expectedClass": "success",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "PASS",
+          "relationEvent": "FAIL",
+          "structuredCertifies": true,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_hand_obstruction_001__iphone_top",
+          "expectedClass": "success_hand_obstruction",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "DROPPED_OUTSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "DROPPED_OUTSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_hand_obstruction_001__sony_front",
+          "expectedClass": "success_hand_obstruction",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "LEFT_ON_RIM",
+          "terminal": "FAIL",
+          "terminalClass": "LEFT_ON_RIM",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_tag_obstruction_001__iphone_top",
+          "expectedClass": "success_tag_obstruction",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_tag_obstruction_001__sony_front",
+          "expectedClass": "success_tag_obstruction",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_tag_obstruction_002__iphone_top",
+          "expectedClass": "success_tag_obstruction",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "NEAR_NOT_INSIDE",
+          "terminal": "FAIL",
+          "terminalClass": "NEAR_NOT_INSIDE",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "oic_success_tag_obstruction_002__sony_front",
+          "expectedClass": "success_tag_obstruction",
+          "groundTruth": "PASS",
+          "kind": "success",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": "FAIL",
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": "BORN_INSIDE_NO_TRANSITION",
+          "terminal": "FAIL",
+          "terminalClass": "RELATION_MISMATCH",
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        }
+      ],
+      "evidenceThresholds": {
+        "max_consecutive_missing": 30,
+        "max_dropout_frac": 0.35
+      },
+      "physicalValidityMode": "external trace (null = physics-unverified)",
+      "source": "78 committed real-camera clips (Sony 45\u00b0 + iPhone top), object_inside_container_v0 (datasets/sony_object_inside_container_v0/).",
+      "tiersRun": [
+        "terminal_only",
+        "relation_event",
+        "placed_from_outside"
+      ],
+      "verifierPath": "pilots.real_camera.verify_episode (fail-closed UNCERTAIN gate -> verify_external_rollout)",
+      "world": "Sony/iPhone real camera",
+      "worldKey": "sony"
+    },
+    {
+      "aggregate": {
+        "failureCorrectlyRejected": 1,
+        "failureStructuredFalsePass": 0,
+        "failureTerminalPass": 0,
+        "leakageCleanCount": 2,
+        "nClips": 2,
+        "nFailure": 1,
+        "nSuccess": 1,
+        "noLeakageViolation": true,
+        "physicalValidity": null,
+        "successStructuredCertify": 1,
+        "successTerminalPass": 1,
+        "successUncertain": 0
+      },
+      "clips": [
+        {
+          "anyUncertain": false,
+          "clipId": "task_0017_user_0010_scene_0005_cfg_0003",
+          "expectedClass": "real_positive",
+          "groundTruth": "PASS",
+          "kind": "real_positive",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": null,
+          "relationEvent": "PASS",
+          "structuredCertifies": true,
+          "structuredClass": null,
+          "terminal": "PASS",
+          "terminalClass": null,
+          "terminalHardMismatches": []
+        },
+        {
+          "anyUncertain": false,
+          "clipId": "task_0017_user_0010_scene_0005_cfg_0003_negative",
+          "expectedClass": "derived_negative",
+          "groundTruth": "FAIL",
+          "kind": "derived_negative",
+          "leakageClean": true,
+          "physicalValidity": null,
+          "placed": null,
+          "relationEvent": "FAIL",
+          "structuredCertifies": false,
+          "structuredClass": null,
+          "terminal": "FAIL",
+          "terminalClass": null,
+          "terminalHardMismatches": [
+            "goal_satisfaction"
+          ]
+        }
+      ],
+      "physicalValidityMode": "external trace (null = physics-unverified)",
+      "source": "RH20T public dataset, task_0017 'put the pen into the pen holder' (1 real positive + 1 derived negative; datasets/rh20t_object_inside_container_v0/).",
+      "tiersRun": [
+        "terminal_only",
+        "relation_event"
+      ],
+      "verifierPath": "verify_external_rollout (leakage door -> extract_robot_csg -> match -> leakage_report)",
+      "world": "RH20T real robot video",
+      "worldKey": "rh20t"
+    }
+  ]
+}

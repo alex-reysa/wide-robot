@@ -1,0 +1,125 @@
+{
+  "componentDistances": {
+    "articulation_transitions": 0.0,
+    "contact_evidence": 0.0,
+    "contact_word": 0.0,
+    "event_order": 0.0,
+    "event_presence": 0.0,
+    "goal_satisfaction": 0.0,
+    "initial_state": 0.0,
+    "object_carrier": 0.0,
+    "object_trajectory": 1.0,
+    "relation_transitions": 0.0,
+    "terminal_state": 0.0
+  },
+  "diagnostics": {
+    "contact_word_pairs": [],
+    "n_best_tied_mappings": 1,
+    "n_candidate_mappings": 2,
+    "object_profile_soft_mismatches": {
+      "h_cube->body_000": {
+        "robot": [
+          "UNKNOWN_GEOMETRY",
+          []
+        ],
+        "target": [
+          "ORIENTED_BOX",
+          []
+        ]
+      },
+      "h_tray->body_001": {
+        "robot": [
+          "UNKNOWN_GEOMETRY",
+          []
+        ],
+        "target": [
+          "ORIENTED_BOX",
+          []
+        ]
+      }
+    },
+    "requires_contact_word": false,
+    "robot_leakage": {
+      "evidence_estimators": [
+        "SIM_STATE_EXTRACTION"
+      ],
+      "had_planner_view": false,
+      "had_solver_metadata": false,
+      "had_target_csg": false
+    },
+    "robot_observed_channels": {
+      "articulations": false,
+      "contacts": true,
+      "events": true,
+      "poses": true,
+      "relations": true
+    },
+    "robot_relevant_objects": [
+      "body_000",
+      "body_001"
+    ],
+    "target_relevant_objects": [
+      "h_cube",
+      "h_tray"
+    ],
+    "target_symmetry_orbits": []
+  },
+  "distance": 0.05555555555555555,
+  "hardProbes": [
+    "object_carrier",
+    "initial_state",
+    "terminal_state",
+    "relation_transitions",
+    "articulation_transitions",
+    "event_presence",
+    "event_order",
+    "goal_satisfaction"
+  ],
+  "objectMapping": {
+    "h_cube": "body_000",
+    "h_tray": "body_001"
+  },
+  "objectOrbitAmbiguous": false,
+  "passed": true,
+  "probeAgreement": {
+    "articulation_transitions": true,
+    "contact_evidence": true,
+    "contact_word": true,
+    "event_order": true,
+    "event_presence": true,
+    "goal_satisfaction": true,
+    "initial_state": true,
+    "object_carrier": true,
+    "object_trajectory": false,
+    "relation_transitions": true,
+    "terminal_state": true
+  },
+  "probeDistance": {
+    "articulation_transitions": 0.0,
+    "contact_evidence": 0.0,
+    "contact_word": 0.0,
+    "event_order": 0.0,
+    "event_presence": 0.0,
+    "goal_satisfaction": 0.0,
+    "initial_state": 0.0,
+    "object_carrier": 0.0,
+    "object_trajectory": 1.0,
+    "relation_transitions": 0.0,
+    "terminal_state": 0.0
+  },
+  "probeSupport": {
+    "articulation_transitions": 0,
+    "contact_evidence": 1,
+    "contact_word": 1,
+    "event_order": 6,
+    "event_presence": 4,
+    "goal_satisfaction": 1,
+    "initial_state": 1,
+    "object_carrier": 2,
+    "object_trajectory": 0,
+    "relation_transitions": 1,
+    "terminal_state": 1
+  },
+  "sameQuotientClass": true,
+  "vacuous": false
+}

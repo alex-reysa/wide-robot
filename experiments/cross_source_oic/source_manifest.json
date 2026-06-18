@@ -1,0 +1,60 @@
+{
+  "task": "object_inside_container",
+  "frozenCore": "csg.matcher.match + csg.rollout_extract.extract_robot_csg (the SAME functions verify_external_rollout and csg.benchmark.run_one call). csg/ is byte-frozen.",
+  "worlds": {
+    "mujoco": {
+      "world": "MuJoCo internal sim",
+      "source": "Genuine MuJoCo backend solver run of put_cube_in_tray (committed fixture; experiments/cross_source_oic/mujoco_fixture/).",
+      "verifierPath": "extract_robot_csg -> csg.matcher.match -> leakage_report (== csg.benchmark.run_one)",
+      "physicalValidityMode": "physics re-checked at capture (true)",
+      "nClips": 1,
+      "tiersRun": [
+        "terminal_only",
+        "relation_event",
+        "placed_from_outside"
+      ]
+    },
+    "rlbench": {
+      "world": "RLBench external sim",
+      "source": "9 live RLBench PutItemInDrawer demos recorded on CoppeliaSim (pilots/rlbench/fixtures/live_runpod_20260616_put_item/).",
+      "verifierPath": "verify_external_rollout (leakage door -> extract_robot_csg -> match -> leakage_report)",
+      "physicalValidityMode": "external trace (null = physics-unverified)",
+      "nClips": 9,
+      "tiersRun": [
+        "terminal_only",
+        "relation_event",
+        "placed_from_outside"
+      ]
+    },
+    "sony": {
+      "world": "Sony/iPhone real camera",
+      "source": "78 committed real-camera clips (Sony 45\u00b0 + iPhone top), object_inside_container_v0 (datasets/sony_object_inside_container_v0/).",
+      "verifierPath": "pilots.real_camera.verify_episode (fail-closed UNCERTAIN gate -> verify_external_rollout)",
+      "physicalValidityMode": "external trace (null = physics-unverified)",
+      "nClips": 78,
+      "tiersRun": [
+        "terminal_only",
+        "relation_event",
+        "placed_from_outside"
+      ]
+    },
+    "rh20t": {
+      "world": "RH20T real robot video",
+      "source": "RH20T public dataset, task_0017 'put the pen into the pen holder' (1 real positive + 1 derived negative; datasets/rh20t_object_inside_container_v0/).",
+      "verifierPath": "verify_external_rollout (leakage door -> extract_robot_csg -> match -> leakage_report)",
+      "physicalValidityMode": "external trace (null = physics-unverified)",
+      "nClips": 2,
+      "tiersRun": [
+        "terminal_only",
+        "relation_event"
+      ]
+    }
+  },
+  "committedInputs": {
+    "mujoco": "experiments/cross_source_oic/mujoco_fixture/ (+ gold_tests/put_cube_in_tray/)",
+    "rlbench": "pilots/rlbench/fixtures/live_runpod_20260616_put_item/",
+    "sony": "datasets/sony_object_inside_container_v0/{tracks,verdicts_all.json}",
+    "rh20t": "datasets/rh20t_object_inside_container_v0/rollouts/",
+    "targets": "pilots/{rlbench,real_camera,rh20t}/targets/object_inside_container_*.json"
+  }
+}
