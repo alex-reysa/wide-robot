@@ -335,9 +335,9 @@ quotient equivalence (`KNOWN_EQUIVALENT_TASKS`, `tests/test_confusion.py`).
 | **3A** | Real-camera episode ingestion (video → rollout evidence) | ✅ **DONE — real Sony/iPhone `object_inside_container` clips judged by the frozen verifier.** 78 clips ingested (`datasets/sony_object_inside_container_v0/`); **0 false PASSes on 30 genuine-failure clips**, born-inside→relation_event FAIL 8/8, success recall **27/32** after a frozen manual tray-corner calibration (was 18/32 marker-fit), 5 remaining misses are conservative UNCERTAIN. `pilots/real_camera/` (author calibration→tracks→rollout→verify, + `visualize_episode.py` overlay diagnostic + `manual_calibration.py`); 107 real_camera tests; `csg/` byte-frozen; raw mp4s off-repo, derived JSON committed. Marker-based + calibration-bounded — not marker-free or high-recall. |
 | **3A.5** | RH20T external-source smoke test | ✅ **DONE — real RH20T episode PASSES the frozen verifier.** `pilots/rh20t/` (annotation→tracks→rollout→frozen verifier) passes 22 synthetic tests; a real episode (`task_0017` pen→holder, cfg3 scene rating 9/10, reviewed from a global camera) PASSes both targets — relation-event non-vacuously — leakage-clean, `physicalValidity` null, source-blind rollout; a derived negative FAILs leakage-clean. `csg/` byte-frozen; no raw RH20T media committed (data obtained via an own-OAuth-client Drive copy bypass and kept off-repo). See `datasets/rh20t_object_inside_container_v0/{manifest.json,reports/eligibility_report.md}`. Gates only RH20T-as-external-source evidence; not a Sony/tripod Phase 3A replacement, not a 3B compiler. |
 | **3B** | Human-demo compiler (video → target CSG) | ⬜ pending, after 3A |
-| **4** | Cross-source flagship task | 🟡 **Three of four worlds landed for object_inside_container: MuJoCo internal-sim (2C), Sony/tripod real-camera (3A), and external-sim (2F-4 — RLBench PutItemInDrawer, 9 live demos PASS the unchanged verifier 9/9).** Remaining: the unified cross-source report (Phase 6) tying object_inside_container across MuJoCo + external sim + Sony/tripod (+ RH20T real-robot-video) through the unchanged verifier; DK1 real-arm is Phase 5. |
+| **4** | Cross-source flagship task | ✅ **DONE — all four worlds tied for object_inside_container through the unchanged verifier, in one report.** MuJoCo internal-sim (2C), RLBench external-sim (2F-4), Sony/tripod real-camera (3A), and RH20T real-robot-video (3A.5) each PASS genuine successes, reject non-successes (**0 false-PASS in every world**), stay leakage-clean, and report `physicalValidity` honestly (true only for the internal sim). See `experiments/cross_source_oic/` + `scripts/build_cross_source_report.py`. DK1 real-arm is Phase 5. |
 | **5** | DK1 / real robot recorded evidence | ⬜ pending (hardware-gated, data campaign first) |
-| **6** | One Task, Four Worlds report | ⬜ pending |
+| **6** | One Task, Four Worlds report | 🟡 **Report landed in build-script form** (`experiments/cross_source_oic/`: master scoreboard + per-clip CSV + per-source target-equivalence proof + leakage/validity, regenerated live through the frozen core, no MuJoCo/RLBench/cv2 needed). Remaining (full vision): the generic `pilots.cross_source.verify_task` CLI bound to a `task_card.md` so ANY task card can be source-bound and reported the same way. |
 | **7** | Verifier-as-a-service / dataset audit tool | ⬜ pending |
 
 ### Phase 1 — Lock the problem ✅
@@ -779,6 +779,12 @@ and every source produces PASS successes, FAIL failures, clean leakage, and
 interpretable failure classes through the unchanged verifier
 ```
 
+✅ **DONE.** `experiments/cross_source_oic/` binds `object_inside_container` to MuJoCo (internal
+sim, `physicalValidity: true`), RLBench (external sim, 9/9), Sony/tripod (real camera, 0 false-PASS
+on 40 non-success clips), AND RH20T (real-robot video, bonus 4th world) — every world PASSing
+successes, rejecting non-successes (0 false-PASS everywhere), leakage-clean, judged by the same
+frozen `csg.matcher.match`. Build: `python3 -m scripts.build_cross_source_report`.
+
 ### Phase 5 — DK1 / real robot recorded evidence
 
 The DK1 is a recorded-evidence source first, not an autonomy milestone. The 24
@@ -808,7 +814,12 @@ in §7, updated to treat DK1 as recorded evidence first.
 
 ### Phase 6 — One Task, Four Worlds report
 
-Create one report command:
+🟡 **Report landed in build-script form** — `python3 -m scripts.build_cross_source_report` →
+`experiments/cross_source_oic/` (master scoreboard, `summary.csv`, `cross_source_report.{md,json}`,
+`leakage_report.json`, `source_manifest.json`, `target_equivalence.json`). It already satisfies the
+"Done when" below for MuJoCo + external sim + Sony + RH20T, regenerated live through the frozen core
+with no MuJoCo/RLBench/cv2 install. **Remaining (full vision):** generalise to the parameterised CLI
+below so ANY task card can be source-bound the same way (DK1 becomes a 5th source once Phase 5 lands):
 
 ```bash
 python3 -m pilots.cross_source.verify_task \
@@ -817,7 +828,8 @@ python3 -m pilots.cross_source.verify_task \
   --out reports/object_inside_container_cross_source/
 ```
 
-Output:
+Output (the build-script form emits the same set, minus `failure_classification.json` which is folded
+into per-clip rows + the report's failure breakdown):
 
 ```text
 cross_source_report.md

@@ -1,0 +1,30 @@
+{
+  "kind": "per-world leakage cleanliness through the frozen leakage gate(s)",
+  "worlds": {
+    "mujoco": {
+      "noLeakageViolation": true,
+      "leakageCleanCount": 1,
+      "nClips": 1,
+      "note": "UNCERTAIN clips report leakageClean=n/a (no rollout minted); none is a violation."
+    },
+    "rlbench": {
+      "noLeakageViolation": true,
+      "leakageCleanCount": 9,
+      "nClips": 9,
+      "note": "UNCERTAIN clips report leakageClean=n/a (no rollout minted); none is a violation."
+    },
+    "sony": {
+      "noLeakageViolation": true,
+      "leakageCleanCount": 64,
+      "nClips": 78,
+      "note": "UNCERTAIN clips report leakageClean=n/a (no rollout minted); none is a violation."
+    },
+    "rh20t": {
+      "noLeakageViolation": true,
+      "leakageCleanCount": 2,
+      "nClips": 2,
+      "note": "UNCERTAIN clips report leakageClean=n/a (no rollout minted); none is a violation."
+    }
+  },
+  "noLeakageViolationAnyWorld": true
+}

@@ -1,0 +1,61 @@
+{
+  "aggregate": {
+    "failureCorrectlyRejected": 1,
+    "failureStructuredFalsePass": 0,
+    "failureTerminalPass": 0,
+    "leakageCleanCount": 2,
+    "nClips": 2,
+    "nFailure": 1,
+    "nSuccess": 1,
+    "noLeakageViolation": true,
+    "physicalValidity": null,
+    "successStructuredCertify": 1,
+    "successTerminalPass": 1,
+    "successUncertain": 0
+  },
+  "clips": [
+    {
+      "anyUncertain": false,
+      "clipId": "task_0017_user_0010_scene_0005_cfg_0003",
+      "expectedClass": "real_positive",
+      "groundTruth": "PASS",
+      "kind": "real_positive",
+      "leakageClean": true,
+      "physicalValidity": null,
+      "placed": null,
+      "relationEvent": "PASS",
+      "structuredCertifies": true,
+      "structuredClass": null,
+      "terminal": "PASS",
+      "terminalClass": null,
+      "terminalHardMismatches": []
+    },
+    {
+      "anyUncertain": false,
+      "clipId": "task_0017_user_0010_scene_0005_cfg_0003_negative",
+      "expectedClass": "derived_negative",
+      "groundTruth": "FAIL",
+      "kind": "derived_negative",
+      "leakageClean": true,
+      "physicalValidity": null,
+      "placed": null,
+      "relationEvent": "FAIL",
+      "structuredCertifies": false,
+      "structuredClass": null,
+      "terminal": "FAIL",
+      "terminalClass": null,
+      "terminalHardMismatches": [
+        "goal_satisfaction"
+      ]
+    }
+  ],
+  "physicalValidityMode": "external trace (null = physics-unverified)",
+  "source": "RH20T public dataset, task_0017 'put the pen into the pen holder' (1 real positive + 1 derived negative; datasets/rh20t_object_inside_container_v0/).",
+  "tiersRun": [
+    "terminal_only",
+    "relation_event"
+  ],
+  "verifierPath": "verify_external_rollout (leakage door -> extract_robot_csg -> match -> leakage_report)",
+  "world": "RH20T real robot video",
+  "worldKey": "rh20t"
+}

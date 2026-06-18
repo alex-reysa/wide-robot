@@ -1,0 +1,3162 @@
+{
+  "agentParts": [
+    {
+      "agentKind": "ROBOT",
+      "agentPartId": "robot_gripper",
+      "label": "robot_gripper",
+      "partKind": "ROBOT_GRIPPER"
+    }
+  ],
+  "contacts": [
+    {
+      "a": {
+        "id": "robot_gripper",
+        "kind": "ROBOT_PART_ENTITY"
+      },
+      "b": {
+        "id": "body_000",
+        "kind": "OBJECT_ENTITY"
+      },
+      "confidence": 1.0,
+      "contactEvidence": {
+        "motionCorrelation": 0.9926523309925843,
+        "stateChangeNearContactBoundary": true
+      },
+      "contactId": "contact_robot_gripper_body_000",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "mode": "GRASP_LIKELY",
+      "relativeMotion": "STICKING_LIKELY",
+      "timeSpan": {
+        "endTimeNs": "4802000000",
+        "startTimeNs": "1702000000"
+      }
+    }
+  ],
+  "events": [
+    {
+      "confidence": 1.0,
+      "contactIds": [
+        "contact_robot_gripper_body_000"
+      ],
+      "eventId": "ev_contact_begin_body_000",
+      "eventKind": "CONTACT_BEGIN",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "involvedObjectIds": [
+        "body_000"
+      ],
+      "timeSpan": {
+        "endTimeNs": "1702000000",
+        "startTimeNs": "1702000000"
+      }
+    },
+    {
+      "confidence": 1.0,
+      "eventId": "ev_release_body_000",
+      "eventKind": "RELEASE_INFERRED",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "involvedObjectIds": [
+        "body_000"
+      ],
+      "timeSpan": {
+        "endTimeNs": "4902000000",
+        "startTimeNs": "4902000000"
+      }
+    },
+    {
+      "confidence": 1.0,
+      "eventId": "ev_containment_change_body_000_body_001_39",
+      "eventKind": "CONTAINMENT_CHANGE",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "involvedObjectIds": [
+        "body_000",
+        "body_001"
+      ],
+      "observedDeltas": [
+        {
+          "confidence": 1.0,
+          "objectId": "body_000",
+          "relationTransition": {
+            "fromRelation": "NEAR",
+            "objectObjectId": "body_001",
+            "subjectObjectId": "body_000",
+            "toRelation": "INSIDE"
+          }
+        }
+      ],
+      "timeSpan": {
+        "endTimeNs": "4402000000",
+        "startTimeNs": "4402000000"
+      }
+    },
+    {
+      "confidence": 1.0,
+      "eventId": "ev_co_motion_body_000",
+      "eventKind": "HAND_OBJECT_CO_MOTION",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "involvedAgentPartIds": [
+        "robot_gripper"
+      ],
+      "involvedObjectIds": [
+        "body_000"
+      ],
+      "timeSpan": {
+        "endTimeNs": "4302000000",
+        "startTimeNs": "1802000000"
+      }
+    }
+  ],
+  "evidence": [
+    {
+      "estimator": "SIM_STATE_EXTRACTION",
+      "evidenceId": "ev_sim_state_extraction",
+      "modelName": "csg.rollout_extract",
+      "modelVersion": "csg.predicates.v0"
+    }
+  ],
+  "extractionMetadata": {
+    "numFrames": 62,
+    "predicatesVersion": "csg.predicates.v0",
+    "readTargetCsg": false,
+    "source": "rollout_frames"
+  },
+  "graphId": "robot_mujoco_rollout",
+  "objectStates": [
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.5228499338483153e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_0",
+      "timeNs": "502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_0",
+      "timeNs": "502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.5228569093719703e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_1",
+      "timeNs": "602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_1",
+      "timeNs": "602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.522861796243752e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_2",
+      "timeNs": "702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_2",
+      "timeNs": "702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.5228667068345605e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_3",
+      "timeNs": "802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_3",
+      "timeNs": "802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.5228720091897517e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_4",
+      "timeNs": "902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_4",
+      "timeNs": "902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.522878668583551e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_5",
+      "timeNs": "1002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_5",
+      "timeNs": "1002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.5228855506514e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_6",
+      "timeNs": "1102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_6",
+      "timeNs": "1102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.522892329891685e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_7",
+      "timeNs": "1202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_7",
+      "timeNs": "1202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.522896732478011e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_8",
+      "timeNs": "1302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_8",
+      "timeNs": "1302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.5229037114508807e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_9",
+      "timeNs": "1402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_9",
+      "timeNs": "1402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.522909253986855e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_10",
+      "timeNs": "1502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_10",
+      "timeNs": "1502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.5229162197008125e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_11",
+      "timeNs": "1602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_11",
+      "timeNs": "1602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2700000000001232,
+          "y": 2.5229248061830684e-13,
+          "z": 0.019986687302375534
+        }
+      },
+      "stateId": "st_body_000_12",
+      "timeNs": "1702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_12",
+      "timeNs": "1702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2699745372056967,
+          "y": 2.51936543538278e-13,
+          "z": 0.019863576718727422
+        }
+      },
+      "stateId": "st_body_000_13",
+      "timeNs": "1802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_13",
+      "timeNs": "1802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2699687729613114,
+          "y": 2.510931402467877e-13,
+          "z": 0.01986107556830675
+        }
+      },
+      "stateId": "st_body_000_14",
+      "timeNs": "1902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_14",
+      "timeNs": "1902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.26996401893334654,
+          "y": 2.4969936260425805e-13,
+          "z": 0.019858361717133625
+        }
+      },
+      "stateId": "st_body_000_15",
+      "timeNs": "2002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_15",
+      "timeNs": "2002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2699577241713328,
+          "y": 2.4636895451133895e-13,
+          "z": 0.019866606826362324
+        }
+      },
+      "stateId": "st_body_000_16",
+      "timeNs": "2102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_16",
+      "timeNs": "2102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.26994898026425673,
+          "y": 2.4337386450089614e-13,
+          "z": 0.019879333021937753
+        }
+      },
+      "stateId": "st_body_000_17",
+      "timeNs": "2202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_17",
+      "timeNs": "2202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2703720855039322,
+          "y": 2.1253250750656324e-13,
+          "z": 0.0330550533815011
+        }
+      },
+      "stateId": "st_body_000_18",
+      "timeNs": "2302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_18",
+      "timeNs": "2302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.27477528257629985,
+          "y": 2.112363980498193e-13,
+          "z": 0.05766693642970648
+        }
+      },
+      "stateId": "st_body_000_19",
+      "timeNs": "2402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_19",
+      "timeNs": "2402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2774256945382798,
+          "y": 2.090332338470198e-13,
+          "z": 0.08421500027806217
+        }
+      },
+      "stateId": "st_body_000_20",
+      "timeNs": "2502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_20",
+      "timeNs": "2502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2777240722342253,
+          "y": 2.0756473051472694e-13,
+          "z": 0.11110047492287792
+        }
+      },
+      "stateId": "st_body_000_21",
+      "timeNs": "2602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_21",
+      "timeNs": "2602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2756672896548092,
+          "y": 2.070713727680216e-13,
+          "z": 0.137917621451842
+        }
+      },
+      "stateId": "st_body_000_22",
+      "timeNs": "2702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_22",
+      "timeNs": "2702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.27128175501129387,
+          "y": 2.0720209478390275e-13,
+          "z": 0.16443028722992248
+        }
+      },
+      "stateId": "st_body_000_23",
+      "timeNs": "2802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_23",
+      "timeNs": "2802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.2802809299405338,
+          "y": 2.160235580241771e-13,
+          "z": 0.1740924065851721
+        }
+      },
+      "stateId": "st_body_000_24",
+      "timeNs": "2902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_24",
+      "timeNs": "2902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.299840516482591,
+          "y": 2.1552273072443114e-13,
+          "z": 0.17263821652004568
+        }
+      },
+      "stateId": "st_body_000_25",
+      "timeNs": "3002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_25",
+      "timeNs": "3002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.32107875817839954,
+          "y": 2.14220240995588e-13,
+          "z": 0.17054731853457544
+        }
+      },
+      "stateId": "st_body_000_26",
+      "timeNs": "3102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_26",
+      "timeNs": "3102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.3425315511831786,
+          "y": 2.1254199347504016e-13,
+          "z": 0.16947036090682932
+        }
+      },
+      "stateId": "st_body_000_27",
+      "timeNs": "3202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_27",
+      "timeNs": "3202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.3639397190379874,
+          "y": 2.1041438442290038e-13,
+          "z": 0.16965147148568896
+        }
+      },
+      "stateId": "st_body_000_28",
+      "timeNs": "3302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_28",
+      "timeNs": "3302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.3851955377311683,
+          "y": 2.077873037318002e-13,
+          "z": 0.17112288998398364
+        }
+      },
+      "stateId": "st_body_000_29",
+      "timeNs": "3402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_29",
+      "timeNs": "3402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.40621241423108895,
+          "y": 2.0466944432252158e-13,
+          "z": 0.17388051123192375
+        }
+      },
+      "stateId": "st_body_000_30",
+      "timeNs": "3502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_30",
+      "timeNs": "3502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.42690770965362,
+          "y": 2.010564406696615e-13,
+          "z": 0.17791017075525928
+        }
+      },
+      "stateId": "st_body_000_31",
+      "timeNs": "3602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_31",
+      "timeNs": "3602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.447200359275883,
+          "y": 1.969569373929424e-13,
+          "z": 0.1831918411207766
+        }
+      },
+      "stateId": "st_body_000_32",
+      "timeNs": "3702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_32",
+      "timeNs": "3702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.4613321782763725,
+          "y": 1.9481481271694057e-13,
+          "z": 0.1752683952411773
+        }
+      },
+      "stateId": "st_body_000_33",
+      "timeNs": "3802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_33",
+      "timeNs": "3802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.4667887063873109,
+          "y": 1.9407139987403812e-13,
+          "z": 0.1540958267382332
+        }
+      },
+      "stateId": "st_body_000_34",
+      "timeNs": "3902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_34",
+      "timeNs": "3902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46972795061660244,
+          "y": 1.9396778744515396e-13,
+          "z": 0.13108777472981725
+        }
+      },
+      "stateId": "st_body_000_35",
+      "timeNs": "4002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_35",
+      "timeNs": "4002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.47077251175336066,
+          "y": 1.9399820874890097e-13,
+          "z": 0.1078796694026046
+        }
+      },
+      "stateId": "st_body_000_36",
+      "timeNs": "4102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_36",
+      "timeNs": "4102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.4699570560824636,
+          "y": 1.9403430353106929e-13,
+          "z": 0.0847726456103151
+        }
+      },
+      "stateId": "st_body_000_37",
+      "timeNs": "4202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_37",
+      "timeNs": "4202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46729395669619883,
+          "y": 1.940658371768343e-13,
+          "z": 0.061929369857453245
+        }
+      },
+      "stateId": "st_body_000_38",
+      "timeNs": "4302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_38",
+      "timeNs": "4302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46280020838797165,
+          "y": 1.9413129585955266e-13,
+          "z": 0.03950102798846798
+        }
+      },
+      "stateId": "st_body_000_39",
+      "timeNs": "4402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_39",
+      "timeNs": "4402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.4581410025961992,
+          "y": 1.9408137065358278e-13,
+          "z": 0.028435227121082797
+        }
+      },
+      "stateId": "st_body_000_40",
+      "timeNs": "4502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_40",
+      "timeNs": "4502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45806423888111786,
+          "y": 1.8753273940610358e-13,
+          "z": 0.027903221439955134
+        }
+      },
+      "stateId": "st_body_000_41",
+      "timeNs": "4602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_41",
+      "timeNs": "4602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45815153372767525,
+          "y": 1.8582332350678063e-13,
+          "z": 0.02790386689131897
+        }
+      },
+      "stateId": "st_body_000_42",
+      "timeNs": "4702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_42",
+      "timeNs": "4702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.4582220971043976,
+          "y": 1.8492292197506624e-13,
+          "z": 0.02792260944276444
+        }
+      },
+      "stateId": "st_body_000_43",
+      "timeNs": "4802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_43",
+      "timeNs": "4802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45826229733231444,
+          "y": 1.8445410933039736e-13,
+          "z": 0.027925619866172924
+        }
+      },
+      "stateId": "st_body_000_44",
+      "timeNs": "4902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_44",
+      "timeNs": "4902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.4580749937088997,
+          "y": 2.0573417966729567e-05,
+          "z": 0.02794426984556489
+        }
+      },
+      "stateId": "st_body_000_45",
+      "timeNs": "5002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_45",
+      "timeNs": "5002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.4580956750894904,
+          "y": -3.569803018028899e-08,
+          "z": 0.02798658357194628
+        }
+      },
+      "stateId": "st_body_000_46",
+      "timeNs": "5102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_46",
+      "timeNs": "5102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572516717195,
+          "y": -8.567069142223713e-08,
+          "z": 0.027986687140384898
+        }
+      },
+      "stateId": "st_body_000_47",
+      "timeNs": "5202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_47",
+      "timeNs": "5202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524298264,
+          "y": -8.574634302814485e-08,
+          "z": 0.02798668730212256
+        }
+      },
+      "stateId": "st_body_000_48",
+      "timeNs": "5302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_48",
+      "timeNs": "5302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645755559547e-08,
+          "z": 0.027986687302375135
+        }
+      },
+      "stateId": "st_body_000_49",
+      "timeNs": "5402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_49",
+      "timeNs": "5402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645772895969e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_50",
+      "timeNs": "5502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_50",
+      "timeNs": "5502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645772759902e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_51",
+      "timeNs": "5602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_51",
+      "timeNs": "5602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645772580503e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_52",
+      "timeNs": "5702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_52",
+      "timeNs": "5702000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645772403667e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_53",
+      "timeNs": "5802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_53",
+      "timeNs": "5802000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645772214024e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_54",
+      "timeNs": "5902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_54",
+      "timeNs": "5902000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645772025665e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_55",
+      "timeNs": "6002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_55",
+      "timeNs": "6002000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645771847882e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_56",
+      "timeNs": "6102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_56",
+      "timeNs": "6102000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645771664417e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_57",
+      "timeNs": "6202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_57",
+      "timeNs": "6202000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645771481015e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_58",
+      "timeNs": "6302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_58",
+      "timeNs": "6302000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645771278488e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_59",
+      "timeNs": "6402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_59",
+      "timeNs": "6402000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645771094838e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_60",
+      "timeNs": "6502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_60",
+      "timeNs": "6502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.45809572524309744,
+          "y": -8.574645770909606e-08,
+          "z": 0.027986687302375524
+        }
+      },
+      "stateId": "st_body_000_61",
+      "timeNs": "6602000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "pose3D": {
+        "confidence": 1.0,
+        "frameId": "world",
+        "orientationWxyz": {
+          "w": 1.0,
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "positionM": {
+          "x": 0.46,
+          "y": 0.0,
+          "z": 0.015
+        }
+      },
+      "stateId": "st_body_001_61",
+      "timeNs": "6602000000"
+    }
+  ],
+  "objects": [
+    {
+      "categoryConfidence": 1.0,
+      "categoryLabel": "object",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_000",
+      "physicalKind": "RIGID_OBJECT"
+    },
+    {
+      "categoryConfidence": 1.0,
+      "categoryLabel": "object",
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectId": "body_001",
+      "physicalKind": "RIGID_OBJECT"
+    }
+  ],
+  "relations": [
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectObjectId": "body_001",
+      "relation": "NEAR",
+      "relationId": "rel_body_000_body_001_first",
+      "subjectObjectId": "body_000",
+      "timeNs": "502000000"
+    },
+    {
+      "confidence": 1.0,
+      "evidenceIds": [
+        "ev_sim_state_extraction"
+      ],
+      "objectObjectId": "body_001",
+      "relation": "INSIDE",
+      "relationId": "rel_body_000_body_001_last",
+      "subjectObjectId": "body_000",
+      "timeNs": "6602000000"
+    }
+  ],
+  "schemaVersion": "csg.v0"
+}

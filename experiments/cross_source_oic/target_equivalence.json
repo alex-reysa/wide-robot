@@ -1,0 +1,313 @@
+{
+  "kind": "structural equivalence of the per-source object_inside_container target cards",
+  "claim": "Each world is verified against its OWN target card (different graphId, object labels, geometry provenance) \u2014 but every card reduces to the SAME verifier-enforced semantic core per tier. This proves 'same semantic task, instantiated per source', NOT 'one identical target file'.",
+  "strippedAuthoringFields": [
+    "graphId",
+    "taskCaption",
+    "categoryLabel",
+    "categoryConfidence",
+    "geometry(source+sizeM)",
+    "confidence(s)",
+    "timeNs/timeSpan magnitudes",
+    "object/relation/event/constraint/stage ids (canonicalised to roles)",
+    "pilotMetadata"
+  ],
+  "signatureStricterThanVerifierNote": "The signature reads everything the matcher hard-gates on (all hard goal constraints, relation endpoints, events, contacts, stage count) PLUS object mobility, which the matcher's hard_signature treats only as a soft diagnostic (it gates on physicalKind). A stricter signature can only yield a false NON-equivalence, never a false equivalence \u2014 the safe direction.",
+  "simplifyingAssumptionScopes": {
+    "rlbench/terminal_only": {
+      "stageCount": 1,
+      "nHardGoals": 1,
+      "nHardRelationGoals": 1,
+      "nHardArticulationGoals": 0,
+      "nContacts": 0
+    },
+    "rlbench/relation_event": {
+      "stageCount": 1,
+      "nHardGoals": 1,
+      "nHardRelationGoals": 1,
+      "nHardArticulationGoals": 0,
+      "nContacts": 0
+    },
+    "rlbench/placed_from_outside": {
+      "stageCount": 1,
+      "nHardGoals": 1,
+      "nHardRelationGoals": 1,
+      "nHardArticulationGoals": 0,
+      "nContacts": 0
+    },
+    "real_camera/terminal_only": {
+      "stageCount": 1,
+      "nHardGoals": 1,
+      "nHardRelationGoals": 1,
+      "nHardArticulationGoals": 0,
+      "nContacts": 0
+    },
+    "real_camera/relation_event": {
+      "stageCount": 1,
+      "nHardGoals": 1,
+      "nHardRelationGoals": 1,
+      "nHardArticulationGoals": 0,
+      "nContacts": 0
+    },
+    "real_camera/placed_from_outside": {
+      "stageCount": 1,
+      "nHardGoals": 1,
+      "nHardRelationGoals": 1,
+      "nHardArticulationGoals": 0,
+      "nContacts": 0
+    },
+    "rh20t/terminal_only": {
+      "stageCount": 1,
+      "nHardGoals": 1,
+      "nHardRelationGoals": 1,
+      "nHardArticulationGoals": 0,
+      "nContacts": 0
+    },
+    "rh20t/relation_event": {
+      "stageCount": 1,
+      "nHardGoals": 1,
+      "nHardRelationGoals": 1,
+      "nHardArticulationGoals": 0,
+      "nContacts": 0
+    }
+  },
+  "perTier": {
+    "terminal_only": {
+      "tier": "terminal_only",
+      "sources": [
+        "real_camera",
+        "rh20t",
+        "rlbench"
+      ],
+      "allIdentical": true,
+      "sharedSignature": {
+        "objects": {
+          "__SUBJECT__": {
+            "physicalKind": "RIGID_OBJECT",
+            "mobility": "MOVABLE"
+          },
+          "__OBJECT__": {
+            "physicalKind": "RIGID_OBJECT",
+            "mobility": "STATIC"
+          }
+        },
+        "goal": {
+          "kind": "OBJECT_RELATION_GOAL",
+          "hard": true,
+          "subject": "__SUBJECT__",
+          "object": "__OBJECT__",
+          "desiredRelation": "INSIDE"
+        },
+        "goals": [
+          {
+            "stage": 0,
+            "kind": "OBJECT_RELATION_GOAL",
+            "hard": true,
+            "subject": "__SUBJECT__",
+            "object": "__OBJECT__",
+            "desiredRelation": "INSIDE",
+            "articulation": null
+          }
+        ],
+        "stageCount": 1,
+        "contacts": [],
+        "requiresContactWord": false,
+        "relations": [],
+        "events": []
+      },
+      "distinctSignatureCount": 1,
+      "pairwiseDiffs": []
+    },
+    "relation_event": {
+      "tier": "relation_event",
+      "sources": [
+        "real_camera",
+        "rh20t",
+        "rlbench"
+      ],
+      "allIdentical": true,
+      "sharedSignature": {
+        "objects": {
+          "__SUBJECT__": {
+            "physicalKind": "RIGID_OBJECT",
+            "mobility": "MOVABLE"
+          },
+          "__OBJECT__": {
+            "physicalKind": "RIGID_OBJECT",
+            "mobility": "STATIC"
+          }
+        },
+        "goal": {
+          "kind": "OBJECT_RELATION_GOAL",
+          "hard": true,
+          "subject": "__SUBJECT__",
+          "object": "__OBJECT__",
+          "desiredRelation": "INSIDE"
+        },
+        "goals": [
+          {
+            "stage": 0,
+            "kind": "OBJECT_RELATION_GOAL",
+            "hard": true,
+            "subject": "__SUBJECT__",
+            "object": "__OBJECT__",
+            "desiredRelation": "INSIDE",
+            "articulation": null
+          }
+        ],
+        "stageCount": 1,
+        "contacts": [],
+        "requiresContactWord": false,
+        "relations": [
+          {
+            "order": 0,
+            "subject": "__SUBJECT__",
+            "object": "__OBJECT__",
+            "relation": "NEAR"
+          },
+          {
+            "order": 1,
+            "subject": "__SUBJECT__",
+            "object": "__OBJECT__",
+            "relation": "INSIDE"
+          }
+        ],
+        "events": [
+          {
+            "eventKind": "CONTAINMENT_CHANGE",
+            "transitions": [
+              {
+                "subject": "__SUBJECT__",
+                "object": "__OBJECT__",
+                "from": "NEAR",
+                "to": "INSIDE"
+              }
+            ]
+          }
+        ]
+      },
+      "distinctSignatureCount": 1,
+      "pairwiseDiffs": []
+    },
+    "placed_from_outside": {
+      "tier": "placed_from_outside",
+      "sources": [
+        "real_camera",
+        "rlbench"
+      ],
+      "allIdentical": true,
+      "sharedSignature": {
+        "objects": {
+          "__SUBJECT__": {
+            "physicalKind": "RIGID_OBJECT",
+            "mobility": "MOVABLE"
+          },
+          "__OBJECT__": {
+            "physicalKind": "RIGID_OBJECT",
+            "mobility": "STATIC"
+          }
+        },
+        "goal": {
+          "kind": "OBJECT_RELATION_GOAL",
+          "hard": true,
+          "subject": "__SUBJECT__",
+          "object": "__OBJECT__",
+          "desiredRelation": "INSIDE"
+        },
+        "goals": [
+          {
+            "stage": 0,
+            "kind": "OBJECT_RELATION_GOAL",
+            "hard": true,
+            "subject": "__SUBJECT__",
+            "object": "__OBJECT__",
+            "desiredRelation": "INSIDE",
+            "articulation": null
+          }
+        ],
+        "stageCount": 1,
+        "contacts": [],
+        "requiresContactWord": false,
+        "relations": [
+          {
+            "order": 0,
+            "subject": "__SUBJECT__",
+            "object": "__OBJECT__",
+            "relation": "FAR_FROM"
+          },
+          {
+            "order": 1,
+            "subject": "__SUBJECT__",
+            "object": "__OBJECT__",
+            "relation": "INSIDE"
+          }
+        ],
+        "events": [
+          {
+            "eventKind": "CONTAINMENT_CHANGE",
+            "transitions": [
+              {
+                "subject": "__SUBJECT__",
+                "object": "__OBJECT__",
+                "from": "NEAR",
+                "to": "INSIDE"
+              }
+            ]
+          }
+        ]
+      },
+      "distinctSignatureCount": 1,
+      "pairwiseDiffs": []
+    }
+  },
+  "allExternalTiersIdentical": true,
+  "tierStrengthening": {
+    "terminalOnlyHasNoRelationsOrEvents": true,
+    "relationEventAddsEndpointsAndEvent": true,
+    "terminalGoalUnchangedAcrossTiers": true,
+    "placedDiffersFromRelationEventOnlyInStartEndpoint": true
+  },
+  "internalSim": {
+    "mujocoGoldGraphId": "human_put_cube_in_tray",
+    "goalCoreMatchesSharedCore": true,
+    "goldGoalCore": {
+      "objects": {
+        "__SUBJECT__": {
+          "physicalKind": "RIGID_OBJECT",
+          "mobility": "MOVABLE"
+        },
+        "__OBJECT__": {
+          "physicalKind": "RIGID_OBJECT",
+          "mobility": "STATIC"
+        }
+      },
+      "goal": {
+        "kind": "OBJECT_RELATION_GOAL",
+        "hard": true,
+        "subject": "__SUBJECT__",
+        "object": "__OBJECT__",
+        "desiredRelation": "INSIDE"
+      }
+    },
+    "sharedGoalCore": {
+      "objects": {
+        "__SUBJECT__": {
+          "physicalKind": "RIGID_OBJECT",
+          "mobility": "MOVABLE"
+        },
+        "__OBJECT__": {
+          "physicalKind": "RIGID_OBJECT",
+          "mobility": "STATIC"
+        }
+      },
+      "goal": {
+        "kind": "OBJECT_RELATION_GOAL",
+        "hard": true,
+        "subject": "__SUBJECT__",
+        "object": "__OBJECT__",
+        "desiredRelation": "INSIDE"
+      }
+    },
+    "note": "The MuJoCo internal-sim world is judged against its native gold pick-place target, a SUPERSET of the relation tiers (it additionally enforces contact / object-carrier / temporal-order probes). Only its INSIDE goal core is claimed equivalent to the shared core \u2014 the internal world is judged at a STRONGER tier."
+  }
+}

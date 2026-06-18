@@ -1,0 +1,36 @@
+{
+  "checks": {
+    "articulation_limits": {
+      "applicable": false,
+      "detail": "no articulated joints in this task",
+      "passed": true
+    },
+    "gripper_feasibility": {
+      "applicable": true,
+      "detail": "aperture spans object, bilateral contact, force within limit",
+      "passed": true
+    },
+    "non_penetration": {
+      "applicable": true,
+      "detail": "max interpenetration 0.3mm <= 5mm",
+      "passed": true
+    },
+    "pose_continuity": {
+      "applicable": true,
+      "detail": "max step 27mm / 0.01rad within limits",
+      "passed": true
+    },
+    "quasi_static_support_at_release": {
+      "applicable": true,
+      "detail": "released object(s) rest supported in terminal relation",
+      "passed": true
+    },
+    "workspace_reachability": {
+      "applicable": true,
+      "detail": "all effector poses reachable, joints within limits, no IK failures",
+      "passed": true
+    }
+  },
+  "physicalValidity": true,
+  "reason": "all applicable physical-validity checks passed"
+}
